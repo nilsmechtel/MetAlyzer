@@ -13,5 +13,5 @@ read_raw_data(object)
 
 }
 \description{
-This function slices measurements from full_sheet into raw_data
+This function slices measurements from .full_sheet into raw_data
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/summarise.R
 \name{show_obj}
 \alias{show_obj}
-\title{Show a MetAlyzer object}
+\title{Show the MetAlyzer object}
 \usage{
 show_obj(object)
 }

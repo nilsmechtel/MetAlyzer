@@ -13,5 +13,6 @@ get_data_range(object)
 
 }
 \description{
-This function extracts rows and column indices to slice the full_sheet into metabolites, raw_data and meta_data
+This function extracts rows and column indices to slice the .full_sheet into
+metabolites, raw_data and meta_data
 }

@@ -13,5 +13,6 @@ read_metabolties(object)
 
 }
 \description{
-This function extracts metabolites with their corresponding class from full_sheet into metabolites
+This function extracts metabolites with their corresponding class from
+.full_sheet into metabolites
 }

@@ -4,14 +4,15 @@
 \alias{readQuantStatus}
 \title{Read quantification status}
 \usage{
-readQuantStatus(object)
+readQuantStatus(MetAlyzer)
 }
 \arguments{
-\item{object}{MetAlyzer object}
+\item{MetAlyzer}{MetAlyzer object}
 }
 \value{
 
 }
 \description{
-This function gets the background color of each cell of the opened Excel file and assigns it to the corresponding quantification status
+This method gets the background color of each cell of the opened Excel file
+and assigns it to the corresponding quantification status
 }

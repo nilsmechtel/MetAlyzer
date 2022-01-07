@@ -1,4 +1,4 @@
-#' Show a MetAlyzer object
+#' Show the MetAlyzer object
 #'
 #' This function shows a summary of MetAlyzer slot values
 #' @param object MetAlyzer object
@@ -9,6 +9,8 @@
 #' @examples
 
 show_obj <- function(object) {
+  meta_data <- get_filtered_data(object, slot = "meta", verbose = FALSE)
+  quant_status <- get_filtered_data(object, slot = "quant", verbose = FALSE)
   if (length(object@file_path) > 0) {
     s_fp <- strsplit(object@file_path, "/")[[1]]
     file <- tail(s_fp, 1)
@@ -31,18 +33,18 @@ show_obj <- function(object) {
   if (length(object@metabolites) > 0) {
     cat("Including metabolism indicators:", "Metabolism Indicators" %in% names(object@metabolites), "\n")
   }
-  cat("Number of samples:", nrow(object@meta_data), "\n")
-  if (ncol(object@meta_data) > 0) {
-    cat("Columns meta data:", paste(colnames(object@meta_data), collapse = "; "), "\n")
+  cat("Number of samples:", nrow(meta_data), "\n")
+  if (ncol(meta_data) > 0) {
+    cat(paste0("Columns meta data: \"", paste(colnames(meta_data), collapse = "\"; \""), "\"\n"))
   }
-  cat("Quantification status completed:", !nrow(object@quant_status) == 0, "\n")
-  cat("-------------------------------------\n")
+  cat("Quantification status completed:", !nrow(quant_status) == 0, "\n")
+  cat("Ploting data created:", !nrow(object@plotting_data) == 0, "\n")
 }
 
 
 #' Summarize quantification status
 #'
-#' This function lists the proportion of LODs, LOQs, Valids, calibration range passes and NAs
+#' This function lists the number of each quantification status and its percentage
 #' @param object MetAlyzer object
 #'
 #' @return
@@ -51,22 +53,20 @@ show_obj <- function(object) {
 #' @examples
 
 sum_quant_data <- function(object) {
-  sum_LOD <- sum(object@quant_status == "LOD", na.rm = TRUE)
-  sum_LOQ <- sum(object@quant_status == "LOQ", na.rm = TRUE)
-  sum_valid <- sum(object@quant_status == "Valid", na.rm = TRUE)
-  sum_val_range <- sum(object@quant_status == "Out of calibration range", na.rm = TRUE)
-  nas <- sum(is.na(object@quant_status))
-  total <- nrow(object@quant_status)*ncol(object@quant_status)
+  quant_status <- get_filtered_data(object, slot = "quant", verbose = FALSE)
+  nas <- sum(is.na(quant_status))
+  total <- nrow(quant_status) * ncol(quant_status)
+  print_number <- function(name) {
+    number <- sum(quant_status == name, na.rm = TRUE)
+    cat(paste0(name, ": ", number,
+               " (", round(number/total*100, 2),"%)\n"))
+  }
   cat("-------------------------------------\n")
-  cat(paste0("Number of LODs: ", sum_LOD,
-               " (", round(sum_LOD/total*100, 2), "%)\n"))
-  cat(paste0("Number of LOQs: ", sum_LOQ,
-               " (", round(sum_LOQ/total*100, 2),"%)\n"))
-  cat(paste0("Number of Valids: ", sum_valid,
-               " (", round(sum_valid/total*100, 2),"%)\n"))
-  cat(paste0("Number of calibration range passes: ", sum_val_range,
-               " (", round(sum_val_range/total*100, 2),"%)\n"))
-  cat(paste0("Number of NAs: ", nas,
-               " (", round(nas/total*100, 2),"%)\n"))
-  cat("-------------------------------------\n")
+  status_vec <- c("Valid", "Smaller Zero", "LOD", "LOQ", "No Intercept",
+                  "Missing Measurement", "ISTD Out of Range", "Invalid",
+                  "No measurement")
+  for (status in status_vec[which(status_vec %in% unlist(quant_status))]) {
+    print_number(status)
+  }
+  cat(paste0("NAs: ", nas, " (", round(nas/total*100, 2),"%)\n"))
 }

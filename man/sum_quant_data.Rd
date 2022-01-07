@@ -13,5 +13,5 @@ sum_quant_data(object)
 
 }
 \description{
-This function lists the proportion of LODs, LOQs, Valids, calibration range passes and NAs
+This function lists the number of each quantification status and its percentage
 }

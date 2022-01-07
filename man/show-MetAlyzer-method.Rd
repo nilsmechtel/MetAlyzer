@@ -7,11 +7,11 @@
 \S4method{show}{MetAlyzer}(object)
 }
 \arguments{
-\item{object}{MetAlyzer object}
+\item{MetAlyzer}{MetAlyzer object}
 }
 \value{
 
 }
 \description{
-This function shows a summary of MetAlyzer slot values
+This method calls show_obj() and shows the MetAlyzer object
 }

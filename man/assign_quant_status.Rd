@@ -13,5 +13,6 @@ assign_quant_status(df_BG)
 
 }
 \description{
-This function assigns the background color of each cell in full_sheet to the corresponding quantification status
+This function assigns the background color of each cell in .full_sheet to the
+corresponding quantification status
 }

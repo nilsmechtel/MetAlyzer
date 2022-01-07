@@ -13,5 +13,5 @@ read_BG_color(object)
 
 }
 \description{
-This function gets the background color of each cell in full_sheet
+This function gets the background color of each cell in .full_sheet
 }

@@ -4,14 +4,15 @@
 \alias{readData}
 \title{Open file and read data}
 \usage{
-readData(object)
+readData(MetAlyzer)
 }
 \arguments{
-\item{object}{MetAlyzer object}
+\item{MetAlyzer}{MetAlyzer object}
 }
 \value{
 
 }
 \description{
-This function opens the given MetIDQ output Excel file and extracts metabolites, raw data and meta data
+This method opens the given MetIDQ output Excel file and extracts metabolites,
+raw data and meta data
 }

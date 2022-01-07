@@ -17,25 +17,37 @@ A S4 class to read and analyze MetIDQ output
 
 \item{\code{sheet}}{A length-one numeric vector}
 
-\item{\code{metabolites}}{A character vector with all 630 measured metabolites and optional 234 additional metabolism indicators}
+\item{\code{metabolites}}{A character vector with all 630 measured metabolites and
+optional 234 additional metabolism indicators}
 
-\item{\code{raw_data}}{A data frame containing all raw measurements; dimension: # samples x # metabolites}
+\item{\code{raw_data}}{A data frame containing all raw measurements;
+dimension: # samples x # metabolites}
 
-\item{\code{quant_status}}{A data frame containing the quantification status of all measurements; dimension: # samples x # metabolites}
+\item{\code{quant_status}}{A data frame containing the quantification status of all
+measurements; dimension: # samples x # metabolites}
 
-\item{\code{meta_data}}{A data frame containing any meta data; dimension: # samples x # meta variables}
+\item{\code{meta_data}}{A data frame containing any meta data;
+dimension: # samples x # meta variables}
 
-\item{\code{full_sheet}}{A matrix containing the un-sliced Excel sheet}
+\item{\code{plotting_data}}{A tibble data.frame containing reshaped information of raw_data,
+quant_status and meta_data for plotting with ggplot2}
 
-\item{\code{data_ranges}}{A length-six numeric list with rows and columns information for slicing}
+\item{\code{.full_sheet}}{A matrix containing the un-sliced Excel sheet}
+
+\item{\code{.data_ranges}}{A length-six numeric list with rows and columns
+information for slicing}
 }}
 
 \examples{
 obj <- new("MetAlyzer")
-obj <- initialize(obj, file_path="results.xlsx")
-show(obj)
+obj <- init(obj, file_path="results.xlsx")
 obj <- readData(obj)
-obj <- readQuantQtatus(obj)
-obj <- filterClasses(obj)
+obj <- readQuantStatus(obj)
+obj <- filterMetabolites(obj)
+show(obj)
 summariseQuantData(obj)
+obj <- createPlottingData(obj, Method, Tissue)
+obj_organisms <- imputePlottingData(obj_organisms, Tissue, Metabolite)
+obj_organisms <- transformPlottingData(obj_organisms)
+obj_organisms <- performANOVA(obj_organisms, "Method")
 }

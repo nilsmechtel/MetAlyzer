@@ -4,14 +4,14 @@
 \alias{summariseQuantData}
 \title{Summarize quantification status}
 \usage{
-summariseQuantData(object)
+summariseQuantData(MetAlyzer)
 }
 \arguments{
-\item{object}{MetAlyzer object}
+\item{MetAlyzer}{MetAlyzer object}
 }
 \value{
 
 }
 \description{
-This function lists the proportion of LODs, LOQs, Valids, calibration range passes and NAs
+This method calls sum_quant_data() and summarizes quantification status
 }
