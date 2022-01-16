@@ -10,7 +10,7 @@ performANOVA(MetAlyzer, categorical)
 \item{MetAlyzer}{MetAlyzer object}
 
 \item{categorical}{A length-one character vector defining the categorical
-variable)}
+variable}
 }
 \value{
 

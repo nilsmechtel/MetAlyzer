@@ -9,7 +9,7 @@ imputePlottingData(MetAlyzer, ..., i = 0.2)
 \arguments{
 \item{MetAlyzer}{MetAlyzer object}
 
-\item{i}{A numeric value below 1)}
+\item{i}{A numeric value below 1}
 }
 \value{
 

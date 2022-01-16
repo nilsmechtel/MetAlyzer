@@ -5,6 +5,7 @@
 #' @param class_name A class to be filtered out
 #'
 #' @return
+#'
 #' @export
 #'
 #' @examples
@@ -34,6 +35,7 @@ filter_metabolites <- function(object, class_name="Metabolism Indicators") {
 #' @param remove A character vector specifying which samples to remove
 #'
 #' @return
+#'
 #' @export
 #'
 #' @examples
@@ -60,6 +62,8 @@ filter_meta_data <- function(object, column, keep=NULL, remove=NULL) {
 #' @param slot A length-one character vector specifying which data frame to slice
 #'
 #' @return
+#'
+#' @import dplyr
 #' @export
 #'
 #' @examples

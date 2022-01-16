@@ -10,7 +10,7 @@ transformPlottingData(MetAlyzer, func = log2)
 \item{MetAlyzer}{MetAlyzer object}
 
 \item{func}{A logarithmic function to transform concentration values with
-number of samples)}
+number of samples}
 }
 \value{
 

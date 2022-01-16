@@ -1,7 +1,3 @@
-library(xlsx)
-library(dplyr)
-library(tidyr)
-
 #' A S4 class to read and analyze MetIDQ output
 #'
 #' @slot file_path A length-one character vector
@@ -21,6 +17,7 @@ library(tidyr)
 #' information for slicing
 #'
 #' @return
+#'
 #' @export
 #'
 #' @examples
@@ -32,26 +29,26 @@ library(tidyr)
 #' show(obj)
 #' summariseQuantData(obj)
 #' obj <- createPlottingData(obj, Method, Tissue)
-#' obj_organisms <- imputePlottingData(obj_organisms, Tissue, Metabolite)
-#' obj_organisms <- transformPlottingData(obj_organisms)
-#' obj_organisms <- performANOVA(obj_organisms, "Method")
+#' obj <- imputePlottingData(obj, Tissue, Metabolite)
+#' obj <- transformPlottingData(obj)
+#' obj <- performANOVA(obj, "Method")
 
-setClass("MetAlyzer",
-         slots=list(
-           ## input ##
-           file_path="character",
-           sheet="numeric",
-           ## output ##
-           metabolites="character",
-           raw_data="data.frame",
-           quant_status="data.frame",
-           meta_data="data.frame",
-           plotting_data="data.frame",
-           ## internal ##
-           .full_sheet="matrix",
-           .data_ranges="list",
-           .orig_metabolites="character"
-         )
+MetAlyzer <- setClass("MetAlyzer",
+                      slots=list(
+                        ## input ##
+                        file_path="character",
+                        sheet="numeric",
+                        ## output ##
+                        metabolites="character",
+                        raw_data="data.frame",
+                        quant_status="data.frame",
+                        meta_data="data.frame",
+                        plotting_data="data.frame",
+                        ## internal ##
+                        .full_sheet="matrix",
+                        .data_ranges="list",
+                        .orig_metabolites="character"
+                      )
 )
 
 
@@ -86,14 +83,10 @@ setMethod("init",
 #' @return
 #' @export
 
-# setGeneric("show",
-#            function(MetAlyzer)
-#              standardGeneric("show")
-# )
 setMethod("show",
           "MetAlyzer",
-          function(MetAlyzer) {
-            show_obj(MetAlyzer)
+          function(object) {
+            show_obj(object)
           }
 )
 
@@ -440,7 +433,7 @@ setMethod("plottingData",
 #' This method adds the column imp_Conc to plotting_data containing imputed
 #' concentration values (Concentration). Imputation: minimal positive value * i
 #' @param MetAlyzer MetAlyzer object
-#' @param i A numeric value below 1)
+#' @param i A numeric value below 1
 #'
 #' @return
 #' @export
@@ -471,7 +464,7 @@ setMethod("imputePlottingData",
 #' transformation of imputed concentration values (imp_Conc)
 #' @param MetAlyzer MetAlyzer object
 #' @param func A logarithmic function to transform concentration values with
-#' number of samples)
+#' number of samples
 #'
 #' @return
 #' @export
@@ -497,7 +490,7 @@ setMethod("transformPlottingData",
 #' with the results of a Tukey post-hoc test
 #' @param MetAlyzer MetAlyzer object
 #' @param categorical A length-one character vector defining the categorical
-#' variable)
+#' variable
 #'
 #' @return
 #' @export
@@ -544,3 +537,4 @@ setMethod("updatePlottingData",
             return(MetAlyzer)
           }
 )
+

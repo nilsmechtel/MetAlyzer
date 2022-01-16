@@ -4,6 +4,7 @@
 #' @param object MetAlyzer object
 #'
 #' @return
+#'
 #' @export
 #'
 #' @examples
@@ -48,6 +49,7 @@ show_obj <- function(object) {
 #' @param object MetAlyzer object
 #'
 #' @return
+#'
 #' @export
 #'
 #' @examples

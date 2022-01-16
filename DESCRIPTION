@@ -2,8 +2,14 @@ Package: MetAlyzer
 Type: Package
 Title: What the Package Does (Title Case)
 Version: 0.1.0
-Author: Nils Mechtel
+Author: Nils Mechtel, Carolin Andresen
 Maintainer: Nils Mechtel <nils.mech@gmail.com>
+Depends: xlsx,
+    openxlsx,
+    dplyr,
+    tidyr,
+    tibble,
+    agricolae
 Description: More about what it does (maybe more than one line)
 License: GPLv3
 Encoding: UTF-8

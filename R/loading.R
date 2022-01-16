@@ -4,6 +4,7 @@
 #' @param object MetAlyzer object
 #'
 #' @return
+#'
 #' @export
 #'
 #' @examples
@@ -27,6 +28,7 @@ open_file <- function(object) {
 #' @param object MetAlyzer object
 #'
 #' @return
+#'
 #' @export
 #'
 #' @examples
@@ -56,6 +58,7 @@ get_data_range <- function(object) {
 #' @param object MetAlyzer object
 #'
 #' @return
+#'
 #' @export
 #'
 #' @examples
@@ -74,6 +77,7 @@ read_metabolties <- function(object) {
 #' @param object MetAlyzer object
 #'
 #' @return
+#'
 #' @export
 #'
 #' @examples
@@ -92,6 +96,7 @@ read_raw_data <- function(object) {
 #' @param object MetAlyzer object
 #'
 #' @return
+#'
 #' @export
 #'
 #' @examples
@@ -114,6 +119,7 @@ read_meta_data <- function(object) {
 #' @param object MetAlyzer object
 #'
 #' @return
+#'
 #' @export
 #'
 #' @examples
@@ -121,11 +127,11 @@ read_meta_data <- function(object) {
 read_BG_color <- function(object) {
   cat("-------------------------------------\n")
   cat("Reading background color...")
-  wb <- loadWorkbook(object@file_path)
-  sheet <- getSheets(wb)[[object@sheet]]
-  rows <- getRows(sheet)
-  cells <- getCells(rows)
-  styles <- sapply(cells, getCellStyle) # get style of each cell
+  wb <- xlsx::loadWorkbook(object@file_path)
+  sheet <- xlsx::getSheets(wb)[[object@sheet]]
+  rows <- xlsx::getRows(sheet)
+  cells <- xlsx::getCells(rows)
+  styles <- sapply(cells, xlsx::getCellStyle) # get style of each cell
   bg <- sapply(styles, function(style) { # get background color of each cell
     fg  <- style$getFillForegroundXSSFColor()
     rgb <- tryCatch(fg$getRgb(), error = function(e) "")
@@ -157,6 +163,7 @@ read_BG_color <- function(object) {
 #' @param object MetAlyzer object
 #'
 #' @return
+#'
 #' @export
 #'
 #' @examples
@@ -178,3 +185,4 @@ assign_quant_status <- function(df_BG) {
   }
   return(df_BG)
 }
+

@@ -3,6 +3,7 @@
 \docType{class}
 \name{MetAlyzer-class}
 \alias{MetAlyzer-class}
+\alias{MetAlyzer}
 \title{A S4 class to read and analyze MetIDQ output}
 \value{
 
@@ -47,7 +48,7 @@ obj <- filterMetabolites(obj)
 show(obj)
 summariseQuantData(obj)
 obj <- createPlottingData(obj, Method, Tissue)
-obj_organisms <- imputePlottingData(obj_organisms, Tissue, Metabolite)
-obj_organisms <- transformPlottingData(obj_organisms)
-obj_organisms <- performANOVA(obj_organisms, "Method")
+obj <- imputePlottingData(obj, Tissue, Metabolite)
+obj <- transformPlottingData(obj)
+obj <- performANOVA(obj, "Method")
 }

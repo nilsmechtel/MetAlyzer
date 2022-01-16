@@ -6,6 +6,9 @@
 #' @param ... A selection of columns from meta_data to add to reshaped data frame
 #'
 #' @return
+#'
+#' @import dplyr
+#' @import tidyr
 #' @export
 #'
 #' @examples
@@ -39,6 +42,7 @@ plotting_data <- function(object, ...) {
 #' @param ts A numeric vector of thresholds
 #'
 #' @return
+#'
 #' @export
 #'
 #' @examples
@@ -71,6 +75,8 @@ set_threshold <- function(x, ts) {
 #' @param ts A numeric vector of thresholds
 #'
 #' @return
+#'
+#' @import dplyr
 #' @export
 #'
 #' @examples
@@ -99,6 +105,8 @@ calc_CV <- function(plotting_data, ts) {
 #' @param t A numeric threshold
 #'
 #' @return
+#'
+#' @import dplyr
 #' @export
 #'
 #' @examples
@@ -121,6 +129,7 @@ valid_measurement <- function(plotting_data, valid_vec, t) {
 #' @param i A numeric value below 1)
 #'
 #' @return
+#'
 #' @export
 #'
 #' @examples
@@ -141,6 +150,7 @@ zero_imputation <- function(vec, i) {
 #' @param func A logarithmic function
 #'
 #' @return
+#'
 #' @export
 #'
 #' @examples
@@ -160,6 +170,9 @@ log_transform <- function(vec, func) {
 #' @param valid_vec A logical vector for filtering
 #'
 #' @return
+#'
+#' @import dplyr
+#' @import tibble
 #' @export
 #'
 #' @examples
@@ -177,10 +190,10 @@ calc_anova <- function(c_vec, d_vec, valid_vec) {
     # Tukey post-hoc; each categorical variable gets assigned to a group
     groups <- agricolae::HSD.test(anova, "Categorical", group=TRUE)$groups %>%
       select(-Dependent) %>%
-      tibble::rownames_to_column("Categorical") %>%
+      rownames_to_column("Categorical") %>%
       mutate(Categorical = factor(Categorical, levels = levels(c_vec))) %>%
       arrange(Categorical) %>%
-      tibble::deframe() %>%
+      deframe() %>%
       toupper()
     group_vec <- sapply(c_vec, function(m) groups[m])
   }
