@@ -7,8 +7,6 @@
 #' @return
 #'
 #' @export
-#'
-#' @examples
 
 filter_metabolites <- function(object, class_name="Metabolism Indicators") {
   cat("-------------------------------------\n")
@@ -31,14 +29,12 @@ filter_metabolites <- function(object, class_name="Metabolism Indicators") {
 #' @param object MetAlyzer object
 #' @param column A length-one character vector specifying which column of
 #' meta_data to use for filtering
-#' @param keep A character vector specifying which samples to keep
-#' @param remove A character vector specifying which samples to remove
+#' @param keep A vector specifying which samples to keep
+#' @param remove A vector specifying which samples to remove
 #'
 #' @return
 #'
 #' @export
-#'
-#' @examples
 
 filter_meta_data <- function(object, column, keep=NULL, remove=NULL) {
   old_filter <- object@meta_data$Filter
@@ -60,13 +56,12 @@ filter_meta_data <- function(object, column, keep=NULL, remove=NULL) {
 #' This function filters meta_data, raw_data or quant_status
 #' @param object MetAlyzer object
 #' @param slot A length-one character vector specifying which data frame to slice
+#' @param verbose If TRUE prints which filtered data frame is returned
 #'
 #' @return
 #'
 #' @import dplyr
 #' @export
-#'
-#' @examples
 
 get_filtered_data <- function(object, slot, verbose=TRUE) {
   if (slot == "meta") {

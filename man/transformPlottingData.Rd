@@ -13,9 +13,15 @@ transformPlottingData(MetAlyzer, func = log2)
 number of samples}
 }
 \value{
-
+An updated MetAlyzer object
 }
 \description{
 This method adds the column transf_Conc to plotting_data with the logarithmic
 transformation of imputed concentration values (imp_Conc)
+}
+\examples{
+\dontrun{
+obj <- transformPlottingData(obj, func = log2)
+obj <- transformPlottingData(obj, func = log)
+}
 }

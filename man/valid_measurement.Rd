@@ -7,6 +7,8 @@
 valid_measurement(plotting_data, valid_vec, t)
 }
 \arguments{
+\item{plotting_data}{plotting_data tibble data frame}
+
 \item{valid_vec}{A character vector containing each quantification status that
 is considered to be a valid measurement}
 

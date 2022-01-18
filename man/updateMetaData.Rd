@@ -15,8 +15,14 @@ updateMetaData(MetAlyzer, name, new_colum)
 number of samples)}
 }
 \value{
-
+An updated MetAlyzer object
 }
 \description{
 This method adds another column to unfiltered meta_data
+}
+\examples{
+\dontrun{
+obj <- updateMetaData(obj, "Date", format(Sys.Date()))
+obj <- updateMetaData(obj, "Analyzed", TRUE)
+}
 }

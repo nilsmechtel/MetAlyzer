@@ -6,14 +6,12 @@
 #' @return
 #'
 #' @export
-#'
-#' @examples
 
 show_obj <- function(object) {
   meta_data <- get_filtered_data(object, slot = "meta", verbose = FALSE)
   quant_status <- get_filtered_data(object, slot = "quant", verbose = FALSE)
   if (length(object@file_path) > 0) {
-    s_fp <- strsplit(object@file_path, "/")[[1]]
+    s_fp <- strsplit(normalizePath(object@file_path), "/")[[1]]
     file <- tail(s_fp, 1)
     path <- paste(s_fp[1:length(s_fp)-1], collapse = "/")
   } else {
@@ -51,8 +49,6 @@ show_obj <- function(object) {
 #' @return
 #'
 #' @export
-#'
-#' @examples
 
 sum_quant_data <- function(object) {
   quant_status <- get_filtered_data(object, slot = "quant", verbose = FALSE)

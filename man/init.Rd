@@ -14,8 +14,13 @@ init(MetAlyzer, file_path, sheet = 1)
 \item{sheet}{A length-one numeric vector with the sheet number}
 }
 \value{
-
+An updated MetAlyzer object
 }
 \description{
 This method initializes file path and sheet number
+}
+\examples{
+\dontrun{
+obj <- init(obj, file_path = "toydata.xlsx", sheet = 1)
+}
 }

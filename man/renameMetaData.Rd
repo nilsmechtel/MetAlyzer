@@ -12,8 +12,13 @@ renameMetaData(MetAlyzer, ...)
 \item{...}{Use new_name = old_name to rename selected variables}
 }
 \value{
-
+An updated MetAlyzer object
 }
 \description{
 This method renames a column of meta_data using rename {dplyr}
+}
+\examples{
+\dontrun{
+obj <- renameMetaData(obj, Methods = X1)
+}
 }

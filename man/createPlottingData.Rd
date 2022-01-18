@@ -25,9 +25,16 @@ is considered to be a valid measurement}
 \item{t}{A numeric threshold to determine valid measurements}
 }
 \value{
-
+An updated MetAlyzer object
 }
 \description{
 This method combines raw_data, quant_status and meta_data to one tibble
 data frame
+}
+\examples{
+\dontrun{
+obj <- createPlottingData(obj, Tissue, Method,
+ts = c(0.1, 0.2, 0.3),
+valid_vec = c("Valid", "LOQ"), t = 0.5)
+}
 }

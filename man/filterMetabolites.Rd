@@ -12,8 +12,13 @@ filterMetabolites(MetAlyzer, class_name = "Metabolism Indicators")
 \item{class_name}{A class to be filtered out}
 }
 \value{
-
+An updated MetAlyzer object
 }
 \description{
 This method calls filter_metabolites() and filters metabolites
+}
+\examples{
+\dontrun{
+obj <- filterMetabolites(obj, class_name = "Metabolism Indicators")
+}
 }

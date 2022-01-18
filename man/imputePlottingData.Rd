@@ -9,12 +9,19 @@ imputePlottingData(MetAlyzer, ..., i = 0.2)
 \arguments{
 \item{MetAlyzer}{MetAlyzer object}
 
+\item{...}{Variables to group by}
+
 \item{i}{A numeric value below 1}
 }
 \value{
-
+An updated MetAlyzer object
 }
 \description{
 This method adds the column imp_Conc to plotting_data containing imputed
 concentration values (Concentration). Imputation: minimal positive value * i
+}
+\examples{
+\dontrun{
+imputePlottingData(obj, Tissue, Metabolite, i = 0.2)
+}
 }

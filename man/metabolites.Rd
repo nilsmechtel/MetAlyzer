@@ -10,8 +10,13 @@ metabolites(MetAlyzer)
 \item{MetAlyzer}{MetAlyzer object}
 }
 \value{
-
+The metabolites vector
 }
 \description{
 This method returns the filtered metabolites vector
+}
+\examples{
+\dontrun{
+metabolites(obj)
+}
 }

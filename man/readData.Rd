@@ -10,9 +10,14 @@ readData(MetAlyzer)
 \item{MetAlyzer}{MetAlyzer object}
 }
 \value{
-
+An updated MetAlyzer object
 }
 \description{
 This method opens the given MetIDQ output Excel file and extracts metabolites,
 raw data and meta data
+}
+\examples{
+\dontrun{
+obj <- readData(obj)
+}
 }

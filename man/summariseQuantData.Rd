@@ -10,8 +10,13 @@ summariseQuantData(MetAlyzer)
 \item{MetAlyzer}{MetAlyzer object}
 }
 \value{
-
+A summary of the quantification status
 }
 \description{
 This method calls sum_quant_data() and summarizes quantification status
+}
+\examples{
+\dontrun{
+summariseQuantData(obj)
+}
 }

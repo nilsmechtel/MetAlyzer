@@ -7,11 +7,18 @@
 \S4method{show}{MetAlyzer}(object)
 }
 \arguments{
-\item{MetAlyzer}{MetAlyzer object}
+\item{object}{MetAlyzer object}
 }
 \value{
-
+A summary of the MetAlyzer object
 }
 \description{
 This method calls show_obj() and shows the MetAlyzer object
+}
+\examples{
+\dontrun{
+show(obj)
+# or
+obj
+}
 }

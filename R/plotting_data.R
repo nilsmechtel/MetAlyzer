@@ -1,7 +1,7 @@
 #' Reshape data
 #'
 #' This function reshapes raw_data, quant_status and meta_data and combines them
-#' in a tibble data.frame for plotting with ggplot2.
+#' in a tibble data frame for plotting with ggplot2.
 #' @param object MetAlyzer object
 #' @param ... A selection of columns from meta_data to add to reshaped data frame
 #'
@@ -10,8 +10,6 @@
 #' @import dplyr
 #' @import tidyr
 #' @export
-#'
-#' @examples
 
 plotting_data <- function(object, ...) {
   meta_data <- get_filtered_data(object, slot = "meta", verbose = FALSE)
@@ -44,8 +42,6 @@ plotting_data <- function(object, ...) {
 #' @return
 #'
 #' @export
-#'
-#' @examples
 
 set_threshold <- function(x, ts) {
   levels <- c(paste0("max", ts*100), paste0("more", tail(ts, 1)*100))
@@ -71,15 +67,13 @@ set_threshold <- function(x, ts) {
 #'
 #' This function adds the mean, standard deviation (SD) and the
 #' coefficient of variation (CV) to plotting_data
-#' @param plotting_data plotting_data tibble data.frame
+#' @param plotting_data plotting_data tibble data frame
 #' @param ts A numeric vector of thresholds
 #'
 #' @return
 #'
 #' @import dplyr
 #' @export
-#'
-#' @examples
 
 calc_CV <- function(plotting_data, ts) {
   col_names <- colnames(plotting_data)
@@ -100,6 +94,7 @@ calc_CV <- function(plotting_data, ts) {
 #' This function adds a filter column based on the quantification status. The
 #' filter is True if the percentage of measurements with a quantification status
 #' part of valid_vec is greater than the threshold t.
+#' @param plotting_data plotting_data tibble data frame
 #' @param valid_vec A character vector containing each quantification status that
 #' is considered to be a valid measurement
 #' @param t A numeric threshold
@@ -108,8 +103,6 @@ calc_CV <- function(plotting_data, ts) {
 #'
 #' @import dplyr
 #' @export
-#'
-#' @examples
 
 valid_measurement <- function(plotting_data, valid_vec, t) {
   filter_status <- function(vec) {
@@ -131,8 +124,6 @@ valid_measurement <- function(plotting_data, valid_vec, t) {
 #' @return
 #'
 #' @export
-#'
-#' @examples
 
 zero_imputation <- function(vec, i) {
   non_zero <- vec[vec > 0]
@@ -152,8 +143,6 @@ zero_imputation <- function(vec, i) {
 #' @return
 #'
 #' @export
-#'
-#' @examples
 
 log_transform <- function(vec, func) {
   vec[vec > 0 & !is.na(vec)] <- func(vec[vec > 0 & !is.na(vec)])
@@ -174,8 +163,6 @@ log_transform <- function(vec, func) {
 #' @import dplyr
 #' @import tibble
 #' @export
-#'
-#' @examples
 
 calc_anova <- function(c_vec, d_vec, valid_vec) {
   # if all concentration values equal 0 (no imputation; log -> NA) or no method

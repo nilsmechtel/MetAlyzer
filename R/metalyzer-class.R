@@ -10,28 +10,29 @@
 #' measurements; dimension: # samples x # metabolites
 #' @slot meta_data A data frame containing any meta data;
 #' dimension: # samples x # meta variables
-#' @slot plotting_data A tibble data.frame containing reshaped information of raw_data,
+#' @slot plotting_data A tibble data frame containing reshaped information of raw_data,
 #' quant_status and meta_data for plotting with ggplot2
 #' @slot .full_sheet A matrix containing the un-sliced Excel sheet
 #' @slot .data_ranges A length-six numeric list with rows and columns
 #' information for slicing
 #'
-#' @return
-#'
 #' @export
 #'
 #' @examples
 #' obj <- new("MetAlyzer")
-#' obj <- init(obj, file_path="results.xlsx")
+#' fpath <- system.file("extdata", "toydata.xlsx", package="MetAlyzer")
+#' obj <- init(obj, fpath, sheet = 1)
 #' obj <- readData(obj)
 #' obj <- readQuantStatus(obj)
 #' obj <- filterMetabolites(obj)
 #' show(obj)
 #' summariseQuantData(obj)
+#' \dontrun{
 #' obj <- createPlottingData(obj, Method, Tissue)
 #' obj <- imputePlottingData(obj, Tissue, Metabolite)
 #' obj <- transformPlottingData(obj)
 #' obj <- performANOVA(obj, "Method")
+#' }
 
 MetAlyzer <- setClass("MetAlyzer",
                       slots=list(
@@ -59,8 +60,14 @@ MetAlyzer <- setClass("MetAlyzer",
 #' @param file_path A length-one character vector with the file path
 #' @param sheet A length-one numeric vector with the sheet number
 #'
-#' @return
+#' @return An updated MetAlyzer object
+#'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' obj <- init(obj, file_path = "toydata.xlsx", sheet = 1)
+#' }
 
 setGeneric("init",
            function(MetAlyzer, file_path, sheet=1)
@@ -78,10 +85,18 @@ setMethod("init",
 #' Show a MetAlyzer object
 #'
 #' This method calls show_obj() and shows the MetAlyzer object
-#' @param MetAlyzer MetAlyzer object
+#' @param object MetAlyzer object
 #'
-#' @return
+#' @return A summary of the MetAlyzer object
+#'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' show(obj)
+#' # or
+#' obj
+#' }
 
 setMethod("show",
           "MetAlyzer",
@@ -97,8 +112,14 @@ setMethod("show",
 #' raw data and meta data
 #' @param MetAlyzer MetAlyzer object
 #'
-#' @return
+#' @return An updated MetAlyzer object
+#'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' obj <- readData(obj)
+#' }
 
 setGeneric("readData",
            function(MetAlyzer)
@@ -124,8 +145,14 @@ setMethod("readData",
 #' and assigns it to the corresponding quantification status
 #' @param MetAlyzer MetAlyzer object
 #'
-#' @return
+#' @return An updated MetAlyzer object
+#'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' obj <- readQuantStatus(obj)
+#' }
 
 setGeneric("readQuantStatus",
            function(MetAlyzer)
@@ -147,8 +174,14 @@ setMethod("readQuantStatus",
 #' @param MetAlyzer MetAlyzer object
 #' @param class_name A class to be filtered out
 #'
-#' @return
+#' @return An updated MetAlyzer object
+#'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' obj <- filterMetabolites(obj, class_name = "Metabolism Indicators")
+#' }
 
 setGeneric("filterMetabolites",
            function(MetAlyzer, class_name="Metabolism Indicators")
@@ -167,8 +200,14 @@ setMethod("filterMetabolites",
 #' This method resets the filtered metabolites
 #' @param MetAlyzer MetAlyzer object
 #'
-#' @return
+#' @return An updated MetAlyzer object
+#'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' obj <- resetMetabolites(obj)
+#' }
 
 setGeneric("resetMetabolites",
            function(MetAlyzer)
@@ -185,11 +224,25 @@ setMethod("resetMetabolites",
 
 #' Filter meta data
 #'
-#' This method calls filter_meta_data() and filters meta_data
-#' @param MetAlyzer MetAlyzer object
+#' This method calls filter_meta_data() and filters meta_data. Note: If both
+#' "keep" and "remove" arguments are used "keep" overwrites the "remove"
+#' argument.
 #'
-#' @return
+#' @param MetAlyzer MetAlyzer object
+#' @param column A length-one character vector specifying the column for filtering
+#' @param keep A vector defining which entries to keep from meta data
+#' @param remove A vector defining which entries to remove meta data
+#'
+#' @return An updated MetAlyzer object
+#'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' obj <- filterMetaData(obj, "Methods", keep = 1:6)
+#' # or
+#' obj <- filterMetaData(obj, "Methods", remove = 7)
+#' }
 
 setGeneric("filterMetaData",
            function(MetAlyzer, column, keep=NULL, remove=NULL)
@@ -208,8 +261,14 @@ setMethod("filterMetaData",
 #' This method resets the filter of meta_data
 #' @param MetAlyzer MetAlyzer object
 #'
-#' @return
+#' @return An updated MetAlyzer object
+#'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' obj <- resetMetaData(obj)
+#' }
 
 setGeneric("resetMetaData",
            function(MetAlyzer)
@@ -232,8 +291,15 @@ setMethod("resetMetaData",
 #' @param new_colum A vector for the new column (length has to be same as the
 #' number of samples)
 #'
-#' @return
+#' @return An updated MetAlyzer object
+#'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' obj <- updateMetaData(obj, "Date", format(Sys.Date()))
+#' obj <- updateMetaData(obj, "Analyzed", TRUE)
+#' }
 
 setGeneric("updateMetaData",
            function(MetAlyzer, name, new_colum)
@@ -255,8 +321,14 @@ setMethod("updateMetaData",
 #' @param MetAlyzer MetAlyzer object
 #' @param ... Use new_name = old_name to rename selected variables
 #'
-#' @return
+#' @return An updated MetAlyzer object
+#'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' obj <- renameMetaData(obj, Methods = X1)
+#' }
 
 setGeneric("renameMetaData",
            function(MetAlyzer, ...)
@@ -277,8 +349,14 @@ setMethod("renameMetaData",
 #' all columns
 #' @param MetAlyzer MetAlyzer object
 #'
-#' @return
+#' @return The meta data data frame
+#'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' metaData(obj)
+#' }
 
 setGeneric("metaData",
            function(MetAlyzer)
@@ -298,8 +376,14 @@ setMethod("metaData",
 #' metabolites (columns)
 #' @param MetAlyzer MetAlyzer object
 #'
-#' @return
+#' @return The raw data data frame
+#'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' rawData(obj)
+#' }
 
 setGeneric("rawData",
            function(MetAlyzer)
@@ -319,8 +403,14 @@ setMethod("rawData",
 #' and metabolites (columns)
 #' @param MetAlyzer MetAlyzer object
 #'
-#' @return
+#' @return The quantification status data frame
+#'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' quantStatus(obj)
+#' }
 
 setGeneric("quantStatus",
            function(MetAlyzer)
@@ -339,8 +429,14 @@ setMethod("quantStatus",
 #' This method returns the filtered metabolites vector
 #' @param MetAlyzer MetAlyzer object
 #'
-#' @return
+#' @return The metabolites vector
+#'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' metabolites(obj)
+#' }
 
 setGeneric("metabolites",
            function(MetAlyzer)
@@ -359,8 +455,14 @@ setMethod("metabolites",
 #' This method calls sum_quant_data() and summarizes quantification status
 #' @param MetAlyzer MetAlyzer object
 #'
-#' @return
+#' @return A summary of the quantification status
+#'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' summariseQuantData(obj)
+#' }
 
 setGeneric("summariseQuantData",
            function(MetAlyzer)
@@ -385,8 +487,16 @@ setMethod("summariseQuantData",
 #' is considered to be a valid measurement
 #' @param t A numeric threshold to determine valid measurements
 #'
-#' @return
+#' @return An updated MetAlyzer object
+#'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' obj <- createPlottingData(obj, Tissue, Method,
+#' ts = c(0.1, 0.2, 0.3),
+#' valid_vec = c("Valid", "LOQ"), t = 0.5)
+#' }
 
 setGeneric("createPlottingData",
            function(MetAlyzer, ...,
@@ -410,11 +520,17 @@ setMethod("createPlottingData",
 
 #' Get plotting data
 #'
-#' This method returns the plotting_data tibble data.frame
+#' This method returns the plotting_data tibble data frame
 #' @param MetAlyzer MetAlyzer object
 #'
-#' @return
+#' @return The plotting data data frame
+#'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' plottingData(obj)
+#' }
 
 setGeneric("plottingData",
            function(MetAlyzer)
@@ -433,10 +549,17 @@ setMethod("plottingData",
 #' This method adds the column imp_Conc to plotting_data containing imputed
 #' concentration values (Concentration). Imputation: minimal positive value * i
 #' @param MetAlyzer MetAlyzer object
+#' @param ... Variables to group by
 #' @param i A numeric value below 1
 #'
-#' @return
+#' @return An updated MetAlyzer object
+#'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' imputePlottingData(obj, Tissue, Metabolite, i = 0.2)
+#' }
 
 setGeneric("imputePlottingData",
            function(MetAlyzer, ..., i = 0.2)
@@ -466,8 +589,15 @@ setMethod("imputePlottingData",
 #' @param func A logarithmic function to transform concentration values with
 #' number of samples
 #'
-#' @return
+#' @return An updated MetAlyzer object
+#'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' obj <- transformPlottingData(obj, func = log2)
+#' obj <- transformPlottingData(obj, func = log)
+#' }
 
 setGeneric("transformPlottingData",
            function(MetAlyzer, func = log2)
@@ -492,8 +622,14 @@ setMethod("transformPlottingData",
 #' @param categorical A length-one character vector defining the categorical
 #' variable
 #'
-#' @return
+#' @return An updated MetAlyzer object
+#'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' obj <- performANOVA(obj, "Methods")
+#' }
 
 setGeneric("performANOVA",
            function(MetAlyzer, categorical)
@@ -523,8 +659,14 @@ setMethod("performANOVA",
 #' @param new_colum A vector for the new column (length has to be same as the
 #' number of samples)
 #'
-#' @return
+#' @return An updated MetAlyzer object
+#'
 #' @export
+#'
+#' @examples
+#' \dontrun{
+#' obj <- updatePlottingData(obj, "color", "blue")
+#' }
 
 setGeneric("updatePlottingData",
            function(MetAlyzer, name, new_colum)
@@ -537,4 +679,3 @@ setMethod("updatePlottingData",
             return(MetAlyzer)
           }
 )
-

@@ -7,7 +7,7 @@
 calc_CV(plotting_data, ts)
 }
 \arguments{
-\item{plotting_data}{plotting_data tibble data.frame}
+\item{plotting_data}{plotting_data tibble data frame}
 
 \item{ts}{A numeric vector of thresholds}
 }

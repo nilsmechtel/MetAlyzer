@@ -10,8 +10,13 @@ resetMetabolites(MetAlyzer)
 \item{MetAlyzer}{MetAlyzer object}
 }
 \value{
-
+An updated MetAlyzer object
 }
 \description{
 This method resets the filtered metabolites
+}
+\examples{
+\dontrun{
+obj <- resetMetabolites(obj)
+}
 }

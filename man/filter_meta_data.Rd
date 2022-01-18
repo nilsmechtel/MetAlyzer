@@ -12,9 +12,9 @@ filter_meta_data(object, column, keep = NULL, remove = NULL)
 \item{column}{A length-one character vector specifying which column of
 meta_data to use for filtering}
 
-\item{keep}{A character vector specifying which samples to keep}
+\item{keep}{A vector specifying which samples to keep}
 
-\item{remove}{A character vector specifying which samples to remove}
+\item{remove}{A vector specifying which samples to remove}
 }
 \value{
 

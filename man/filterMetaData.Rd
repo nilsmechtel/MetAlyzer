@@ -8,10 +8,25 @@ filterMetaData(MetAlyzer, column, keep = NULL, remove = NULL)
 }
 \arguments{
 \item{MetAlyzer}{MetAlyzer object}
+
+\item{column}{A length-one character vector specifying the column for filtering}
+
+\item{keep}{A vector defining which entries to keep from meta data}
+
+\item{remove}{A vector defining which entries to remove meta data}
 }
 \value{
-
+An updated MetAlyzer object
 }
 \description{
-This method calls filter_meta_data() and filters meta_data
+This method calls filter_meta_data() and filters meta_data. Note: If both
+"keep" and "remove" arguments are used "keep" overwrites the "remove"
+argument.
+}
+\examples{
+\dontrun{
+obj <- filterMetaData(obj, "Methods", keep = 1:6)
+# or
+obj <- filterMetaData(obj, "Methods", remove = 7)
+}
 }

@@ -7,7 +7,7 @@
 assign_quant_status(df_BG)
 }
 \arguments{
-\item{object}{MetAlyzer object}
+\item{df_BG}{A data frame containing background color information}
 }
 \value{
 

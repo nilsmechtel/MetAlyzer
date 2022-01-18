@@ -15,8 +15,13 @@ updatePlottingData(MetAlyzer, name, new_colum)
 number of samples)}
 }
 \value{
-
+An updated MetAlyzer object
 }
 \description{
 This method adds or modifies a column to/of plotting_data
+}
+\examples{
+\dontrun{
+obj <- updatePlottingData(obj, "color", "blue")
+}
 }

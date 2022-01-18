@@ -10,9 +10,14 @@ readQuantStatus(MetAlyzer)
 \item{MetAlyzer}{MetAlyzer object}
 }
 \value{
-
+An updated MetAlyzer object
 }
 \description{
 This method gets the background color of each cell of the opened Excel file
 and assigns it to the corresponding quantification status
+}
+\examples{
+\dontrun{
+obj <- readQuantStatus(obj)
+}
 }

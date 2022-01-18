@@ -10,9 +10,14 @@ rawData(MetAlyzer)
 \item{MetAlyzer}{MetAlyzer object}
 }
 \value{
-
+The raw data data frame
 }
 \description{
 This method returns the raw_data data frame with filtered samples (rows) and
 metabolites (columns)
+}
+\examples{
+\dontrun{
+rawData(obj)
+}
 }

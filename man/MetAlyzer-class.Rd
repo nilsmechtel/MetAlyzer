@@ -5,9 +5,6 @@
 \alias{MetAlyzer-class}
 \alias{MetAlyzer}
 \title{A S4 class to read and analyze MetIDQ output}
-\value{
-
-}
 \description{
 A S4 class to read and analyze MetIDQ output
 }
@@ -30,7 +27,7 @@ measurements; dimension: # samples x # metabolites}
 \item{\code{meta_data}}{A data frame containing any meta data;
 dimension: # samples x # meta variables}
 
-\item{\code{plotting_data}}{A tibble data.frame containing reshaped information of raw_data,
+\item{\code{plotting_data}}{A tibble data frame containing reshaped information of raw_data,
 quant_status and meta_data for plotting with ggplot2}
 
 \item{\code{.full_sheet}}{A matrix containing the un-sliced Excel sheet}
@@ -41,14 +38,17 @@ information for slicing}
 
 \examples{
 obj <- new("MetAlyzer")
-obj <- init(obj, file_path="results.xlsx")
+fpath <- system.file("extdata", "toydata.xlsx", package="MetAlyzer")
+obj <- init(obj, fpath, sheet = 1)
 obj <- readData(obj)
 obj <- readQuantStatus(obj)
 obj <- filterMetabolites(obj)
 show(obj)
 summariseQuantData(obj)
+\dontrun{
 obj <- createPlottingData(obj, Method, Tissue)
 obj <- imputePlottingData(obj, Tissue, Metabolite)
 obj <- transformPlottingData(obj)
 obj <- performANOVA(obj, "Method")
+}
 }

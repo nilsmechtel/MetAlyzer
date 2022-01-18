@@ -6,8 +6,6 @@
 #' @return
 #'
 #' @export
-#'
-#' @examples
 
 open_file <- function(object) {
   full_sheet <- openxlsx::read.xlsx(object@file_path,
@@ -30,8 +28,6 @@ open_file <- function(object) {
 #' @return
 #'
 #' @export
-#'
-#' @examples
 
 get_data_range <- function(object) {
   row_class <- which(object@.full_sheet == "Class") %% nrow(object@.full_sheet) # row of header "Class"
@@ -60,8 +56,6 @@ get_data_range <- function(object) {
 #' @return
 #'
 #' @export
-#'
-#' @examples
 
 read_metabolties <- function(object) {
   metabolites <- object@.full_sheet[object@.data_ranges[["class_row"]]-1, object@.data_ranges[["data_cols"]]] # metabolites are a row above classes
@@ -79,8 +73,6 @@ read_metabolties <- function(object) {
 #' @return
 #'
 #' @export
-#'
-#' @examples
 
 read_raw_data <- function(object) {
   raw_data <- as.data.frame(object@.full_sheet[object@.data_ranges[["data_rows"]], object@.data_ranges[["data_cols"]]])
@@ -98,8 +90,6 @@ read_raw_data <- function(object) {
 #' @return
 #'
 #' @export
-#'
-#' @examples
 
 read_meta_data <- function(object) {
   meta_header <- paste(object@.full_sheet[object@.data_ranges[["sample_type_row"]], 1:object@.data_ranges[["class_col"]]])
@@ -121,8 +111,6 @@ read_meta_data <- function(object) {
 #' @return
 #'
 #' @export
-#'
-#' @examples
 
 read_BG_color <- function(object) {
   cat("-------------------------------------\n")
@@ -160,13 +148,11 @@ read_BG_color <- function(object) {
 #'
 #' This function assigns the background color of each cell in .full_sheet to the
 #' corresponding quantification status
-#' @param object MetAlyzer object
+#' @param df_BG A data frame containing background color information
 #'
 #' @return
 #'
 #' @export
-#'
-#' @examples
 
 assign_quant_status <- function(df_BG) {
   status_list <- list(

@@ -10,6 +10,8 @@ get_filtered_data(object, slot, verbose = TRUE)
 \item{object}{MetAlyzer object}
 
 \item{slot}{A length-one character vector specifying which data frame to slice}
+
+\item{verbose}{If TRUE prints which filtered data frame is returned}
 }
 \value{
 
