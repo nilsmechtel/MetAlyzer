@@ -103,72 +103,50 @@ read_meta_data <- function(object) {
 }
 
 
-#' Get background color
+#' Get quantification status
 #'
-#' This function gets the background color of each cell in .full_sheet
+#' This function gets the background color of each cell in .full_sheet and
+#' assigns it to the corresponding quantification status
 #' @param object MetAlyzer object
 #'
 #' @return
 #'
 #' @export
 
-read_BG_color <- function(object) {
-  cat("-------------------------------------\n")
-  cat("Reading background color...")
-  wb <- xlsx::loadWorkbook(object@file_path)
-  sheet <- xlsx::getSheets(wb)[[object@sheet]]
-  rows <- xlsx::getRows(sheet)
-  cells <- xlsx::getCells(rows)
-  styles <- sapply(cells, xlsx::getCellStyle) # get style of each cell
-  bg <- sapply(styles, function(style) { # get background color of each cell
-    fg  <- style$getFillForegroundXSSFColor()
-    rgb <- tryCatch(fg$getRgb(), error = function(e) "")
-    rgb <- paste(rgb, collapse = "")
-    return(rgb)
-  })
-  row_index <- as.numeric(unlist(lapply(strsplit(names(bg),split = "\\."),
-                                        "[", 1))) # row indexes are at first position
-  row_index <- row_index - min(row_index) + 1 # start at 1
-  col_index <- as.numeric(unlist(lapply(strsplit(names(bg), split = "\\."),
-                                        "[", 2))) # column indexes are at second position
-  col_index <- col_index - min(col_index) + 1 # start at 1
-  mat_BG <- matrix("", ncol = max(col_index), nrow = max(row_index))
-  for (i in 1:length(bg)) { # fill background color matrix
-    mat_BG[row_index[i], col_index[i]] <- tolower(bg[i])
-  }
-  df_BG <- as.data.frame(mat_BG)[object@.data_ranges[["data_rows"]], object@.data_ranges[["data_cols"]]]
-  colnames(df_BG) <- object@metabolites
-  df_BG[is.na(object@raw_data)] <- NA
-  cat(" completed!\n")
-  return(df_BG)
-}
-
-
-#' Get quantification status
-#'
-#' This function assigns the background color of each cell in .full_sheet to the
-#' corresponding quantification status
-#' @param df_BG A data frame containing background color information
-#'
-#' @return
-#'
-#' @export
-
-assign_quant_status <- function(df_BG) {
+read_quant_status <- function(object) {
   status_list <- list(
-    "Valid" = "00cd66",
+    "Valid" = "00CD66",
     "Smaller Zero" = "???",
-    "LOD" = "6a5acd", # < LOD
-    "LOQ" = "87ceeb", # <LLOQ or > ULOQ
+    "LOD" = "6A5ACD", # < LOD
+    "LOQ" = "87CEEB", # <LLOQ or > ULOQ
     "No Intercept" = "???",
     "Missing Measurement" = "???",
-    "ISTD Out of Range" = "ffff33",
-    "Invalid" = "ffffcc",
+    "ISTD Out of Range" = "FFFF33",
+    "Invalid" = "FFFFCC",
     "No measurement" = "???"
   )
-  for (status in names(status_list)) {
-    df_BG[df_BG == status_list[[status]]] <- status
+  wb <- openxlsx::loadWorkbook(file = object@file_path)
+  sheet_name <- openxlsx::getSheetNames(file = object@file_path)[object@sheet]
+  styles <- wb$styleObjects
+  mat_BG <- matrix(NA, ncol = ncol(object@.full_sheet),
+                   nrow = nrow(object@.full_sheet))
+  for (x in styles) { # iterate through different styles in the sheet
+    if (x$sheet == sheet_name) {
+      rgb <- toupper(substr(x$style$fill$fillFg, 3,8))
+      rgb <- ifelse(length(rgb) == 0, "", rgb)
+      if (rgb %in% status_list) {
+        status <- names(which(status_list == rgb))
+        rows <- x$rows # row indices
+        cols <- x$cols # colum indices
+        for (i in 1:length(rows)) {
+          mat_BG[rows[i], cols[i]] <- status
+        }
+      }
+    }
   }
-  return(df_BG)
+  quant_status <- as.data.frame(mat_BG)[object@.data_ranges[["data_rows"]],
+                                 object@.data_ranges[["data_cols"]]]
+  colnames(quant_status) <- object@metabolites
+  quant_status[is.na(object@raw_data)] <- NA
+  return(quant_status)
 }
-

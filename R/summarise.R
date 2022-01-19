@@ -36,7 +36,6 @@ show_obj <- function(object) {
   if (ncol(meta_data) > 0) {
     cat(paste0("Columns meta data: \"", paste(colnames(meta_data), collapse = "\"; \""), "\"\n"))
   }
-  cat("Quantification status completed:", !nrow(quant_status) == 0, "\n")
   cat("Ploting data created:", !nrow(object@plotting_data) == 0, "\n")
 }
 
