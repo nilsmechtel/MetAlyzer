@@ -49,7 +49,12 @@ Ploting data created: FALSE
 
 Show statistics
 ```r
-summariseQuantData(obj)
+> summariseQuantData(obj)
+-------------------------------------
+Valid: 248 (34.44%)
+LOD: 423 (58.75%)
+LOQ: 49 (6.81%)
+NAs: 0 (0%)
 ```
 
 Add meta data

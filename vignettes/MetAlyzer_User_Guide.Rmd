@@ -1,0 +1,67 @@
+---
+title: "MetAlyzer User Guide"
+author: "Nils Mechtel & Carolin Andresen"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+Vignette: >
+  %\VignetteIndexEntry{Read and analyze MetIDQ output files in Excel format}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  %\VignettePackage{MetAlyzer}
+---
+
+```{r, echo=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo=TRUE, collapse=T, comment='#>')
+library(MetAlyzer)
+```
+
+The package provides functions to read output files from the MetIDQ:&trade; software into R. Metabolomics and meta data are read and reformatted into an S4 object for convenient data handling, statistics and downstream analysis.
+
+## Install
+
+There is a version available on CRAN.
+
+```r
+install.packages('MetAlyzer')
+```
+
+## Overview
+
+![](`r rprojroot::is_r_package$find_file('vignettes/MetAlyzer_overview.png')`){width=100%}
+
+The package takes ".xlsx" files generated as output from the MetIDQ&trade; software. Additionally, meta data for each sample can be provided for further analysis.
+
+## Get started
+### Set data path and read meta data:
+```{r}
+fpath <- system.file("data", "example.xlsx", package="MetAlyzer")
+mpath <- system.file("data", "example_meta_data.rds", package="MetAlyzer")
+```
+
+MetIDQ&trade; allows to export the metabolomic measurements as ".xlsx" files. Effective quantification of metabolites requires a reliable signal. The limit of detection (LOD) is defined as 3 times signal-to-noise of the baseline, calculated by the software MetIDQ for each metabolite. Values are classified as "valid", "LOQ" (below limit of quantification) or "LOD" (below limit of detection). The color of the fields in the ".xlsx" table encodes for this information. The MetAlyzer packages allows to read both information, the value and the detection status, gives statistics about the quantification efficacy and allows filtering based on the LOD.
+
+![Example of excel sheet.](`r rprojroot::is_r_package$find_file('vignettes/screenshot_xlsx.png')`){width=100%}
+
+### Initialize MetAlyzer object and load data
+```{r}
+obj <- new("MetAlyzer")
+obj <- init(obj, file_path=fpath)
+obj <- readData(obj)
+```
+
+### Show MetAlyzer object
+```{r}
+show(obj)
+```
+
+### Show statistics
+```{r}
+summariseQuantData(obj)
+```
+
+### Add meta data
+```{r}
+# obj <- updateMetaData(obj, "Replicate", as.vector(meta_df$Replicate))
+```
+
+
