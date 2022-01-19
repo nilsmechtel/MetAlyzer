@@ -21,23 +21,40 @@ The package takes ".xlsx" files generated as output from the MetIDQ:tm:software.
 
 Set data path and read meta data:
 ```r
-fpath <- system.file("extdata", "toydata.xlsx", package="MetAlyzer")
+fpath <- system.file("data", "example.xlsx", package="MetAlyzer")
+mpath <- system.file("data", "example_meta_data.rds", package="MetAlyzer")
 ```
 
+Initialize MetAlyzer object and load data
 ```r
 obj <- new("MetAlyzer")
-
-obj <- init(obj, fpath, sheet = 1)
+obj <- init(obj, file_path=fpath)
 obj <- readData(obj)
-obj <- readQuantStatus(obj)
-obj <- filterMetabolites(obj)
-show(obj)
+```
+
+Show MetAlyzer object
+```r
+> show(obj)
+-------------------------------------
+File name: example.xlsx 
+Sheet: 1 
+# File path: ~/MetAlyzer/data 
+Metabolites: 40 
+Classes: 1 
+Including metabolism indicators: FALSE 
+Number of samples: 18 
+Columns meta data: "Plate Bar Code"; "Sample Bar Code"; "Sample Type"; "Group"; "Sample Volume"; "Measurement Time"
+Ploting data created: FALSE 
+```
+
+Show statistics
+```r
 summariseQuantData(obj)
-## Not run: 
-obj <- createPlottingData(obj, Method, Tissue)
-obj <- imputePlottingData(obj, Tissue, Metabolite)
-obj <- transformPlottingData(obj)
-obj <- performANOVA(obj, "Method")
+```
+
+Add meta data
+```r
+obj <- updateMetaData(obj, "Replicate", as.vector(meta_df$Replicate))
 ```
 
 
