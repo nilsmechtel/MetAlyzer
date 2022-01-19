@@ -1,7 +1,7 @@
 MetAlyzer
 ========
 
-** An R Package to read and analyze MetIDQ:tm: output**
+**An R Package to read and analyze MetIDQ:tm: output**
 
 The package provides R functions to read output files from the MetIDQ:tm: software. 
 
@@ -15,7 +15,7 @@ install.packages('MetAlyzer')
 
 ## Quick start
 
-![Overview](`r rprojroot::is_r_package$find_file('inst/images/MetAlyzer_overview.png')`)
+![Overview](inst/images/MetAlyzer_overview.png)
 
 The 
 
