@@ -4,16 +4,22 @@ Title: Read and analyze MetIDQ output files in Excel format
 Version: 0.1.0
 Author: Nils Mechtel, Carolin Andresen
 Maintainer: Nils Mechtel <nils.mech@gmail.com>
-Imports: xlsx,
+Depends:
+    R (>= 4.0.0)
+Imports:
     openxlsx,
     dplyr,
     tidyr,
     tibble,
     agricolae,
-    methods
+    methods     
 Description: The MetAlyzer class makes it easy to load MetIDQ output files into R, perform filtering and statistical analysis and prepare for plotting with ggplot2. The resulting format corresponds to input data of the Shiny app MetaboExtract (https://www.metaboextract.shiny.dkfz.de/MetaboExtract/).
 License: GPL-3
 Encoding: UTF-8
 Language: en-US
 LazyData: true
 RoxygenNote: 7.1.2
+Suggests:
+    rmarkdown,
+    knitr
+VignetteBuilder: knitr

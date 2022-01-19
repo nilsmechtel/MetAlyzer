@@ -37,15 +37,14 @@ information for slicing}
 }}
 
 \examples{
+\dontrun{
 obj <- new("MetAlyzer")
-fpath <- system.file("extdata", "toydata.xlsx", package="MetAlyzer")
-obj <- init(obj, fpath, sheet = 1)
+obj <- init(obj, "toydata.xlsx", sheet = 1)
 obj <- readData(obj)
 obj <- readQuantStatus(obj)
 obj <- filterMetabolites(obj)
 show(obj)
 summariseQuantData(obj)
-\dontrun{
 obj <- createPlottingData(obj, Method, Tissue)
 obj <- imputePlottingData(obj, Tissue, Metabolite)
 obj <- transformPlottingData(obj)

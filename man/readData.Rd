@@ -14,7 +14,7 @@ An updated MetAlyzer object
 }
 \description{
 This method opens the given MetIDQ output Excel file and extracts metabolites,
-raw data and meta data
+raw data, quantification status and meta data
 }
 \examples{
 \dontrun{

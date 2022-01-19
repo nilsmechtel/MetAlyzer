@@ -19,15 +19,14 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' obj <- new("MetAlyzer")
-#' fpath <- system.file("extdata", "toydata.xlsx", package="MetAlyzer")
-#' obj <- init(obj, fpath, sheet = 1)
+#' obj <- init(obj, "toydata.xlsx", sheet = 1)
 #' obj <- readData(obj)
 #' obj <- readQuantStatus(obj)
 #' obj <- filterMetabolites(obj)
 #' show(obj)
 #' summariseQuantData(obj)
-#' \dontrun{
 #' obj <- createPlottingData(obj, Method, Tissue)
 #' obj <- imputePlottingData(obj, Tissue, Metabolite)
 #' obj <- transformPlottingData(obj)
@@ -109,7 +108,7 @@ setMethod("show",
 #' Open file and read data
 #'
 #' This method opens the given MetIDQ output Excel file and extracts metabolites,
-#' raw data and meta data
+#' raw data, quantification status and meta data
 #' @param MetAlyzer MetAlyzer object
 #'
 #' @return An updated MetAlyzer object
@@ -133,36 +132,8 @@ setMethod("readData",
             MetAlyzer@.orig_metabolites <- read_metabolties(MetAlyzer)
             MetAlyzer@metabolites <- MetAlyzer@.orig_metabolites
             MetAlyzer@raw_data <- read_raw_data(MetAlyzer)
+            MetAlyzer@quant_status <- read_quant_status(MetAlyzer)
             MetAlyzer@meta_data <- read_meta_data(MetAlyzer)
-            return(MetAlyzer)
-          }
-)
-
-
-#' Read quantification status
-#'
-#' This method gets the background color of each cell of the opened Excel file
-#' and assigns it to the corresponding quantification status
-#' @param MetAlyzer MetAlyzer object
-#'
-#' @return An updated MetAlyzer object
-#'
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#' obj <- readQuantStatus(obj)
-#' }
-
-setGeneric("readQuantStatus",
-           function(MetAlyzer)
-             standardGeneric("readQuantStatus")
-           )
-setMethod("readQuantStatus",
-          "MetAlyzer",
-          function(MetAlyzer) {
-            df_BG <- read_BG_color(MetAlyzer)
-            MetAlyzer@quant_status <- assign_quant_status(df_BG)
             return(MetAlyzer)
           }
 )
@@ -511,8 +482,6 @@ setMethod("createPlottingData",
             plotting_data <- calc_CV(plotting_data, ts = ts)
             plotting_data <- valid_measurement(plotting_data, valid_vec, t)
             MetAlyzer@plotting_data <- plotting_data
-            cat("-------------------------------------\n")
-            cat("Returning plotting data\n")
             return(MetAlyzer)
           }
 )
