@@ -15,7 +15,7 @@ install.packages('MetAlyzer')
 
 ## Quick start
 
-![Overview](inst/images/MetAlyzer_overview.png)
+![Overview](vignettes/MetAlyzer_overview.png)
 
 The 
 
