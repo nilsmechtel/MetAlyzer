@@ -36,7 +36,7 @@ obj <- MetAlyzerDataset(file_path=fpath)
 -------------------------------------
 File name: example_data.xlsx 
 Sheet: 1 
-File path: /omics/groups/OE0285/internal/andresen/home_links/R/x86_64-pc-linux-gnu-library/4.0/MetAlyzer/extdata 
+File path: ~/MetAlyzer/extdata 
 Metabolites: 862 
 Classes: 24 
 Including metabolism indicators: TRUE 
