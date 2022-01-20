@@ -21,5 +21,6 @@ LazyData: true
 RoxygenNote: 7.1.2
 Suggests:
     rmarkdown,
-    knitr
+    knitr,
+    ggplot2
 VignetteBuilder: knitr
