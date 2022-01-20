@@ -13,9 +13,6 @@ get_filtered_data(object, slot, verbose = TRUE)
 
 \item{verbose}{If TRUE prints which filtered data frame is returned}
 }
-\value{
-
-}
 \description{
 This function filters meta_data, raw_data or quant_status
 }

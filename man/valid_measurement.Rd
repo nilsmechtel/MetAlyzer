@@ -14,9 +14,6 @@ is considered to be a valid measurement}
 
 \item{t}{A numeric threshold}
 }
-\value{
-
-}
 \description{
 This function adds a filter column based on the quantification status. The
 filter is True if the percentage of measurements with a quantification status

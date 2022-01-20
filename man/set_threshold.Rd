@@ -11,9 +11,6 @@ set_threshold(x, ts)
 
 \item{ts}{A numeric vector of thresholds}
 }
-\value{
-
-}
 \description{
 This function assigns a CV value according to a vector of thresholds.
 }

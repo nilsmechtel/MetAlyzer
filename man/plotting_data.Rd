@@ -11,9 +11,6 @@ plotting_data(object, ...)
 
 \item{...}{A selection of columns from meta_data to add to reshaped data frame}
 }
-\value{
-
-}
 \description{
 This function reshapes raw_data, quant_status and meta_data and combines them
 in a tibble data frame for plotting with ggplot2.

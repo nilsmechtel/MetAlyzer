@@ -9,9 +9,6 @@ sum_quant_data(object)
 \arguments{
 \item{object}{MetAlyzer object}
 }
-\value{
-
-}
 \description{
 This function lists the number of each quantification status and its percentage
 }

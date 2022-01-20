@@ -9,9 +9,6 @@ open_file(object)
 \arguments{
 \item{object}{MetAlyzer object}
 }
-\value{
-
-}
 \description{
 This function opens the given MetIDQ output Excel file
 }

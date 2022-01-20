@@ -16,9 +16,6 @@ meta_data to use for filtering}
 
 \item{remove}{A vector specifying which samples to remove}
 }
-\value{
-
-}
 \description{
 This function updates the "Filter" column in meta_data to filter out samples
 }

@@ -11,9 +11,6 @@ zero_imputation(vec, i)
 
 \item{i}{A numeric value below 1)}
 }
-\value{
-
-}
 \description{
 This function performs zero imputation with the minimal positive value times i
 }

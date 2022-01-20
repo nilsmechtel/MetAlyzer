@@ -9,9 +9,6 @@ show_obj(object)
 \arguments{
 \item{object}{MetAlyzer object}
 }
-\value{
-
-}
 \description{
 This function shows a summary of MetAlyzer slot values
 }

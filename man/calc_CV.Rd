@@ -11,9 +11,6 @@ calc_CV(plotting_data, ts)
 
 \item{ts}{A numeric vector of thresholds}
 }
-\value{
-
-}
 \description{
 This function adds the mean, standard deviation (SD) and the
 coefficient of variation (CV) to plotting_data

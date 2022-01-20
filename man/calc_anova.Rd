@@ -13,9 +13,6 @@ calc_anova(c_vec, d_vec, valid_vec)
 
 \item{valid_vec}{A logical vector for filtering}
 }
-\value{
-
-}
 \description{
 This function filters based on the filter vector valid_vec and then performs
 a one-way ANOVA

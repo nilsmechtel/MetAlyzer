@@ -5,11 +5,8 @@
 #' @param object MetAlyzer object
 #' @param ... A selection of columns from meta_data to add to reshaped data frame
 #'
-#' @return
-#'
 #' @import dplyr
 #' @import tidyr
-#' @export
 
 plotting_data <- function(object, ...) {
   meta_data <- get_filtered_data(object, slot = "meta", verbose = FALSE)
@@ -38,10 +35,6 @@ plotting_data <- function(object, ...) {
 #' This function assigns a CV value according to a vector of thresholds.
 #' @param x A CV value
 #' @param ts A numeric vector of thresholds
-#'
-#' @return
-#'
-#' @export
 
 set_threshold <- function(x, ts) {
   levels <- c(paste0("max", ts*100), paste0("more", tail(ts, 1)*100))
@@ -70,10 +63,7 @@ set_threshold <- function(x, ts) {
 #' @param plotting_data plotting_data tibble data frame
 #' @param ts A numeric vector of thresholds
 #'
-#' @return
-#'
 #' @import dplyr
-#' @export
 
 calc_CV <- function(plotting_data, ts) {
   col_names <- colnames(plotting_data)
@@ -99,10 +89,7 @@ calc_CV <- function(plotting_data, ts) {
 #' is considered to be a valid measurement
 #' @param t A numeric threshold
 #'
-#' @return
-#'
 #' @import dplyr
-#' @export
 
 valid_measurement <- function(plotting_data, valid_vec, t) {
   filter_status <- function(vec) {
@@ -120,10 +107,6 @@ valid_measurement <- function(plotting_data, valid_vec, t) {
 #' This function performs zero imputation with the minimal positive value times i
 #' @param vec A numeric vector containing the concentration values
 #' @param i A numeric value below 1)
-#'
-#' @return
-#'
-#' @export
 
 zero_imputation <- function(vec, i) {
   non_zero <- vec[vec > 0]
@@ -139,10 +122,6 @@ zero_imputation <- function(vec, i) {
 #' values (imp_Conc)
 #' @param vec MetAlyzer object
 #' @param func A logarithmic function
-#'
-#' @return
-#'
-#' @export
 
 log_transform <- function(vec, func) {
   vec[vec > 0 & !is.na(vec)] <- func(vec[vec > 0 & !is.na(vec)])
@@ -158,11 +137,8 @@ log_transform <- function(vec, func) {
 #' @param d_vec A numeric vector containing the dependent variables
 #' @param valid_vec A logical vector for filtering
 #'
-#' @return
-#'
 #' @import dplyr
 #' @import tibble
-#' @export
 
 calc_anova <- function(c_vec, d_vec, valid_vec) {
   # if all concentration values equal 0 (no imputation; log -> NA) or no method

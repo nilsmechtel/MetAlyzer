@@ -19,19 +19,15 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' obj <- new("MetAlyzer")
-#' obj <- init(obj, "toydata.xlsx", sheet = 1)
-#' obj <- readData(obj)
-#' obj <- readQuantStatus(obj)
+#' fpath <- system.file("extdata", "toydata.xlsx", package="MetAlyzer")
+#' obj <- MetAlyzerDataset(file_path = fpath)
 #' obj <- filterMetabolites(obj)
 #' show(obj)
 #' summariseQuantData(obj)
-#' obj <- createPlottingData(obj, Method, Tissue)
-#' obj <- imputePlottingData(obj, Tissue, Metabolite)
+#' obj <- createPlottingData(obj, Group)
+#' obj <- imputePlottingData(obj, Group, Metabolite)
 #' obj <- transformPlottingData(obj)
-#' obj <- performANOVA(obj, "Method")
-#' }
+#' obj <- performANOVA(obj, "Metabolite")
 
 MetAlyzer <- setClass("MetAlyzer",
                       slots=list(
@@ -52,33 +48,33 @@ MetAlyzer <- setClass("MetAlyzer",
 )
 
 
-#' Initialize
+#' Open file and read data
 #'
-#' This method initializes file path and sheet number
-#' @param MetAlyzer MetAlyzer object
-#' @param file_path A length-one character vector with the file path
-#' @param sheet A length-one numeric vector with the sheet number
+#' This function creates a MetAlyzer object, opens the given MetIDQ output Excel
+#' file and extracts metabolites, raw data, quantification status and meta data
+#' @param file_path file path
+#' @param sheet sheet index
 #'
-#' @return An updated MetAlyzer object
+#' @return An MetAlyzer object
 #'
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' obj <- init(obj, file_path = "toydata.xlsx", sheet = 1)
+#' obj <- MetAlyzerDataset(file_path = "toydata.xlsx")
 #' }
 
-setGeneric("init",
-           function(MetAlyzer, file_path, sheet=1)
-             standardGeneric("init")
-           )
-setMethod("init",
-          "MetAlyzer",
-          function(MetAlyzer, file_path, sheet) {
-            MetAlyzer@file_path <- file_path
-            MetAlyzer@sheet <- sheet
-            return(MetAlyzer)
-          })
+MetAlyzerDataset <- function(file_path, sheet=1) {
+  MetAlyzer <- new("MetAlyzer", file_path = file_path, sheet = sheet)
+  MetAlyzer@.full_sheet <- open_file(MetAlyzer)
+  MetAlyzer@.data_ranges <- get_data_range(MetAlyzer)
+  MetAlyzer@.orig_metabolites <- read_metabolties(MetAlyzer)
+  MetAlyzer@metabolites <- MetAlyzer@.orig_metabolites
+  MetAlyzer@raw_data <- read_raw_data(MetAlyzer)
+  MetAlyzer@quant_status <- read_quant_status(MetAlyzer)
+  MetAlyzer@meta_data <- read_meta_data(MetAlyzer)
+  return(MetAlyzer)
+}
 
 
 #' Show a MetAlyzer object
@@ -105,36 +101,28 @@ setMethod("show",
 )
 
 
-#' Open file and read data
+#' Summarize quantification status
 #'
-#' This method opens the given MetIDQ output Excel file and extracts metabolites,
-#' raw data, quantification status and meta data
+#' This method calls sum_quant_data() and summarizes quantification status
 #' @param MetAlyzer MetAlyzer object
 #'
-#' @return An updated MetAlyzer object
+#' @return A summary of the quantification status
 #'
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' obj <- readData(obj)
+#' summariseQuantData(obj)
 #' }
 
-setGeneric("readData",
+setGeneric("summariseQuantData",
            function(MetAlyzer)
-             standardGeneric("readData")
-           )
-setMethod("readData",
+             standardGeneric("summariseQuantData")
+)
+setMethod("summariseQuantData",
           "MetAlyzer",
           function(MetAlyzer) {
-            MetAlyzer@.full_sheet <- open_file(MetAlyzer)
-            MetAlyzer@.data_ranges <- get_data_range(MetAlyzer)
-            MetAlyzer@.orig_metabolites <- read_metabolties(MetAlyzer)
-            MetAlyzer@metabolites <- MetAlyzer@.orig_metabolites
-            MetAlyzer@raw_data <- read_raw_data(MetAlyzer)
-            MetAlyzer@quant_status <- read_quant_status(MetAlyzer)
-            MetAlyzer@meta_data <- read_meta_data(MetAlyzer)
-            return(MetAlyzer)
+            sum_quant_data(MetAlyzer)
           }
 )
 
@@ -279,7 +267,12 @@ setGeneric("updateMetaData",
 setMethod("updateMetaData",
           "MetAlyzer",
           function(MetAlyzer, name, new_colum) {
-            MetAlyzer@meta_data[,name] <- factor(NA, levels = levels(new_colum))
+            if (class(new_colum) == "factor") {
+              levels <- levels(new_colum)
+            } else {
+              levels <- unique(new_colum)
+            }
+            MetAlyzer@meta_data[,name] <- factor(NA, levels = levels)
             MetAlyzer@meta_data[,name][MetAlyzer@meta_data$Filter == TRUE] <- new_colum
             return(MetAlyzer)
           }
@@ -417,32 +410,6 @@ setMethod("metabolites",
           "MetAlyzer",
           function(MetAlyzer) {
             MetAlyzer@metabolites
-          }
-)
-
-
-#' Summarize quantification status
-#'
-#' This method calls sum_quant_data() and summarizes quantification status
-#' @param MetAlyzer MetAlyzer object
-#'
-#' @return A summary of the quantification status
-#'
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#' summariseQuantData(obj)
-#' }
-
-setGeneric("summariseQuantData",
-           function(MetAlyzer)
-             standardGeneric("summariseQuantData")
-           )
-setMethod("summariseQuantData",
-          "MetAlyzer",
-          function(MetAlyzer) {
-            sum_quant_data(MetAlyzer)
           }
 )
 
@@ -622,11 +589,9 @@ setMethod("performANOVA",
 
 #' Update plotting data
 #'
-#' This method adds or modifies a column to/of plotting_data
+#' This method replaces plotting_data with an updated version
 #' @param MetAlyzer MetAlyzer object
-#' @param name A length-one character vector giving the new column name
-#' @param new_colum A vector for the new column (length has to be same as the
-#' number of samples)
+#' @param plotting_data An updated plotting_data tibble data frame
 #'
 #' @return An updated MetAlyzer object
 #'
@@ -634,17 +599,17 @@ setMethod("performANOVA",
 #'
 #' @examples
 #' \dontrun{
-#' obj <- updatePlottingData(obj, "color", "blue")
+#' obj <- setPlottingData(obj, updated_plotting_data)
 #' }
 
-setGeneric("updatePlottingData",
-           function(MetAlyzer, name, new_colum)
-             standardGeneric("updatePlottingData")
+setGeneric("setPlottingData",
+           function(MetAlyzer, plotting_data)
+             standardGeneric("setPlottingData")
 )
-setMethod("updatePlottingData",
+setMethod("setPlottingData",
           "MetAlyzer",
-          function(MetAlyzer, name, new_colum) {
-            MetAlyzer@plotting_data[,name] <- new_colum
+          function(MetAlyzer, plotting_data) {
+            MetAlyzer@plotting_data <- plotting_data
             return(MetAlyzer)
           }
 )

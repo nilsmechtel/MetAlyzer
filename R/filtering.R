@@ -3,10 +3,6 @@
 #' This function filters out certain classes of the metabolites vector
 #' @param object MetAlyzer object
 #' @param class_name A class to be filtered out
-#'
-#' @return
-#'
-#' @export
 
 filter_metabolites <- function(object, class_name="Metabolism Indicators") {
   cat("-------------------------------------\n")
@@ -31,10 +27,6 @@ filter_metabolites <- function(object, class_name="Metabolism Indicators") {
 #' meta_data to use for filtering
 #' @param keep A vector specifying which samples to keep
 #' @param remove A vector specifying which samples to remove
-#'
-#' @return
-#'
-#' @export
 
 filter_meta_data <- function(object, column, keep=NULL, remove=NULL) {
   old_filter <- object@meta_data$Filter
@@ -58,10 +50,7 @@ filter_meta_data <- function(object, column, keep=NULL, remove=NULL) {
 #' @param slot A length-one character vector specifying which data frame to slice
 #' @param verbose If TRUE prints which filtered data frame is returned
 #'
-#' @return
-#'
 #' @import dplyr
-#' @export
 
 get_filtered_data <- function(object, slot, verbose=TRUE) {
   if (slot == "meta") {

@@ -11,9 +11,6 @@ filter_metabolites(object, class_name = "Metabolism Indicators")
 
 \item{class_name}{A class to be filtered out}
 }
-\value{
-
-}
 \description{
 This function filters out certain classes of the metabolites vector
 }

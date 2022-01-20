@@ -11,9 +11,6 @@ log_transform(vec, func)
 
 \item{func}{A logarithmic function}
 }
-\value{
-
-}
 \description{
 This function performs logarithmic transformation of imputed concentration
 values (imp_Conc)

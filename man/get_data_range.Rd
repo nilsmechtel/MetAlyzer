@@ -9,9 +9,6 @@ get_data_range(object)
 \arguments{
 \item{object}{MetAlyzer object}
 }
-\value{
-
-}
 \description{
 This function extracts rows and column indices to slice the .full_sheet into
 metabolites, raw_data and meta_data

@@ -9,9 +9,6 @@ read_metabolties(object)
 \arguments{
 \item{object}{MetAlyzer object}
 }
-\value{
-
-}
 \description{
 This function extracts metabolites with their corresponding class from
 .full_sheet into metabolites

@@ -9,9 +9,6 @@ read_meta_data(object)
 \arguments{
 \item{object}{MetAlyzer object}
 }
-\value{
-
-}
 \description{
 This function slices meta data from .full_sheet into meta_data
 }
