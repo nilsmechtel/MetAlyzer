@@ -4,17 +4,26 @@
 #' @param object MetAlyzer object
 #' @param class_name A class to be filtered out
 
-filter_metabolites <- function(object, class_name="Metabolism Indicators") {
-  cat("-------------------------------------\n")
-  if (class_name %in% names(object@metabolites)) {
-    new_metabolites <- which(names(object@metabolites) != class_name)
-    object@metabolites <- object@metabolites[new_metabolites]
-    if (! class_name %in% names(object@metabolites)) {
-      cat(paste(class_name, "were removed from metabolites.\n"))
+filter_metabolites <- function(object, class_name="Metabolism Indicators",
+                               metabo_vec=NULL) {
+  metabolites <- object@metabolites
+  orig_length <- length(metabolites)
+  if (!is.null(metabo_vec)) { # if metabo_vec is given
+    if (any(metabo_vec %in% metabolites)) {
+      metabolites <- metabolites[which(!metabolites %in% metabo_vec)]
     }
-  } else {
-    cat(paste("No", class_name, "to filter!\n"))
+  } else if (class_name %in% names(metabolites)) {
+    metabolites <- metabolites[which(names(metabolites) != class_name)]
   }
+  diff <- orig_length - length(metabolites)
+  if (diff == 1) {
+    cat("1 metabolite was filtered!\n")
+  } else if (diff > 1) {
+    cat(paste(diff, "metabolites were filtered!\n"))
+  } else {
+    cat("No metabolites were filtered!\n")
+  }
+  object@metabolites <- metabolites
   return(object)
 }
 

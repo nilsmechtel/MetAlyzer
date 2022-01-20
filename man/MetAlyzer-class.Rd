@@ -37,13 +37,19 @@ information for slicing}
 }}
 
 \examples{
-fpath <- system.file("extdata", "toydata.xlsx", package="MetAlyzer")
+fpath <- system.file("extdata", "Extraction_test.xlsx", package="MetAlyzer")
 obj <- MetAlyzerDataset(file_path = fpath)
 obj <- filterMetabolites(obj)
 show(obj)
 summariseQuantData(obj)
-obj <- createPlottingData(obj, Group)
-obj <- imputePlottingData(obj, Group, Metabolite)
+
+obj <- renameMetaData(obj, Method = Group)
+obj <- filterMetaData(obj, Method, keep = 1:6)
+
+obj <- createPlottingData(obj, Method, Tissue)
+obj <- imputePlottingData(obj, Method, Metabolite)
 obj <- transformPlottingData(obj)
-obj <- performANOVA(obj, "Metabolite")
+\donttest{
+obj <- performANOVA(obj, Methods)
+}
 }

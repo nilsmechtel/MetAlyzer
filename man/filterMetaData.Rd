@@ -9,7 +9,7 @@ filterMetaData(MetAlyzer, column, keep = NULL, remove = NULL)
 \arguments{
 \item{MetAlyzer}{MetAlyzer object}
 
-\item{column}{A length-one character vector specifying the column for filtering}
+\item{column}{A column of meta data for filtering}
 
 \item{keep}{A vector defining which entries to keep from meta data}
 
@@ -25,8 +25,8 @@ argument.
 }
 \examples{
 \dontrun{
-obj <- filterMetaData(obj, "Methods", keep = 1:6)
+obj <- filterMetaData(obj, Methods, keep = 1:6)
 # or
-obj <- filterMetaData(obj, "Methods", remove = 7)
+obj <- filterMetaData(obj, Methods, remove = 7)
 }
 }

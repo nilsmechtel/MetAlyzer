@@ -4,7 +4,11 @@
 \alias{filter_metabolites}
 \title{Filter metabolites}
 \usage{
-filter_metabolites(object, class_name = "Metabolism Indicators")
+filter_metabolites(
+  object,
+  class_name = "Metabolism Indicators",
+  metabo_vec = NULL
+)
 }
 \arguments{
 \item{object}{MetAlyzer object}

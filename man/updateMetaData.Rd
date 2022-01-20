@@ -9,10 +9,10 @@ updateMetaData(MetAlyzer, name, new_colum)
 \arguments{
 \item{MetAlyzer}{MetAlyzer object}
 
-\item{name}{A length-one character vector giving the new column name}
+\item{name}{The new column name}
 
 \item{new_colum}{A vector for the new column (length has to be same as the
-number of samples)}
+number of filtered samples)}
 }
 \value{
 An updated MetAlyzer object
@@ -22,7 +22,7 @@ This method adds another column to unfiltered meta_data
 }
 \examples{
 \dontrun{
-obj <- updateMetaData(obj, "Date", format(Sys.Date()))
-obj <- updateMetaData(obj, "Analyzed", TRUE)
+obj <- updateMetaData(obj, Date, format(Sys.Date()))
+obj <- updateMetaData(obj, Analyzed, TRUE)
 }
 }

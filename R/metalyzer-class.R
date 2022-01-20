@@ -19,15 +19,21 @@
 #' @export
 #'
 #' @examples
-#' fpath <- system.file("extdata", "toydata.xlsx", package="MetAlyzer")
+#' fpath <- system.file("extdata", "Extraction_test.xlsx", package="MetAlyzer")
 #' obj <- MetAlyzerDataset(file_path = fpath)
 #' obj <- filterMetabolites(obj)
 #' show(obj)
 #' summariseQuantData(obj)
-#' obj <- createPlottingData(obj, Group)
-#' obj <- imputePlottingData(obj, Group, Metabolite)
+#'
+#' obj <- renameMetaData(obj, Method = Group)
+#' obj <- filterMetaData(obj, Method, keep = 1:6)
+#'
+#' obj <- createPlottingData(obj, Method, Tissue)
+#' obj <- imputePlottingData(obj, Method, Metabolite)
 #' obj <- transformPlottingData(obj)
-#' obj <- performANOVA(obj, "Metabolite")
+#' \donttest{
+#' obj <- performANOVA(obj, Methods)
+#' }
 
 MetAlyzer <- setClass("MetAlyzer",
                       slots=list(
@@ -129,9 +135,11 @@ setMethod("summariseQuantData",
 
 #' Filter metabolites
 #'
-#' This method calls filter_metabolites() and filters metabolites
+#' This method calls filter_metabolites() and filters metabolites.
+#' Note: metabo_vec overwrites class_name argument!
 #' @param MetAlyzer MetAlyzer object
-#' @param class_name A class to be filtered out
+#' @param class_name A character value defining the class to be removed
+#' @param metabo_vec A character vector defining metabolites to be removed
 #'
 #' @return An updated MetAlyzer object
 #'
@@ -140,16 +148,18 @@ setMethod("summariseQuantData",
 #' @examples
 #' \dontrun{
 #' obj <- filterMetabolites(obj, class_name = "Metabolism Indicators")
+#' obj <- filterMetabolites(obj, metabo_vec = c("C0", "C2", "C3"))
 #' }
 
 setGeneric("filterMetabolites",
-           function(MetAlyzer, class_name="Metabolism Indicators")
+           function(MetAlyzer, class_name="Metabolism Indicators",
+                    metabo_vec=NULL)
              standardGeneric("filterMetabolites")
 )
 setMethod("filterMetabolites",
           "MetAlyzer",
-          function(MetAlyzer, class_name) {
-            filter_metabolites(MetAlyzer, class_name)
+          function(MetAlyzer, class_name, metabo_vec) {
+            filter_metabolites(MetAlyzer, class_name, metabo_vec)
           }
 )
 
@@ -175,7 +185,12 @@ setGeneric("resetMetabolites",
 setMethod("resetMetabolites",
           "MetAlyzer",
           function(MetAlyzer) {
-            MetAlyzer@metabolites <- MetAlyzer@.orig_metabolites
+            orig <- MetAlyzer@.orig_metabolites
+            diff <- length(orig) - length(MetAlyzer@metabolites)
+            if (diff > 0) {
+              cat(paste("Restoring", diff, "metabolite(s).\n"))
+            }
+            MetAlyzer@metabolites <- orig
             return(MetAlyzer)
           }
 )
@@ -188,7 +203,7 @@ setMethod("resetMetabolites",
 #' argument.
 #'
 #' @param MetAlyzer MetAlyzer object
-#' @param column A length-one character vector specifying the column for filtering
+#' @param column A column of meta data for filtering
 #' @param keep A vector defining which entries to keep from meta data
 #' @param remove A vector defining which entries to remove meta data
 #'
@@ -198,9 +213,9 @@ setMethod("resetMetabolites",
 #'
 #' @examples
 #' \dontrun{
-#' obj <- filterMetaData(obj, "Methods", keep = 1:6)
+#' obj <- filterMetaData(obj, Methods, keep = 1:6)
 #' # or
-#' obj <- filterMetaData(obj, "Methods", remove = 7)
+#' obj <- filterMetaData(obj, Methods, remove = 7)
 #' }
 
 setGeneric("filterMetaData",
@@ -210,7 +225,7 @@ setGeneric("filterMetaData",
 setMethod("filterMetaData",
           "MetAlyzer",
           function(MetAlyzer, column, keep, remove) {
-            filter_meta_data(MetAlyzer, column, keep, remove)
+            filter_meta_data(MetAlyzer, deparse(substitute(column)), keep, remove)
           }
 )
 
@@ -246,9 +261,9 @@ setMethod("resetMetaData",
 #'
 #' This method adds another column to unfiltered meta_data
 #' @param MetAlyzer MetAlyzer object
-#' @param name A length-one character vector giving the new column name
+#' @param name The new column name
 #' @param new_colum A vector for the new column (length has to be same as the
-#' number of samples)
+#' number of filtered samples)
 #'
 #' @return An updated MetAlyzer object
 #'
@@ -256,8 +271,8 @@ setMethod("resetMetaData",
 #'
 #' @examples
 #' \dontrun{
-#' obj <- updateMetaData(obj, "Date", format(Sys.Date()))
-#' obj <- updateMetaData(obj, "Analyzed", TRUE)
+#' obj <- updateMetaData(obj, Date, format(Sys.Date()))
+#' obj <- updateMetaData(obj, Analyzed, TRUE)
 #' }
 
 setGeneric("updateMetaData",
@@ -272,8 +287,11 @@ setMethod("updateMetaData",
             } else {
               levels <- unique(new_colum)
             }
-            MetAlyzer@meta_data[,name] <- factor(NA, levels = levels)
-            MetAlyzer@meta_data[,name][MetAlyzer@meta_data$Filter == TRUE] <- new_colum
+            meta_data <- MetAlyzer@meta_data
+            chr_name <- deparse(substitute(name))
+            meta_data[,chr_name] <- factor(NA, levels = levels)
+            meta_data[,chr_name][meta_data$Filter == TRUE] <- new_colum
+            MetAlyzer@meta_data <- meta_data
             return(MetAlyzer)
           }
 )
@@ -555,8 +573,7 @@ setMethod("transformPlottingData",
 #' This method performs a one-way ANOVA adds the column Group to plotting_data
 #' with the results of a Tukey post-hoc test
 #' @param MetAlyzer MetAlyzer object
-#' @param categorical A length-one character vector defining the categorical
-#' variable
+#' @param categorical A  column defining the categorical variable
 #'
 #' @return An updated MetAlyzer object
 #'
@@ -564,7 +581,7 @@ setMethod("transformPlottingData",
 #'
 #' @examples
 #' \dontrun{
-#' obj <- performANOVA(obj, "Methods")
+#' obj <- performANOVA(obj, Methods)
 #' }
 
 setGeneric("performANOVA",
@@ -576,10 +593,10 @@ setMethod("performANOVA",
           function(MetAlyzer, categorical) {
             plotting_data <- MetAlyzer@plotting_data
             grouping_vars <- group_vars(plotting_data)
-            group_cols <- grouping_vars[-which(grouping_vars == categorical)]
             plotting_data <- plotting_data %>%
-              group_by_at(group_cols) %>%
-              mutate(Group = calc_anova(!!sym(categorical), transf_Conc, Valid)) %>%
+              group_by_at(grouping_vars, add = FALSE) %>%
+              ungroup(Method) %>%
+              mutate(ANOVA_group = calc_anova(Method, transf_Conc, Valid)) %>%
               group_by_at(grouping_vars)
             MetAlyzer@plotting_data <- plotting_data
             return(MetAlyzer)

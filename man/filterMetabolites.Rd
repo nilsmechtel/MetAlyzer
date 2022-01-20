@@ -4,21 +4,29 @@
 \alias{filterMetabolites}
 \title{Filter metabolites}
 \usage{
-filterMetabolites(MetAlyzer, class_name = "Metabolism Indicators")
+filterMetabolites(
+  MetAlyzer,
+  class_name = "Metabolism Indicators",
+  metabo_vec = NULL
+)
 }
 \arguments{
 \item{MetAlyzer}{MetAlyzer object}
 
-\item{class_name}{A class to be filtered out}
+\item{class_name}{A character value defining the class to be removed}
+
+\item{metabo_vec}{A character vector defining metabolites to be removed}
 }
 \value{
 An updated MetAlyzer object
 }
 \description{
-This method calls filter_metabolites() and filters metabolites
+This method calls filter_metabolites() and filters metabolites.
+Note: metabo_vec overwrites class_name argument!
 }
 \examples{
 \dontrun{
 obj <- filterMetabolites(obj, class_name = "Metabolism Indicators")
+obj <- filterMetabolites(obj, metabo_vec = c("C0", "C2", "C3"))
 }
 }

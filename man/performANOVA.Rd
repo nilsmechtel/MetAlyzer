@@ -9,8 +9,7 @@ performANOVA(MetAlyzer, categorical)
 \arguments{
 \item{MetAlyzer}{MetAlyzer object}
 
-\item{categorical}{A length-one character vector defining the categorical
-variable}
+\item{categorical}{A  column defining the categorical variable}
 }
 \value{
 An updated MetAlyzer object
@@ -21,6 +20,6 @@ with the results of a Tukey post-hoc test
 }
 \examples{
 \dontrun{
-obj <- performANOVA(obj, "Methods")
+obj <- performANOVA(obj, Methods)
 }
 }
