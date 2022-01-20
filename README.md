@@ -3,7 +3,7 @@ MetAlyzer
 
 **An R Package to read and analyze MetIDQ:tm: output**
 
-The package provides functions to read output files from the MetIDQ:tm:software into R. Metabolomics and meta data are read and reformatted into an S4 object for convenient data handling, statistics and downstream analysis.
+The package provides functions to read output files from the MetIDQ:&trade; software into R. Metabolomics data is read and reformatted into an S4 object for convenient data handling, statistics and downstream analysis.
 
 ## Install
 
@@ -17,50 +17,86 @@ install.packages('MetAlyzer')
 
 ![Overview](vignettes/MetAlyzer_overview.png)
 
-The package takes ".xlsx" files generated as output from the MetIDQ:tm:software. Additionally, meta data for each sample can be provided for further analysis.
+The package takes metabolomic measurements and the quantification status ("valid", "LOQ", "LOD") as ".xlsx" files generated from the MetIDQ&trade; software. Additionally, meta data for each sample can be provided for further analysis.
 
-Set data path and read meta data:
+####Set data path and read meta data:
 ```r
-fpath <- system.file("data", "example.xlsx", package="MetAlyzer")
-mpath <- system.file("data", "example_meta_data.rds", package="MetAlyzer")
+fpath <- system.file("extdata", "example_data.xlsx", package="MetAlyzer")
+mpath <- system.file("extdata", "example_meta_data.rds", package="MetAlyzer")
 ```
 
-Initialize MetAlyzer object and load data
+####Create MetAlyzer object:
 ```r
-obj <- new("MetAlyzer")
-obj <- init(obj, file_path=fpath)
-obj <- readData(obj)
+obj <- MetAlyzerDataset(file_path=fpath)
 ```
 
-Show MetAlyzer object
+####Show MetAlyzer object:
 ```r
 > show(obj)
 -------------------------------------
-File name: example.xlsx 
+File name: example_data.xlsx 
 Sheet: 1 
-# File path: ~/MetAlyzer/data 
-Metabolites: 40 
-Classes: 1 
-Including metabolism indicators: FALSE 
-Number of samples: 18 
-Columns meta data: "Plate Bar Code"; "Sample Bar Code"; "Sample Type"; "Group"; "Sample Volume"; "Measurement Time"
+File path: /omics/groups/OE0285/internal/andresen/home_links/R/x86_64-pc-linux-gnu-library/4.0/MetAlyzer/extdata 
+Metabolites: 862 
+Classes: 24 
+Including metabolism indicators: TRUE 
+Number of samples: 74 
+Columns meta data: "Plate Bar Code"; "Sample Bar Code"; "Sample Type"; "Group"; "Tissue"; "Sample Volume"; "Measurement Time"
 Ploting data created: FALSE 
 ```
 
-Show statistics
+####Use filter functions to exclude the metabolite indicators and only keep Group 1 to 6:
+```r
+obj <- filterMetabolites(obj, class_name = "Metabolism Indicators")
+obj <- filterMetaData(obj, Group, keep = c(1:6))
+```
+
+####Show statistics:
 ```r
 > summariseQuantData(obj)
 -------------------------------------
-Valid: 248 (34.44%)
-LOD: 423 (58.75%)
-LOQ: 49 (6.81%)
+Valid: 21951 (48.39%)
+LOD: 20577 (45.36%)
+LOQ: 2832 (6.24%)
 NAs: 0 (0%)
 ```
 
-Add meta data
+Add meta data:
 ```r
-obj <- updateMetaData(obj, "Replicate", as.vector(meta_df$Replicate))
+meta_df <- readRDS(mpath)
+obj <- updateMetaData(obj, "Replicate", meta_df$Replicate)
 ```
+
+####Reformat for plotting:
+For further filtering and plotting, the data can be reformatted into a data frame.
+```{r}
+obj <- createPlottingData(obj, Group, Tissue)
+gg_df <- plottingData(obj)
+
+head(gg_df)
+# A tibble: 6 × 11
+# Groups:   Group, Tissue, Metabolite [2]
+  Group Tissue     Metabolite Class          Concentration  Mean    SD    CV CV_thresh Status Valid
+  <chr> <chr>      <fct>      <fct>                  <dbl> <dbl> <dbl> <dbl> <fct>     <fct>  <lgl>
+1 1     Drosophila C0         Acylcarnitines         203    179.  82.4 0.461 more30    Valid  TRUE 
+2 1     Drosophila C0         Acylcarnitines          86.8  179.  82.4 0.461 more30    Valid  TRUE 
+3 1     Drosophila C0         Acylcarnitines         246    179.  82.4 0.461 more30    Valid  TRUE 
+4 2     Drosophila C0         Acylcarnitines         198    231. 124.  0.538 more30    Valid  TRUE 
+5 2     Drosophila C0         Acylcarnitines         369    231. 124.  0.538 more30    Valid  TRUE 
+6 2     Drosophila C0         Acylcarnitines         127    231. 124.  0.538 more30    Valid  TRUE 
+```
+
+####Plot filter data and plot concentration of glutamic acid:
+```{r}
+glu_gg_df <- filter(gg_df, Metabolite == "Glu")
+
+ggplot(glu_gg_df, aes(Group, Concentration, color = Status)) +
+  geom_point() +
+  facet_grid(~ Tissue)
+```
+![](vignettes/example_ggplot.png)
+
+
 
 
 
