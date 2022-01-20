@@ -9,19 +9,19 @@ filterMetaData(MetAlyzer, column, keep = NULL, remove = NULL)
 \arguments{
 \item{MetAlyzer}{MetAlyzer object}
 
-\item{column}{A column of meta data for filtering}
+\item{column}{A column of meta_data for filtering}
 
-\item{keep}{A vector defining which entries to keep from meta data}
+\item{keep}{A vector defining which entries to keep from meta_data}
 
-\item{remove}{A vector defining which entries to remove meta data}
+\item{remove}{A vector defining which entries to remove meta_data}
 }
 \value{
 An updated MetAlyzer object
 }
 \description{
-This method calls filter_meta_data() and filters meta_data. Note: If both
-"keep" and "remove" arguments are used "keep" overwrites the "remove"
-argument.
+This function updates the "Filter" column in meta_data to filter out samples.
+Note: If both "keep" and "remove" arguments are used "keep" overwrites the
+"remove" argument.
 }
 \examples{
 \dontrun{

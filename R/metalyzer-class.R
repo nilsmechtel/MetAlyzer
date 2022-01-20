@@ -85,7 +85,7 @@ MetAlyzerDataset <- function(file_path, sheet=1) {
 
 #' Show a MetAlyzer object
 #'
-#' This method calls show_obj() and shows the MetAlyzer object
+#' This method shows a summary of MetAlyzer slot values
 #' @param object MetAlyzer object
 #'
 #' @return A summary of the MetAlyzer object
@@ -109,7 +109,7 @@ setMethod("show",
 
 #' Summarize quantification status
 #'
-#' This method calls sum_quant_data() and summarizes quantification status
+#' This method lists the number of each quantification status and its percentage
 #' @param MetAlyzer MetAlyzer object
 #'
 #' @return A summary of the quantification status
@@ -135,8 +135,10 @@ setMethod("summariseQuantData",
 
 #' Filter metabolites
 #'
-#' This method calls filter_metabolites() and filters metabolites.
-#' Note: metabo_vec overwrites class_name argument!
+#' This function filters out certain classes or metabolites of the metabolites
+#' vector
+#' Note: If both "metabo_vec" and "class_name" arguments are used "metabo_vec"
+#' overwrites the "class_name" argument!
 #' @param MetAlyzer MetAlyzer object
 #' @param class_name A character value defining the class to be removed
 #' @param metabo_vec A character vector defining metabolites to be removed
@@ -198,14 +200,14 @@ setMethod("resetMetabolites",
 
 #' Filter meta data
 #'
-#' This method calls filter_meta_data() and filters meta_data. Note: If both
-#' "keep" and "remove" arguments are used "keep" overwrites the "remove"
-#' argument.
+#' This function updates the "Filter" column in meta_data to filter out samples.
+#' Note: If both "keep" and "remove" arguments are used "keep" overwrites the
+#' "remove" argument.
 #'
 #' @param MetAlyzer MetAlyzer object
-#' @param column A column of meta data for filtering
-#' @param keep A vector defining which entries to keep from meta data
-#' @param remove A vector defining which entries to remove meta data
+#' @param column A column of meta_data for filtering
+#' @param keep A vector defining which entries to keep from meta_data
+#' @param remove A vector defining which entries to remove meta_data
 #'
 #' @return An updated MetAlyzer object
 #'
@@ -282,17 +284,7 @@ setGeneric("updateMetaData",
 setMethod("updateMetaData",
           "MetAlyzer",
           function(MetAlyzer, name, new_colum) {
-            if (class(new_colum) == "factor") {
-              levels <- levels(new_colum)
-            } else {
-              levels <- unique(new_colum)
-            }
-            meta_data <- MetAlyzer@meta_data
-            chr_name <- deparse(substitute(name))
-            meta_data[,chr_name] <- factor(NA, levels = levels)
-            meta_data[,chr_name][meta_data$Filter == TRUE] <- new_colum
-            MetAlyzer@meta_data <- meta_data
-            return(MetAlyzer)
+            update_meta_data(MetAlyzer, name, new_colum)
           }
 )
 
@@ -331,7 +323,7 @@ setMethod("renameMetaData",
 #' all columns
 #' @param MetAlyzer MetAlyzer object
 #'
-#' @return The meta data data frame
+#' @return The meta_data data frame
 #'
 #' @export
 #'
@@ -358,7 +350,7 @@ setMethod("metaData",
 #' metabolites (columns)
 #' @param MetAlyzer MetAlyzer object
 #'
-#' @return The raw data data frame
+#' @return The raw_data data frame
 #'
 #' @export
 #'
@@ -385,7 +377,7 @@ setMethod("rawData",
 #' and metabolites (columns)
 #' @param MetAlyzer MetAlyzer object
 #'
-#' @return The quantification status data frame
+#' @return The quant_status data frame
 #'
 #' @export
 #'
@@ -434,8 +426,8 @@ setMethod("metabolites",
 
 #' Create plotting data
 #'
-#' This method combines raw_data, quant_status and meta_data to one tibble
-#' data frame
+#' This method reshapes raw_data, quant_status and meta_data and combines them
+#' in a tibble data frame for plotting with ggplot2.
 #' @param MetAlyzer MetAlyzer object
 #' @param ... A selection of columns from meta_data to add to reshaped data frame
 #' @param ts A numeric vector of thresholds for CV categorization
@@ -477,7 +469,7 @@ setMethod("createPlottingData",
 #' This method returns the plotting_data tibble data frame
 #' @param MetAlyzer MetAlyzer object
 #'
-#' @return The plotting data data frame
+#' @return The plotting_data data frame
 #'
 #' @export
 #'
@@ -570,8 +562,9 @@ setMethod("transformPlottingData",
 
 #' ANOVA
 #'
-#' This method performs a one-way ANOVA adds the column Group to plotting_data
-#' with the results of a Tukey post-hoc test
+#' This method filters based on the filter $Valid, performs a one-way ANOVA and
+#' adds the column Group to plotting_data with the results of a Tukey post-hoc
+#' test
 #' @param MetAlyzer MetAlyzer object
 #' @param categorical A  column defining the categorical variable
 #'

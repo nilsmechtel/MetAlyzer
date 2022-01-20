@@ -13,7 +13,7 @@
 A summary of the MetAlyzer object
 }
 \description{
-This method calls show_obj() and shows the MetAlyzer object
+This method shows a summary of MetAlyzer slot values
 }
 \examples{
 \dontrun{

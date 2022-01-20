@@ -28,8 +28,8 @@ is considered to be a valid measurement}
 An updated MetAlyzer object
 }
 \description{
-This method combines raw_data, quant_status and meta_data to one tibble
-data frame
+This method reshapes raw_data, quant_status and meta_data and combines them
+in a tibble data frame for plotting with ggplot2.
 }
 \examples{
 \dontrun{

@@ -12,3 +12,4 @@ read_meta_data(object)
 \description{
 This function slices meta data from .full_sheet into meta_data
 }
+\keyword{internal}

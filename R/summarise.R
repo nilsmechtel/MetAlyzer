@@ -2,6 +2,8 @@
 #'
 #' This function shows a summary of MetAlyzer slot values
 #' @param object MetAlyzer object
+#'
+#' @keywords internal
 
 show_obj <- function(object) {
   meta_data <- get_filtered_data(object, slot = "meta", verbose = FALSE)
@@ -40,6 +42,8 @@ show_obj <- function(object) {
 #'
 #' This function lists the number of each quantification status and its percentage
 #' @param object MetAlyzer object
+#'
+#' @keywords internal
 
 sum_quant_data <- function(object) {
   quant_status <- get_filtered_data(object, slot = "quant", verbose = FALSE)

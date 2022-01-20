@@ -21,8 +21,10 @@ filterMetabolites(
 An updated MetAlyzer object
 }
 \description{
-This method calls filter_metabolites() and filters metabolites.
-Note: metabo_vec overwrites class_name argument!
+This function filters out certain classes or metabolites of the metabolites
+vector
+Note: If both "metabo_vec" and "class_name" arguments are used "metabo_vec"
+overwrites the "class_name" argument!
 }
 \examples{
 \dontrun{

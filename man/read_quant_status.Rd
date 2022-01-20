@@ -13,3 +13,4 @@ read_quant_status(object)
 This function gets the background color of each cell in .full_sheet and
 assigns it to the corresponding quantification status
 }
+\keyword{internal}

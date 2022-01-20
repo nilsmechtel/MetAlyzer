@@ -16,3 +16,4 @@ get_filtered_data(object, slot, verbose = TRUE)
 \description{
 This function filters meta_data, raw_data or quant_status
 }
+\keyword{internal}

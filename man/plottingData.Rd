@@ -10,7 +10,7 @@ plottingData(MetAlyzer)
 \item{MetAlyzer}{MetAlyzer object}
 }
 \value{
-The plotting data data frame
+The plotting_data data frame
 }
 \description{
 This method returns the plotting_data tibble data frame

@@ -15,3 +15,4 @@ log_transform(vec, func)
 This function performs logarithmic transformation of imputed concentration
 values (imp_Conc)
 }
+\keyword{internal}
