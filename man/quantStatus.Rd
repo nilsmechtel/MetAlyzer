@@ -10,7 +10,7 @@ quantStatus(MetAlyzer)
 \item{MetAlyzer}{MetAlyzer object}
 }
 \value{
-The quantification status data frame
+The quant_status data frame
 }
 \description{
 This method returns the quant_status data frame with filtered samples (rows)

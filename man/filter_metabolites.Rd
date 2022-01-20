@@ -16,5 +16,7 @@ filter_metabolites(
 \item{class_name}{A class to be filtered out}
 }
 \description{
-This function filters out certain classes of the metabolites vector
+This function filters out certain classes or metabolites of the metabolites
+vector
 }
+\keyword{internal}

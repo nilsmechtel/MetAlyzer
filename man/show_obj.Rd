@@ -12,3 +12,4 @@ show_obj(object)
 \description{
 This function shows a summary of MetAlyzer slot values
 }
+\keyword{internal}

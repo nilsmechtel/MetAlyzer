@@ -7,6 +7,8 @@
 #'
 #' @import dplyr
 #' @import tidyr
+#'
+#' @keywords internal
 
 plotting_data <- function(object, ...) {
   meta_data <- get_filtered_data(object, slot = "meta", verbose = FALSE)
@@ -35,6 +37,8 @@ plotting_data <- function(object, ...) {
 #' This function assigns a CV value according to a vector of thresholds.
 #' @param x A CV value
 #' @param ts A numeric vector of thresholds
+#'
+#' @keywords internal
 
 set_threshold <- function(x, ts) {
   levels <- c(paste0("max", ts*100), paste0("more", tail(ts, 1)*100))
@@ -64,6 +68,8 @@ set_threshold <- function(x, ts) {
 #' @param ts A numeric vector of thresholds
 #'
 #' @import dplyr
+#'
+#' @keywords internal
 
 calc_CV <- function(plotting_data, ts) {
   col_names <- colnames(plotting_data)
@@ -90,6 +96,8 @@ calc_CV <- function(plotting_data, ts) {
 #' @param t A numeric threshold
 #'
 #' @import dplyr
+#'
+#' @keywords internal
 
 valid_measurement <- function(plotting_data, valid_vec, t) {
   filter_status <- function(vec) {
@@ -107,6 +115,8 @@ valid_measurement <- function(plotting_data, valid_vec, t) {
 #' This function performs zero imputation with the minimal positive value times i
 #' @param vec A numeric vector containing the concentration values
 #' @param i A numeric value below 1)
+#'
+#' @keywords internal
 
 zero_imputation <- function(vec, i) {
   non_zero <- vec[vec > 0]
@@ -122,6 +132,8 @@ zero_imputation <- function(vec, i) {
 #' values (imp_Conc)
 #' @param vec MetAlyzer object
 #' @param func A logarithmic function
+#'
+#' @keywords internal
 
 log_transform <- function(vec, func) {
   vec[vec > 0 & !is.na(vec)] <- func(vec[vec > 0 & !is.na(vec)])
@@ -131,14 +143,17 @@ log_transform <- function(vec, func) {
 
 #' Perform an ANOVA
 #'
-#' This function filters based on the filter vector valid_vec and then performs
-#' a one-way ANOVA
+#' This function filters based on the filter vector valid_vec, performs a
+#' one-way ANOVA and adds the column Group to plotting_data with the results of
+#' a Tukey post-hoc test
 #' @param c_vec A character vector containing the categorical variables
 #' @param d_vec A numeric vector containing the dependent variables
 #' @param valid_vec A logical vector for filtering
 #'
 #' @import dplyr
 #' @import tibble
+#'
+#' @keywords internal
 
 calc_anova <- function(c_vec, d_vec, valid_vec) {
   # if all concentration values equal 0 (no imputation; log -> NA) or no method

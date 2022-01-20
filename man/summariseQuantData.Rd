@@ -13,7 +13,7 @@ summariseQuantData(MetAlyzer)
 A summary of the quantification status
 }
 \description{
-This method calls sum_quant_data() and summarizes quantification status
+This method lists the number of each quantification status and its percentage
 }
 \examples{
 \dontrun{

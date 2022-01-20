@@ -15,8 +15,9 @@ performANOVA(MetAlyzer, categorical)
 An updated MetAlyzer object
 }
 \description{
-This method performs a one-way ANOVA adds the column Group to plotting_data
-with the results of a Tukey post-hoc test
+This method filters based on the filter $Valid, performs a one-way ANOVA and
+adds the column Group to plotting_data with the results of a Tukey post-hoc
+test
 }
 \examples{
 \dontrun{

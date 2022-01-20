@@ -14,3 +14,4 @@ set_threshold(x, ts)
 \description{
 This function assigns a CV value according to a vector of thresholds.
 }
+\keyword{internal}

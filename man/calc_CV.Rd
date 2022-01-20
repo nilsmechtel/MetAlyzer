@@ -15,3 +15,4 @@ calc_CV(plotting_data, ts)
 This function adds the mean, standard deviation (SD) and the
 coefficient of variation (CV) to plotting_data
 }
+\keyword{internal}

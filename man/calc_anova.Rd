@@ -14,6 +14,8 @@ calc_anova(c_vec, d_vec, valid_vec)
 \item{valid_vec}{A logical vector for filtering}
 }
 \description{
-This function filters based on the filter vector valid_vec and then performs
-a one-way ANOVA
+This function filters based on the filter vector valid_vec, performs a
+one-way ANOVA and adds the column Group to plotting_data with the results of
+a Tukey post-hoc test
 }
+\keyword{internal}

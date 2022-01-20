@@ -10,7 +10,7 @@ metaData(MetAlyzer)
 \item{MetAlyzer}{MetAlyzer object}
 }
 \value{
-The meta data data frame
+The meta_data data frame
 }
 \description{
 This method returns the meta_data data frame with filtered samples (rows) and

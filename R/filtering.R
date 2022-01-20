@@ -1,8 +1,11 @@
 #' Filter metabolites
 #'
-#' This function filters out certain classes of the metabolites vector
+#' This function filters out certain classes or metabolites of the metabolites
+#' vector
 #' @param object MetAlyzer object
 #' @param class_name A class to be filtered out
+#'
+#' @keywords internal
 
 filter_metabolites <- function(object, class_name="Metabolism Indicators",
                                metabo_vec=NULL) {
@@ -36,6 +39,8 @@ filter_metabolites <- function(object, class_name="Metabolism Indicators",
 #' meta_data to use for filtering
 #' @param keep A vector specifying which samples to keep
 #' @param remove A vector specifying which samples to remove
+#'
+#' @keywords internal
 
 filter_meta_data <- function(object, column, keep=NULL, remove=NULL) {
   old_filter <- object@meta_data$Filter
@@ -51,6 +56,30 @@ filter_meta_data <- function(object, column, keep=NULL, remove=NULL) {
   return(object)
 }
 
+#' Update meta data
+#'
+#' This function adds another column to unfiltered meta_data
+#' @param MetAlyzer MetAlyzer object
+#' @param name The new column name
+#' @param new_colum A vector for the new column (length has to be same as the
+#' number of filtered samples)
+#'
+#' @keywords internal
+
+update_meta_data <- function(MetAlyzer, name, new_colum) {
+  if (class(new_colum) == "factor") {
+    levels <- levels(new_colum)
+  } else {
+    levels <- unique(new_colum)
+  }
+  meta_data <- MetAlyzer@meta_data
+  chr_name <- deparse(substitute(name))
+  meta_data[,chr_name] <- factor(NA, levels = levels)
+  meta_data[,chr_name][meta_data$Filter == TRUE] <- new_colum
+  MetAlyzer@meta_data <- meta_data
+  return(MetAlyzer)
+}
+
 
 #' Get filtered data
 #'
@@ -60,6 +89,8 @@ filter_meta_data <- function(object, column, keep=NULL, remove=NULL) {
 #' @param verbose If TRUE prints which filtered data frame is returned
 #'
 #' @import dplyr
+#'
+#' @keywords internal
 
 get_filtered_data <- function(object, slot, verbose=TRUE) {
   if (slot == "meta") {

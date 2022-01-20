@@ -13,3 +13,4 @@ read_metabolties(object)
 This function extracts metabolites with their corresponding class from
 .full_sheet into metabolites
 }
+\keyword{internal}

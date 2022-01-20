@@ -12,3 +12,4 @@ open_file(object)
 \description{
 This function opens the given MetIDQ output Excel file
 }
+\keyword{internal}
