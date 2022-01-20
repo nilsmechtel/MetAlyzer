@@ -111,7 +111,7 @@ gg_df <- plottingData(obj)
 head(gg_df)
 ```
 
-For example, can filter for glutamic acid (Glu) and plot the concentration.
+For example, we can filter for glutamic acid (Glu) and plot the concentration.
 ```{r, fig.width=7, fig.height=4.5}
 glu_gg_df <- filter(gg_df, Metabolite == "Glu")
 
@@ -132,7 +132,7 @@ obj <- imputePlottingData(obj)
 imp_gg_df <- plottingData(obj)
 ```
 
-After the imputation, the lowest values is non-zero. The imputation can also performed for each metabolite separately (recommended), which we do not show for simplicity since some metabolites only show zero values.
+After the imputation, the lowest values is non-zero. The imputation can also performed for each metabolite separately (recommended), which we do not show for simplicity since some metabolites only show zero values. The imputed values are written into column "imp_Conc".
 ```{r}
 min(imp_gg_df$imp_Conc)
 ```
@@ -143,7 +143,7 @@ obj <- transformPlottingData(obj)
 trans_gg_df <- plottingData(obj)
 head(trans_gg_df)
 ```
-For plotting, we filter again for glutamic acid:
+To plot imputed and transformed data, we filter again for glutamic acid:
 ```{r, fig.width=7, fig.height=4.5}
 trans_glu_gg_df <- filter(trans_gg_df, Metabolite == "Glu")
 
@@ -157,5 +157,6 @@ As described in ([Gegner et al.](https://doi.org/10.1101/2021.12.16.472947)), an
 ```{r}
 obj <- performANOVA(obj, "Method")
 anv_gg_df <- plottingData(obj)
+head(anv_gg_df)
 ```
 
