@@ -1,23 +1,23 @@
 MetAlyzer
 ========
 
-**An R Package to read and analyze MetIDQ:tm: output**
+**An R Package to read and analyze MetIDQ&trade; output**
 
-The package provides functions to read output files from the MetIDQ:&trade; software into R. Metabolomics data is read and reformatted into an S4 object for convenient data handling, statistics and downstream analysis.
+The package provides functions to read output files from the MetIDQ&trade; software into R. Metabolomics data is read and reformatted into an S4 object for convenient data handling, statistics and downstream analysis.
 
 ## Install
 
 There is a version available on CRAN.
 
 ```r
-install.packages('MetAlyzer')
+install.packages("MetAlyzer")
 ```
 
 ## Quick start
 
 ![Overview](vignettes/MetAlyzer_overview.png)
 
-The package takes metabolomic measurements and the quantification status ("valid", "LOQ", "LOD") as ".xlsx" files generated from the MetIDQ&trade; software. Additionally, meta data for each sample can be provided for further analysis.
+The package takes metabolomic measurements and the quantification status (e.g. "Valid", "LOQ", "LOD") as ".xlsx" files generated from the MetIDQ&trade; software. Additionally, meta data for each sample can be provided for further analysis.
 
 #### Set data path and read meta data
 ```r
@@ -32,7 +32,7 @@ obj <- MetAlyzerDataset(file_path=fpath)
 
 #### Show MetAlyzer object:
 ```r
-> show(obj)
+show(obj)
 -------------------------------------
 File name: example_data.xlsx 
 Sheet: 1 
@@ -53,11 +53,11 @@ obj <- filterMetaData(obj, Group, keep = c(1:6))
 
 #### Show statistics:
 ```r
-> summariseQuantData(obj)
+summariseQuantData(obj)
 -------------------------------------
 Valid: 21951 (48.39%)
-LOD: 20577 (45.36%)
 LOQ: 2832 (6.24%)
+LOD: 20577 (45.36%)
 NAs: 0 (0%)
 ```
 
@@ -79,11 +79,11 @@ head(gg_df)
   Group Tissue     Metabolite Class          Concentration  Mean    SD    CV CV_thresh Status Valid
   <chr> <chr>      <fct>      <fct>                  <dbl> <dbl> <dbl> <dbl> <fct>     <fct>  <lgl>
 1 1     Drosophila C0         Acylcarnitines         203    179.  82.4 0.461 more30    Valid  TRUE 
-2 1     Drosophila C0         Acylcarnitines          86.8  179.  82.4 0.461 more30    Valid  TRUE 
+2 1     Drosophila C0         Acylcarnitines         86.8   179.  82.4 0.461 more30    Valid  TRUE 
 3 1     Drosophila C0         Acylcarnitines         246    179.  82.4 0.461 more30    Valid  TRUE 
-4 2     Drosophila C0         Acylcarnitines         198    231. 124.  0.538 more30    Valid  TRUE 
-5 2     Drosophila C0         Acylcarnitines         369    231. 124.  0.538 more30    Valid  TRUE 
-6 2     Drosophila C0         Acylcarnitines         127    231. 124.  0.538 more30    Valid  TRUE 
+4 2     Drosophila C0         Acylcarnitines         198    231.  124. 0.538 more30    Valid  TRUE 
+5 2     Drosophila C0         Acylcarnitines         369    231.  124. 0.538 more30    Valid  TRUE 
+6 2     Drosophila C0         Acylcarnitines         127    231.  124. 0.538 more30    Valid  TRUE 
 ```
 
 #### Plot filter data and plot concentration of glutamic acid:
@@ -92,6 +92,9 @@ glu_gg_df <- filter(gg_df, Metabolite == "Glu")
 
 ggplot(glu_gg_df, aes(Group, Concentration, color = Status)) +
   geom_point() +
+  scale_color_manual(values = c("Valid" = "#00CD66",
+                                "LOQ" = "#87CEEB",
+                                "LOD" = "#6A5ACD")) + 
   facet_grid(~ Tissue)
 ```
 ![](vignettes/example_ggplot.png)
@@ -99,4 +102,3 @@ ggplot(glu_gg_df, aes(Group, Concentration, color = Status)) +
 
 ## Detailed instructions
 **For a comprehensive tutorial, please check out the vignette.**
-

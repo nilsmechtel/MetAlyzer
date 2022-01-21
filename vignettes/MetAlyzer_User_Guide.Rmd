@@ -24,7 +24,7 @@ The package provides functions to read output files from the MetIDQ:&trade; soft
 There is a version available on CRAN.
 
 ```r
-install.packages('MetAlyzer')
+install.packages("MetAlyzer")
 ```
 
 ## Overview
@@ -33,7 +33,7 @@ install.packages('MetAlyzer')
 
 The package takes metabolomic measurements as ".xlsx" files generated from the MetIDQ&trade; software. Additionally, meta data for each sample can be provided for further analysis.
 
-Effective quantification of metabolites requires a reliable signal. The limit of detection (LOD) is defined as 3 times signal-to-noise of the baseline, calculated by the software MetIDQ for each metabolite. Values are classified as "valid", "LOQ" (below limit of quantification) or "LOD" (below limit of detection). This information is encoded in the color in the ".xlsx" table. The MetAlyzer packages allows to read both information, the value and the quantification status, gives statistics about the quantification efficacy and allows filtering based on the LOD.
+Effective quantification of metabolites requires a reliable signal. The limit of detection (LOD) is defined as 3 times signal-to-noise of the baseline, calculated by the software MetIDQ for each metabolite. Values are classified as "Valid", "LOQ" (below limit of quantification) or "LOD" (below limit of detection). This information is encoded in the color in the ".xlsx" table. Further color codes can include "ISTD Out of Range", "Invalid" and "Incomplete". The MetAlyzer packages allow to read both information, the value and the quantification status, gives statistics about the quantification efficacy and allows filtering based on the LOD.
 
 ![Example of excel sheet.](`r rprojroot::is_r_package$find_file('vignettes/screenshot_xlsx.png')`){width=100%}
 
@@ -59,7 +59,7 @@ The slots can be accessed using the functions *metaData*, *rawData*, *quantStatu
 ```{r}
 head(metaData(obj))
 
-quantStatus(obj)[c(1:5), c(1:5)]
+head(quantStatus(obj), c(5, 5))
 ```
 
 ### Filter metabolites and meta data
@@ -91,7 +91,7 @@ head(meta_df)
 
 And then add the replicate information.
 ```{r}
-obj <- updateMetaData(obj, "Replicate", meta_df$Replicate)
+obj <- updateMetaData(obj, Replicate, meta_df$Replicate)
 show(obj)
 ```
 
@@ -117,6 +117,9 @@ glu_gg_df <- filter(gg_df, Metabolite == "Glu")
 
 ggplot(glu_gg_df, aes(Method, Concentration, color = Status)) +
   geom_point() +
+  scale_color_manual(values = c("Valid" = "#00CD66",
+                                "LOQ" = "#87CEEB",
+                                "LOD" = "#6A5ACD")) + 
   facet_grid(~ Tissue)
 ```
 
@@ -126,18 +129,18 @@ In case NAs or zeros are produced, we provide zero imputation as described in ([
 length(which(gg_df$Concentration == 0))
 ```
 
-Now we impute the data.
+Now we impute the data for each tissue separately.
 ```{r}
-obj <- imputePlottingData(obj)
+obj <- imputePlottingData(obj, Tissue)
 imp_gg_df <- plottingData(obj)
 ```
 
-After the imputation, the lowest values is non-zero. The imputation can also performed for each metabolite separately (recommended), which we do not show for simplicity since some metabolites only show zero values. The imputed values are written into column "imp_Conc".
+After the imputation, the lowest values is non-zero. The imputation can additionally be performed for each metabolite separately (recommended), which we do not show for simplicity since some metabolites only show zero values. The imputed values are written into column "imp_Conc".
 ```{r}
 min(imp_gg_df$imp_Conc)
 ```
 
-Raw concentrations in the object can directly be transformed using the function *transformPlottingData*. By default the data is log2 transformed and written into the colunm "transf_Conc". 
+Raw or imputed concentrations in the object can directly be transformed using the function *transformPlottingData*. By default the data is log2 transformed and written into the colunm "transf_Conc". 
 ```{r}
 obj <- transformPlottingData(obj)
 trans_gg_df <- plottingData(obj)
@@ -149,6 +152,9 @@ trans_glu_gg_df <- filter(trans_gg_df, Metabolite == "Glu")
 
 ggplot(trans_glu_gg_df, aes(Method, transf_Conc, color = Status)) +
   geom_point() +
+  scale_color_manual(values = c("Valid" = "#00CD66",
+                                "LOQ" = "#87CEEB",
+                                "LOD" = "#6A5ACD")) +
   facet_grid(~ Tissue)
 ```
 

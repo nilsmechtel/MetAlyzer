@@ -69,9 +69,11 @@ read_metabolties <- function(object) {
 #' @keywords internal
 
 read_raw_data <- function(object) {
-  raw_data <- as.data.frame(object@.full_sheet[object@.data_ranges[["data_rows"]], object@.data_ranges[["data_cols"]]])
+  raw_data <- object@.full_sheet[object@.data_ranges[["data_rows"]],
+                                 object@.data_ranges[["data_cols"]]]
+  raw_data <- as.data.frame(raw_data)
   colnames(raw_data) <- object@metabolites
-  raw_data[] <- sapply(raw_data[], as.numeric)
+  raw_data[] <- lapply(raw_data[], as.numeric)
   return(raw_data)
 }
 
@@ -106,14 +108,11 @@ read_meta_data <- function(object) {
 read_quant_status <- function(object) {
   status_list <- list(
     "Valid" = "00CD66",
-    "Smaller Zero" = "???",
-    "LOD" = "6A5ACD", # < LOD
     "LOQ" = "87CEEB", # <LLOQ or > ULOQ
-    "No Intercept" = "???",
-    "Missing Measurement" = "???",
+    "LOD" = "6A5ACD", # < LOD
     "ISTD Out of Range" = "FFFF33",
     "Invalid" = "FFFFCC",
-    "No measurement" = "???"
+    "Incomplete" = "???"
   )
   wb <- openxlsx::loadWorkbook(file = object@file_path)
   sheet_name <- openxlsx::getSheetNames(file = object@file_path)[object@sheet]
@@ -138,5 +137,8 @@ read_quant_status <- function(object) {
                                  object@.data_ranges[["data_cols"]]]
   colnames(quant_status) <- object@metabolites
   quant_status[is.na(object@raw_data)] <- NA
+  quant_status[] <- lapply(quant_status, function(x) {
+    factor(x, levels = names(status_list))
+  })
   return(quant_status)
 }

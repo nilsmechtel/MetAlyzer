@@ -562,11 +562,15 @@ setMethod("transformPlottingData",
 
 #' ANOVA
 #'
-#' This method filters based on the filter $Valid, performs a one-way ANOVA and
-#' adds the column Group to plotting_data with the results of a Tukey post-hoc
-#' test
+#' This method performs a one-way ANOVA on the grouped plotting_data (the
+#' categorical variable is removed from grouping first). For this, $Valid must
+#' have at least one entry that is TRUE. A Tukey post-hoc test is then used to
+#' determine group names, starting with "A" followed by further letters. These
+#' group names are added to plotting_data in the column Group. Thereby,
+#' metabolites can be identified which are significantly higher in one or more
+#' of the categorical variable compared to all other for each metabolite.
 #' @param MetAlyzer MetAlyzer object
-#' @param categorical A  column defining the categorical variable
+#' @param categorical A column defining the categorical variable
 #'
 #' @return An updated MetAlyzer object
 #'

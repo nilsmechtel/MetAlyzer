@@ -24,9 +24,12 @@ plotting_data <- function(object, ...) {
                               names(object@metabolites[object@metabolites == x])
                             }),
                             .after = Metabolite)
-    plotting_data$Metabolite <- factor(plotting_data$Metabolite, levels = unique(object@metabolites))
-    plotting_data$Class <- factor(plotting_data$Class, levels = unique(names(object@metabolites)))
-    plotting_data$Status <- factor(gathered_status$Status, levels = unique(gathered_status$Status))
+    plotting_data$Metabolite <- factor(plotting_data$Metabolite,
+                                       levels = unique(object@metabolites))
+    plotting_data$Class <- factor(plotting_data$Class,
+                                  levels = unique(names(object@metabolites)))
+    plotting_data$Status <- factor(gathered_status$Status,
+                                   levels = levels(quant_status[,1]))
     return(plotting_data)
   }
 }

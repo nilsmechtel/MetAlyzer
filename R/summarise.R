@@ -55,9 +55,7 @@ sum_quant_data <- function(object) {
                " (", round(number/total*100, 2),"%)\n"))
   }
   cat("-------------------------------------\n")
-  status_vec <- c("Valid", "Smaller Zero", "LOD", "LOQ", "No Intercept",
-                  "Missing Measurement", "ISTD Out of Range", "Invalid",
-                  "No measurement")
+  status_vec <- levels(quant_status[,1])
   for (status in status_vec[which(status_vec %in% unlist(quant_status))]) {
     print_number(status)
   }
