@@ -108,7 +108,7 @@ For further filtering and plotting, the data can be reformatted into a data fram
 obj <- createPlottingData(obj, Method, Tissue)
 gg_df <- plottingData(obj)
 
-head(gg_df)
+head(data.frame(gg_df))
 ```
 
 For example, we can filter for glutamic acid (Glu) and plot the concentration.
@@ -144,7 +144,7 @@ Raw or imputed concentrations in the object can directly be transformed using th
 ```{r}
 obj <- transformPlottingData(obj)
 trans_gg_df <- plottingData(obj)
-head(trans_gg_df)
+head(data.frame(trans_gg_df))
 ```
 To plot imputed and transformed data, we filter again for glutamic acid:
 ```{r, fig.width=7, fig.height=4.5}
@@ -163,6 +163,6 @@ As described in ([Gegner et al.](https://doi.org/10.1101/2021.12.16.472947)), an
 ```{r}
 obj <- performANOVA(obj, "Method")
 anv_gg_df <- plottingData(obj)
-head(anv_gg_df)
+head(data.frame(anv_gg_df))
 ```
 
