@@ -29,7 +29,9 @@ An updated MetAlyzer object
 }
 \description{
 This method reshapes raw_data, quant_status and meta_data and combines them
-together with basic statistics in a tibble data frame for plotting with ggplot2.
+together with basic statistics in a tibble data frame for plotting with
+ggplot2. plotting_data is grouped by metabolites as well as the selection of
+additional variables. Statistics are then calculated per group.
 }
 \examples{
 \dontrun{

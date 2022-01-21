@@ -38,7 +38,7 @@ Effective quantification of metabolites requires a reliable signal. The limit of
 ![Example of excel sheet.](`r rprojroot::is_r_package$find_file('vignettes/screenshot_xlsx.png')`){width=100%}
 
 ## Get started
-To present the functionalities of the package, we use a data set published by [Gegner et al. 2022](https://doi.org/10.1101/2021.12.16.472947). This data set used 6 (1 to 6) different extraction methods to quantify 630 metabolites in triplicates for 4 tissue types (Drosophila, Mouse Liver, Mouse Kidney, Zebrafish Liver).
+To present the functionalities of the package, we use a data set published by [Gegner <i>et al</i>. 2022](https://doi.org/10.1101/2021.12.16.472947). This data set used 6 (1 to 6) different extraction methods to quantify 630 metabolites in triplicates for 4 tissue types (Drosophila, Mouse Liver, Mouse Kidney, Zebrafish Liver).
 
 ### Set data paths to the example data and a meta data file:
 ```{r}
@@ -96,7 +96,7 @@ show(obj)
 ```
 
 ### Rename meta data
-In the meta data, the description of the 6 extraction methods is encoded in the column "Group". For downsteam analyses, we want to rename this column into "Method" using *renameMetaData*.
+In the meta data, the description of the 6 extraction methods is encoded in the column "Group". For downstream analyses, we want to rename this column into "Method" using *renameMetaData*.
 ```{r}
 obj <- renameMetaData(obj, Method = Group)
 head(metaData(obj))
@@ -124,7 +124,7 @@ ggplot(glu_gg_df, aes(Method, Concentration, color = Status)) +
 ```
 
 ### Imputation and transformation
-In case NAs or zeros are produced, we provide zero imputation as described in ([Gegner et al.](https://doi.org/10.1101/2021.12.16.472947)). Before, the imputation, there are 12,212 zero values in the data set.
+In case NAs or zeros are produced, we provide zero imputation as described in ([Gegner <i>et al</i>.](https://doi.org/10.1101/2021.12.16.472947)). Before, the imputation, there are 12,212 zero values in the data set.
 ```{r}
 length(which(gg_df$Concentration == 0))
 ```
@@ -140,7 +140,7 @@ After the imputation, the lowest values is non-zero. The imputation can addition
 min(imp_gg_df$imp_Conc)
 ```
 
-Raw or imputed concentrations in the object can directly be transformed using the function *transformPlottingData*. By default the data is log2 transformed and written into the colunm "transf_Conc". 
+Raw or imputed concentrations in the object can directly be transformed using the function *transformPlottingData*. By default the data is log2 transformed and written into the column "transf_Conc". 
 ```{r}
 obj <- transformPlottingData(obj)
 trans_gg_df <- plottingData(obj)
@@ -159,7 +159,7 @@ ggplot(trans_glu_gg_df, aes(Method, transf_Conc, color = Status)) +
 ```
 
 ### ANOVA
-As described in ([Gegner et al.](https://doi.org/10.1101/2021.12.16.472947)), an ANOVA can be used to identify metabolites which are significantly higher in one or more methods compared to all other for each metabolite.
+As described in ([Gegner <i>et al</i>.](https://doi.org/10.1101/2021.12.16.472947)), an ANOVA can be used to identify metabolites which are significantly higher in one or more methods compared to all other for each metabolite.
 ```{r}
 obj <- performANOVA(obj, categorical = Method)
 anv_gg_df <- plottingData(obj)

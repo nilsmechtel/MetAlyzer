@@ -16,8 +16,9 @@ number of samples}
 An updated MetAlyzer object
 }
 \description{
-This method adds the column transf_Conc to plotting_data with the logarithmic
-transformation of imputed concentration values (imp_Conc)
+This method performs a transformation of imputed concentration values
+(imp_Conc) with a given funciton. NA values are skipped. The transformed
+values are added to plotting_data in an extra column transf_Conc.
 }
 \examples{
 \dontrun{

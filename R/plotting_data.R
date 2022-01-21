@@ -129,13 +129,17 @@ valid_measurement <- function(plotting_data, valid_vec, t) {
 #' This function performs zero imputation with the minimal positive value times i
 #' @param vec A numeric vector containing the concentration values
 #' @param i A numeric value below 1)
+#' @param imputeNA Logical value whether to impute NA values. Default = FALSE
 #'
 #' @keywords internal
 
-zero_imputation <- function(vec, i) {
-  non_zero <- vec[vec > 0]
+zero_imputation <- function(vec, i, imputeNA) {
+  non_zero <- vec[vec > 0 & !is.na(vec)]
   imp_v <- ifelse(length(non_zero) > 0, min(non_zero) * i, NA)
   vec[vec == 0] <- imp_v
+  if (imputeNA) {
+    vec[is.na(vec)] <- imp_v
+  }
   return(vec)
 }
 
@@ -180,7 +184,7 @@ calc_anova <- function(c_vec, d_vec, valid_vec) {
     # # ANOVA
     anova <- aov(Dependent ~ Categorical, data = tmp_df)
     # Tukey post-hoc; each categorical variable gets assigned to a group
-    groups <- agricolae::HSD.test(anova, "Categorical", group=TRUE)$groups %>%
+    groups <- agricolae::HSD.test(anova, "Categorical", group = TRUE)$groups %>%
       select(-Dependent) %>%
       rownames_to_column("Categorical") %>%
       mutate(Categorical = factor(Categorical, levels = levels(c_vec))) %>%

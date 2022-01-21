@@ -37,7 +37,7 @@ information for slicing}
 }}
 
 \examples{
-fpath <- system.file("extdata", "Extraction_test.xlsx", package="MetAlyzer")
+fpath <- system.file("extdata", "Extraction_test.xlsx", package = "MetAlyzer")
 obj <- MetAlyzerDataset(file_path = fpath)
 obj <- filterMetabolites(obj)
 show(obj)

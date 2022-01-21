@@ -4,7 +4,7 @@
 \alias{imputePlottingData}
 \title{Impute plotting data}
 \usage{
-imputePlottingData(MetAlyzer, ..., i = 0.2)
+imputePlottingData(MetAlyzer, ..., i = 0.2, imputeNA = FALSE)
 }
 \arguments{
 \item{MetAlyzer}{MetAlyzer object}
@@ -12,16 +12,20 @@ imputePlottingData(MetAlyzer, ..., i = 0.2)
 \item{...}{Variables to group by}
 
 \item{i}{A numeric value below 1}
+
+\item{imputeNA}{Logical value whether to impute NA values. Default = FALSE}
 }
 \value{
 An updated MetAlyzer object
 }
 \description{
-This method adds the column imp_Conc to plotting_data containing imputed
-concentration values (Concentration). Imputation: minimal positive value * i
+This method imputes zero concentration values (Concentration) with the
+minimal positive value multiplied by i. If all values are zero or NA, they
+are set to NA. The imputed values are added to plotting_data in an extra
+column imp_Conc.
 }
 \examples{
 \dontrun{
-imputePlottingData(obj, Tissue, Metabolite, i = 0.2)
+imputePlottingData(obj, Tissue, Metabolite, i = 0.2, imputeNA = FALSE)
 }
 }

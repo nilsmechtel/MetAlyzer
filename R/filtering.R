@@ -4,11 +4,11 @@
 #' vector
 #' @param object MetAlyzer object
 #' @param class_name A class to be filtered out
+#' @param metabo_vec A character vector defining metabolites to be removed
 #'
 #' @keywords internal
 
-filter_metabolites <- function(object, class_name="Metabolism Indicators",
-                               metabo_vec=NULL) {
+filter_metabolites <- function(object, class_name, metabo_vec) {
   metabolites <- object@metabolites
   orig_length <- length(metabolites)
   if (!is.null(metabo_vec)) { # if metabo_vec is given
@@ -42,7 +42,7 @@ filter_metabolites <- function(object, class_name="Metabolism Indicators",
 #'
 #' @keywords internal
 
-filter_meta_data <- function(object, column, keep=NULL, remove=NULL) {
+filter_meta_data <- function(object, column, keep, remove) {
   old_filter <- object@meta_data$Filter
   if (!is.null(keep)) {
     new_filter <- object@meta_data[,column] %in% keep

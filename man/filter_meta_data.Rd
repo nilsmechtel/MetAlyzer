@@ -4,7 +4,7 @@
 \alias{filter_meta_data}
 \title{Filter meta data}
 \usage{
-filter_meta_data(object, column, keep = NULL, remove = NULL)
+filter_meta_data(object, column, keep, remove)
 }
 \arguments{
 \item{object}{MetAlyzer object}

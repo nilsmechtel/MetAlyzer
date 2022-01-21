@@ -9,7 +9,7 @@ open_file <- function(object) {
   full_sheet <- openxlsx::read.xlsx(object@file_path,
                                     sheet = object@sheet,
                                     colNames = FALSE,
-                                    skipEmptyRows=FALSE,
+                                    skipEmptyRows = FALSE,
                                     skipEmptyCols = FALSE)
   full_sheet <- as.matrix(full_sheet)
   full_sheet[full_sheet == "NA"] <- NA # all entries are strings
@@ -36,9 +36,12 @@ get_data_range <- function(object) {
   names(rows_data) <- NULL
   cols_data <- (col_class+1):ncol(object@.full_sheet) # columns
 
-  data_ranges <- list("class_row"=row_class, "class_col"=col_class,
-                      "sample_type_row"=row_sample_type, "sample_type_col"=col_sample_type,
-                      "data_rows"=rows_data, "data_cols"=cols_data)
+  data_ranges <- list("class_row" = row_class,
+                      "class_col" = col_class,
+                      "sample_type_row" = row_sample_type,
+                      "sample_type_col" = col_sample_type,
+                      "data_rows" = rows_data,
+                      "data_cols" = cols_data)
   return(data_ranges)
 }
 

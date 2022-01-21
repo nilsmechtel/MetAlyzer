@@ -19,7 +19,7 @@
 #' @export
 #'
 #' @examples
-#' fpath <- system.file("extdata", "Extraction_test.xlsx", package="MetAlyzer")
+#' fpath <- system.file("extdata", "Extraction_test.xlsx", package = "MetAlyzer")
 #' obj <- MetAlyzerDataset(file_path = fpath)
 #' obj <- filterMetabolites(obj)
 #' show(obj)
@@ -36,20 +36,20 @@
 #' }
 
 MetAlyzer <- setClass("MetAlyzer",
-                      slots=list(
+                      slots = list(
                         ## input ##
-                        file_path="character",
-                        sheet="numeric",
+                        file_path = "character",
+                        sheet = "numeric",
                         ## output ##
-                        metabolites="character",
-                        raw_data="data.frame",
-                        quant_status="data.frame",
-                        meta_data="data.frame",
-                        plotting_data="data.frame",
+                        metabolites = "character",
+                        raw_data = "data.frame",
+                        quant_status = "data.frame",
+                        meta_data = "data.frame",
+                        plotting_data = "data.frame",
                         ## internal ##
-                        .full_sheet="matrix",
-                        .data_ranges="list",
-                        .orig_metabolites="character"
+                        .full_sheet = "matrix",
+                        .data_ranges = "list",
+                        .orig_metabolites = "character"
                       )
 )
 
@@ -427,7 +427,9 @@ setMethod("metabolites",
 #' Create plotting data
 #'
 #' This method reshapes raw_data, quant_status and meta_data and combines them
-#' together with basic statistics in a tibble data frame for plotting with ggplot2.
+#' together with basic statistics in a tibble data frame for plotting with
+#' ggplot2. plotting_data is grouped by metabolites as well as the selection of
+#' additional variables. Statistics are then calculated per group.
 #' @param MetAlyzer MetAlyzer object
 #' @param ... A selection of columns from meta_data to add to reshaped data frame
 #' @param ts A numeric vector of thresholds for CV categorization
@@ -448,8 +450,8 @@ setMethod("metabolites",
 
 setGeneric("createPlottingData",
            function(MetAlyzer, ...,
-                    ts = c(0.1, 0.2, 0.3),
-                    valid_vec = c("Valid", "LOQ"), t = 0.5)
+                    ts=c(0.1, 0.2, 0.3),
+                    valid_vec=c("Valid", "LOQ"), t=0.5)
              standardGeneric("createPlottingData")
 )
 setMethod("createPlottingData",
@@ -492,11 +494,14 @@ setMethod("plottingData",
 
 #' Impute plotting data
 #'
-#' This method adds the column imp_Conc to plotting_data containing imputed
-#' concentration values (Concentration). Imputation: minimal positive value * i
+#' This method imputes zero concentration values (Concentration) with the
+#' minimal positive value multiplied by i. If all values are zero or NA, they
+#' are set to NA. The imputed values are added to plotting_data in an extra
+#' column imp_Conc.
 #' @param MetAlyzer MetAlyzer object
 #' @param ... Variables to group by
 #' @param i A numeric value below 1
+#' @param imputeNA Logical value whether to impute NA values. Default = FALSE
 #'
 #' @return An updated MetAlyzer object
 #'
@@ -504,21 +509,21 @@ setMethod("plottingData",
 #'
 #' @examples
 #' \dontrun{
-#' imputePlottingData(obj, Tissue, Metabolite, i = 0.2)
+#' imputePlottingData(obj, Tissue, Metabolite, i = 0.2, imputeNA = FALSE)
 #' }
 
 setGeneric("imputePlottingData",
-           function(MetAlyzer, ..., i = 0.2)
+           function(MetAlyzer, ..., i=0.2, imputeNA=FALSE)
              standardGeneric("imputePlottingData")
 )
 setMethod("imputePlottingData",
           "MetAlyzer",
-          function(MetAlyzer, ..., i) {
+          function(MetAlyzer, ..., i, imputeNA) {
             plotting_data <- MetAlyzer@plotting_data
             grouping_vars <- group_vars(plotting_data)
             plotting_data <- plotting_data %>%
               group_by(...) %>%
-              mutate(imp_Conc = zero_imputation(Concentration, i),
+              mutate(imp_Conc = zero_imputation(Concentration, i, imputeNA),
                      .after = Concentration) %>%
               group_by_at(grouping_vars)
             MetAlyzer@plotting_data <- plotting_data
@@ -529,8 +534,9 @@ setMethod("imputePlottingData",
 
 #' log transform plotting data
 #'
-#' This method adds the column transf_Conc to plotting_data with the logarithmic
-#' transformation of imputed concentration values (imp_Conc)
+#' This method performs a transformation of imputed concentration values
+#' (imp_Conc) with a given funciton. NA values are skipped. The transformed
+#' values are added to plotting_data in an extra column transf_Conc.
 #' @param MetAlyzer MetAlyzer object
 #' @param func A logarithmic function to transform concentration values with
 #' number of samples
@@ -546,7 +552,7 @@ setMethod("imputePlottingData",
 #' }
 
 setGeneric("transformPlottingData",
-           function(MetAlyzer, func = log2)
+           function(MetAlyzer, func=log2)
              standardGeneric("transformPlottingData")
 )
 setMethod("transformPlottingData",

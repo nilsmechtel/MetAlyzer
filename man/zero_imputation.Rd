@@ -4,12 +4,14 @@
 \alias{zero_imputation}
 \title{Zero imputation}
 \usage{
-zero_imputation(vec, i)
+zero_imputation(vec, i, imputeNA)
 }
 \arguments{
 \item{vec}{A numeric vector containing the concentration values}
 
 \item{i}{A numeric value below 1)}
+
+\item{imputeNA}{Logical value whether to impute NA values. Default = FALSE}
 }
 \description{
 This function performs zero imputation with the minimal positive value times i

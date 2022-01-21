@@ -4,16 +4,14 @@
 \alias{filter_metabolites}
 \title{Filter metabolites}
 \usage{
-filter_metabolites(
-  object,
-  class_name = "Metabolism Indicators",
-  metabo_vec = NULL
-)
+filter_metabolites(object, class_name, metabo_vec)
 }
 \arguments{
 \item{object}{MetAlyzer object}
 
 \item{class_name}{A class to be filtered out}
+
+\item{metabo_vec}{A character vector defining metabolites to be removed}
 }
 \description{
 This function filters out certain classes or metabolites of the metabolites
