@@ -19,12 +19,12 @@ This method performs a one-way ANOVA on the grouped plotting_data (the
 categorical variable is removed from grouping first). For this, $Valid must
 have at least one entry that is TRUE. A Tukey post-hoc test is then used to
 determine group names, starting with "A" followed by further letters. These
-group names are added to plotting_data in the column Group. Thereby,
+group names are added to plotting_data in the column ANOVA_group. Thereby,
 metabolites can be identified which are significantly higher in one or more
 of the categorical variable compared to all other for each metabolite.
 }
 \examples{
 \dontrun{
-obj <- performANOVA(obj, Methods)
+obj <- performANOVA(obj, categorical = Methods)
 }
 }

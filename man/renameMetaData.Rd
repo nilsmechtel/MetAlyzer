@@ -19,6 +19,6 @@ This method renames a column of meta_data using rename {dplyr}
 }
 \examples{
 \dontrun{
-obj <- renameMetaData(obj, Methods = X1)
+obj <- renameMetaData(obj, Method = Group)
 }
 }

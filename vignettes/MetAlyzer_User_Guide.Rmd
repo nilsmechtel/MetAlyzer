@@ -42,13 +42,13 @@ To present the functionalities of the package, we use a data set published by [G
 
 ### Set data paths to the example data and a meta data file:
 ```{r}
-fpath <- system.file("extdata", "example_data.xlsx", package="MetAlyzer")
-mpath <- system.file("extdata", "example_meta_data.rds", package="MetAlyzer")
+fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
+mpath <- system.file("extdata", "example_meta_data.rds", package = "MetAlyzer")
 ```
 
 ### Initialize MetAlyzer object and load data:
 ```{r}
-obj <- MetAlyzerDataset(file_path=fpath)
+obj <- MetAlyzerDataset(file_path = fpath)
 show(obj)
 ```
 The overview shows the different slots in the MetAlyzer object. The 630 metabolites are accompanied by 232 metabolite indicators calculated by the MetIDQ:&trade; software.
@@ -73,7 +73,7 @@ obj <- filterMetabolites(obj, class_name = "Metabolism Indicators")
 **There are also 2 blank samples in the data that we want to remove:**
 The extraction methods are encoded in the column "Group" of the meta data. We only keep those samples that are named c(1:6).
 ```{r}
-obj <- filterMetaData(obj, Group, keep = c(1:6))
+obj <- filterMetaData(obj, column = Group, keep = c(1:6))
 ```
 
 ### Show statistics
@@ -91,7 +91,7 @@ head(meta_df)
 
 And then add the replicate information.
 ```{r}
-obj <- updateMetaData(obj, Replicate, meta_df$Replicate)
+obj <- updateMetaData(obj, name = Replicate, new_colum = meta_df$Replicate)
 show(obj)
 ```
 
@@ -108,7 +108,7 @@ For further filtering and plotting, the data can be reformatted into a data fram
 obj <- createPlottingData(obj, Method, Tissue)
 gg_df <- plottingData(obj)
 
-head(data.frame(gg_df))
+head(gg_df)
 ```
 
 For example, we can filter for glutamic acid (Glu) and plot the concentration.
@@ -144,7 +144,7 @@ Raw or imputed concentrations in the object can directly be transformed using th
 ```{r}
 obj <- transformPlottingData(obj)
 trans_gg_df <- plottingData(obj)
-head(data.frame(trans_gg_df))
+head(trans_gg_df)
 ```
 To plot imputed and transformed data, we filter again for glutamic acid:
 ```{r, fig.width=7, fig.height=4.5}
@@ -161,7 +161,7 @@ ggplot(trans_glu_gg_df, aes(Method, transf_Conc, color = Status)) +
 ### ANOVA
 As described in ([Gegner et al.](https://doi.org/10.1101/2021.12.16.472947)), an ANOVA can be used to identify metabolites which are significantly higher in one or more methods compared to all other for each metabolite.
 ```{r}
-obj <- performANOVA(obj, "Method")
+obj <- performANOVA(obj, categorical = Method)
 anv_gg_df <- plottingData(obj)
 head(data.frame(anv_gg_df))
 ```

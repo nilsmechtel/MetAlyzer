@@ -44,12 +44,12 @@ show(obj)
 summariseQuantData(obj)
 
 obj <- renameMetaData(obj, Method = Group)
-obj <- filterMetaData(obj, Method, keep = 1:6)
+obj <- filterMetaData(obj, column = Method, keep = 1:6)
 
 obj <- createPlottingData(obj, Method, Tissue)
 obj <- imputePlottingData(obj, Method, Metabolite)
 obj <- transformPlottingData(obj)
 \donttest{
-obj <- performANOVA(obj, Methods)
+obj <- performANOVA(obj, categorical = Methods)
 }
 }

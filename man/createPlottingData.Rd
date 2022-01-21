@@ -29,7 +29,7 @@ An updated MetAlyzer object
 }
 \description{
 This method reshapes raw_data, quant_status and meta_data and combines them
-in a tibble data frame for plotting with ggplot2.
+together with basic statistics in a tibble data frame for plotting with ggplot2.
 }
 \examples{
 \dontrun{

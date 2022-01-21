@@ -25,8 +25,8 @@ Note: If both "keep" and "remove" arguments are used "keep" overwrites the
 }
 \examples{
 \dontrun{
-obj <- filterMetaData(obj, Methods, keep = 1:6)
+obj <- filterMetaData(obj, column = Methods, keep = 1:6)
 # or
-obj <- filterMetaData(obj, Methods, remove = 7)
+obj <- filterMetaData(obj, column = Methods, remove = 7)
 }
 }

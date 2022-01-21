@@ -19,17 +19,31 @@ plotting_data <- function(object, ...) {
     raw_data <- bind_cols(raw_data, extra_columns)
     gathered_data <- gather(raw_data, key = Metabolite, value = Concentration, -c(...))
     gathered_status <- gather(quant_status, key = Metabolite, value = Status)
-    plotting_data <- mutate(gathered_data,
-                            Class = sapply(Metabolite, function(x) {
-                              names(object@metabolites[object@metabolites == x])
-                            }),
-                            .after = Metabolite)
+    col_names <- colnames(gathered_data)
+    group_cols <- col_names[1:which(col_names == "Metabolite")]
+    plotting_data <- gathered_data %>%
+      group_by_at(group_cols) %>%
+      mutate(Class = sapply(Metabolite, function(x) {
+        names(object@metabolites[object@metabolites == x])
+      }),
+      Replicates = 1:n(),
+      .after = Metabolite)
     plotting_data$Metabolite <- factor(plotting_data$Metabolite,
                                        levels = unique(object@metabolites))
     plotting_data$Class <- factor(plotting_data$Class,
                                   levels = unique(names(object@metabolites)))
     plotting_data$Status <- factor(gathered_status$Status,
                                    levels = levels(quant_status[,1]))
+    for (col_name in colnames(extra_columns)) {
+      col <- extra_columns[, col_name]
+      if (class(col) == "factor") {
+        levels <- levels(col)
+      } else {
+        levels <- unique(col)
+      }
+      plotting_data[, col_name] <- factor(unlist(plotting_data[,col_name]),
+                                          levels = levels)
+    }
     return(plotting_data)
   }
 }
@@ -75,10 +89,7 @@ set_threshold <- function(x, ts) {
 #' @keywords internal
 
 calc_CV <- function(plotting_data, ts) {
-  col_names <- colnames(plotting_data)
-  group_cols <- col_names[1:which(col_names == "Metabolite")]
   plotting_data <- plotting_data %>%
-    group_by_at(group_cols) %>%
     mutate(Mean = mean(Concentration, na.rm = TRUE),
            SD = sd(Concentration, na.rm = TRUE),
            CV = SD / Mean,
@@ -166,7 +177,7 @@ calc_anova <- function(c_vec, d_vec, valid_vec) {
   } else {
     tmp_df <- data.frame(Categorical = as.character(c_vec),
                          Dependent = as.numeric(d_vec))
-    # ANOVA
+    # # ANOVA
     anova <- aov(Dependent ~ Categorical, data = tmp_df)
     # Tukey post-hoc; each categorical variable gets assigned to a group
     groups <- agricolae::HSD.test(anova, "Categorical", group=TRUE)$groups %>%

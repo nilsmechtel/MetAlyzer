@@ -20,6 +20,6 @@ file and extracts metabolites, raw data, quantification status and meta data
 }
 \examples{
 \dontrun{
-obj <- MetAlyzerDataset(file_path = "toydata.xlsx")
+obj <- MetAlyzerDataset(file_path = "example_data.xlsx")
 }
 }

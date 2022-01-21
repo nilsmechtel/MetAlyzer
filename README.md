@@ -21,13 +21,13 @@ The package takes metabolomic measurements and the quantification status (e.g. "
 
 #### Set data path and read meta data
 ```r
-fpath <- system.file("extdata", "example_data.xlsx", package="MetAlyzer")
-mpath <- system.file("extdata", "example_meta_data.rds", package="MetAlyzer")
+fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
+mpath <- system.file("extdata", "example_meta_data.rds", package = "MetAlyzer")
 ```
 
 #### Create MetAlyzer object:
 ```r
-obj <- MetAlyzerDataset(file_path=fpath)
+obj <- MetAlyzerDataset(file_path = fpath)
 ```
 
 #### Show MetAlyzer object:
@@ -36,19 +36,20 @@ show(obj)
 -------------------------------------
 File name: example_data.xlsx 
 Sheet: 1 
-File path: ~/MetAlyzer/extdata 
+File path: /Library/Frameworks/R.framework/Versions/4.0/Resources/library/MetAlyzer/extdata 
 Metabolites: 862 
 Classes: 24 
 Including metabolism indicators: TRUE 
 Number of samples: 74 
 Columns meta data: "Plate Bar Code"; "Sample Bar Code"; "Sample Type"; "Group"; "Tissue"; "Sample Volume"; "Measurement Time"
-Ploting data created: FALSE 
+Ploting data created: FALSE
 ```
 
 #### Use filter functions to exclude the metabolite indicators and only keep Group 1 to 6:
 ```r
 obj <- filterMetabolites(obj, class_name = "Metabolism Indicators")
-obj <- filterMetaData(obj, Group, keep = c(1:6))
+232 metabolites were filtered!
+obj <- filterMetaData(obj, column = Group, keep = c(1:6))
 ```
 
 #### Show statistics:
@@ -74,16 +75,16 @@ obj <- createPlottingData(obj, Group, Tissue)
 gg_df <- plottingData(obj)
 
 head(gg_df)
-# A tibble: 6 × 11
+# A tibble: 6 × 12
 # Groups:   Group, Tissue, Metabolite [2]
-  Group Tissue     Metabolite Class          Concentration  Mean    SD    CV CV_thresh Status Valid
-  <chr> <chr>      <fct>      <fct>                  <dbl> <dbl> <dbl> <dbl> <fct>     <fct>  <lgl>
-1 1     Drosophila C0         Acylcarnitines         203    179.  82.4 0.461 more30    Valid  TRUE 
-2 1     Drosophila C0         Acylcarnitines         86.8   179.  82.4 0.461 more30    Valid  TRUE 
-3 1     Drosophila C0         Acylcarnitines         246    179.  82.4 0.461 more30    Valid  TRUE 
-4 2     Drosophila C0         Acylcarnitines         198    231.  124. 0.538 more30    Valid  TRUE 
-5 2     Drosophila C0         Acylcarnitines         369    231.  124. 0.538 more30    Valid  TRUE 
-6 2     Drosophila C0         Acylcarnitines         127    231.  124. 0.538 more30    Valid  TRUE 
+  Group Tissue     Metabolite Class          Replicates Concentration  Mean    SD    CV CV_thresh Status Valid
+  <fct> <fct>      <fct>      <fct>               <int>         <dbl> <dbl> <dbl> <dbl> <fct>     <fct>  <lgl>
+1 1     Drosophila C0         Acylcarnitines          1         203    179.  82.4 0.461 more30    Valid  TRUE 
+2 1     Drosophila C0         Acylcarnitines          2          86.8  179.  82.4 0.461 more30    Valid  TRUE 
+3 1     Drosophila C0         Acylcarnitines          3         246    179.  82.4 0.461 more30    Valid  TRUE 
+4 2     Drosophila C0         Acylcarnitines          1         198    231. 124.  0.538 more30    Valid  TRUE 
+5 2     Drosophila C0         Acylcarnitines          2         369    231. 124.  0.538 more30    Valid  TRUE 
+6 2     Drosophila C0         Acylcarnitines          3         127    231. 124.  0.538 more30    Valid  TRUE 
 ```
 
 #### Plot filter data and plot concentration of glutamic acid:

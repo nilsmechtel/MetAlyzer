@@ -26,13 +26,13 @@
 #' summariseQuantData(obj)
 #'
 #' obj <- renameMetaData(obj, Method = Group)
-#' obj <- filterMetaData(obj, Method, keep = 1:6)
+#' obj <- filterMetaData(obj, column = Method, keep = 1:6)
 #'
 #' obj <- createPlottingData(obj, Method, Tissue)
 #' obj <- imputePlottingData(obj, Method, Metabolite)
 #' obj <- transformPlottingData(obj)
 #' \donttest{
-#' obj <- performANOVA(obj, Methods)
+#' obj <- performANOVA(obj, categorical = Methods)
 #' }
 
 MetAlyzer <- setClass("MetAlyzer",
@@ -67,7 +67,7 @@ MetAlyzer <- setClass("MetAlyzer",
 #'
 #' @examples
 #' \dontrun{
-#' obj <- MetAlyzerDataset(file_path = "toydata.xlsx")
+#' obj <- MetAlyzerDataset(file_path = "example_data.xlsx")
 #' }
 
 MetAlyzerDataset <- function(file_path, sheet=1) {
@@ -215,9 +215,9 @@ setMethod("resetMetabolites",
 #'
 #' @examples
 #' \dontrun{
-#' obj <- filterMetaData(obj, Methods, keep = 1:6)
+#' obj <- filterMetaData(obj, column = Methods, keep = 1:6)
 #' # or
-#' obj <- filterMetaData(obj, Methods, remove = 7)
+#' obj <- filterMetaData(obj, column = Methods, remove = 7)
 #' }
 
 setGeneric("filterMetaData",
@@ -273,8 +273,8 @@ setMethod("resetMetaData",
 #'
 #' @examples
 #' \dontrun{
-#' obj <- updateMetaData(obj, Date, format(Sys.Date()))
-#' obj <- updateMetaData(obj, Analyzed, TRUE)
+#' obj <- updateMetaData(obj, name = Date, new_colum = format(Sys.Date()))
+#' obj <- updateMetaData(obj, name = Analyzed, new_colum = TRUE)
 #' }
 
 setGeneric("updateMetaData",
@@ -301,7 +301,7 @@ setMethod("updateMetaData",
 #'
 #' @examples
 #' \dontrun{
-#' obj <- renameMetaData(obj, Methods = X1)
+#' obj <- renameMetaData(obj, Method = Group)
 #' }
 
 setGeneric("renameMetaData",
@@ -427,7 +427,7 @@ setMethod("metabolites",
 #' Create plotting data
 #'
 #' This method reshapes raw_data, quant_status and meta_data and combines them
-#' in a tibble data frame for plotting with ggplot2.
+#' together with basic statistics in a tibble data frame for plotting with ggplot2.
 #' @param MetAlyzer MetAlyzer object
 #' @param ... A selection of columns from meta_data to add to reshaped data frame
 #' @param ts A numeric vector of thresholds for CV categorization
@@ -566,7 +566,7 @@ setMethod("transformPlottingData",
 #' categorical variable is removed from grouping first). For this, $Valid must
 #' have at least one entry that is TRUE. A Tukey post-hoc test is then used to
 #' determine group names, starting with "A" followed by further letters. These
-#' group names are added to plotting_data in the column Group. Thereby,
+#' group names are added to plotting_data in the column ANOVA_group. Thereby,
 #' metabolites can be identified which are significantly higher in one or more
 #' of the categorical variable compared to all other for each metabolite.
 #' @param MetAlyzer MetAlyzer object
@@ -578,7 +578,7 @@ setMethod("transformPlottingData",
 #'
 #' @examples
 #' \dontrun{
-#' obj <- performANOVA(obj, Methods)
+#' obj <- performANOVA(obj, categorical = Methods)
 #' }
 
 setGeneric("performANOVA",
@@ -588,12 +588,14 @@ setGeneric("performANOVA",
 setMethod("performANOVA",
           "MetAlyzer",
           function(MetAlyzer, categorical) {
+            categorical <- deparse(substitute(categorical))
             plotting_data <- MetAlyzer@plotting_data
             grouping_vars <- group_vars(plotting_data)
             plotting_data <- plotting_data %>%
               group_by_at(grouping_vars, add = FALSE) %>%
-              ungroup(Method) %>%
-              mutate(ANOVA_group = calc_anova(Method, transf_Conc, Valid)) %>%
+              ungroup(categorical) %>%
+              mutate(ANOVA_group = calc_anova(get(categorical),
+                                              transf_Conc, Valid)) %>%
               group_by_at(grouping_vars)
             MetAlyzer@plotting_data <- plotting_data
             return(MetAlyzer)

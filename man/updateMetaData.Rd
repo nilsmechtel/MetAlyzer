@@ -22,7 +22,7 @@ This method adds another column to unfiltered meta_data
 }
 \examples{
 \dontrun{
-obj <- updateMetaData(obj, Date, format(Sys.Date()))
-obj <- updateMetaData(obj, Analyzed, TRUE)
+obj <- updateMetaData(obj, name = Date, new_colum = format(Sys.Date()))
+obj <- updateMetaData(obj, name = Analyzed, new_colum = TRUE)
 }
 }
