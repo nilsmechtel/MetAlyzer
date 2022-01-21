@@ -120,6 +120,7 @@ ggplot(glu_gg_df, aes(Method, Concentration, color = Status)) +
   scale_color_manual(values = c("Valid" = "#00CD66",
                                 "LOQ" = "#87CEEB",
                                 "LOD" = "#6A5ACD")) + 
+  ylab("Concentration [pmol/mg Tissue]") + 
   facet_grid(~ Tissue)
 ```
 
