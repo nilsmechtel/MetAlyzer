@@ -4,11 +4,11 @@ Title: Read and Analyze MetIDQ&trade; Software Output Files
 Version: 0.1.0
 Authors@R: 
     c(person("Nils", "Mechtel",
-            email = "mechtel@stud.uni-heidelberg.de",
+            email = "nils.mech@gmail.com",
             role = c("aut", "cre"),
             comment = c(ORCID = "0000-0002-1278-7125")),
      person("Carolin", "Andresen",
-            email = "c.andresen@dkfz-heidelberg.de",
+            email = "carolinandresen@googlemail.com",
             role = c("aut"),
             comment = c(ORCID = "0000-0002-8960-7719")))
 Depends:
