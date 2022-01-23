@@ -10,6 +10,7 @@ sum_quant_data(object)
 \item{object}{MetAlyzer object}
 }
 \description{
-This function lists the number of each quantification status and its percentage
+This function lists the number of each quantification status and its
+percentage.
 }
 \keyword{internal}

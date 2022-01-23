@@ -1,16 +1,50 @@
+#' Open file and read data
+#'
+#' This function creates a MetAlyzer object, opens the given MetIDQ output Excel
+#' sheet and extracts metabolites, raw data, quantification status and meta data.
+#'
+#' @param file_path file path
+#' @param sheet sheet index
+#'
+#' @return An MetAlyzer object
+#'
+#' @importFrom methods new
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' obj <- MetAlyzerDataset(file_path = "example_data.xlsx")
+#' }
+
+MetAlyzerDataset <- function(file_path, sheet=1) {
+  object <- new("MetAlyzer", file_path = file_path, sheet = sheet)
+  object@.full_sheet <- open_file(object)
+  object@.data_ranges <- get_data_range(object)
+  object@.orig_metabolites <- slice_metabolties(object)
+  object@metabolites <- object@.orig_metabolites
+  object@meta_data <- slice_meta_data(object)
+  object@raw_data <- slice_raw_data(object)
+  object@quant_status <- read_quant_status(object)
+  return(object)
+}
+
 #' Open Excel file
 #'
-#' This function opens the given MetIDQ output Excel file
+#' This function opens the given MetIDQ output Excel file and reads the full
+#' given sheet.
+#'
 #' @param object MetAlyzer object
+#'
+#' @importFrom openxlsx read.xlsx
 #'
 #' @keywords internal
 
 open_file <- function(object) {
-  full_sheet <- openxlsx::read.xlsx(object@file_path,
-                                    sheet = object@sheet,
-                                    colNames = FALSE,
-                                    skipEmptyRows = FALSE,
-                                    skipEmptyCols = FALSE)
+  full_sheet <- read.xlsx(object@file_path,
+                          sheet = object@sheet,
+                          colNames = FALSE,
+                          skipEmptyRows = FALSE,
+                          skipEmptyCols = FALSE)
   full_sheet <- as.matrix(full_sheet)
   full_sheet[full_sheet == "NA"] <- NA # all entries are strings
   return(full_sheet)
@@ -20,7 +54,8 @@ open_file <- function(object) {
 #' Get data range
 #'
 #' This function extracts rows and column indices to slice the .full_sheet into
-#' metabolites, raw_data and meta_data
+#' metabolites, raw_data and meta_data.
+#'
 #' @param object MetAlyzer object
 #'
 #' @keywords internal
@@ -46,15 +81,16 @@ get_data_range <- function(object) {
 }
 
 
-#' Get metabolites
+#' Slice metabolites
 #'
-#' This function extracts metabolites with their corresponding class from
-#' .full_sheet into metabolites
+#' This function extracts metabolites with their corresponding metabolite class
+#' from .full_sheet into metabolites.
+#'
 #' @param object MetAlyzer object
 #'
 #' @keywords internal
 
-read_metabolties <- function(object) {
+slice_metabolties <- function(object) {
   metabolites <- object@.full_sheet[object@.data_ranges[["class_row"]]-1, object@.data_ranges[["data_cols"]]] # metabolites are a row above classes
   classes <- object@.full_sheet[object@.data_ranges[["class_row"]], object@.data_ranges[["data_cols"]]]
   names(metabolites) <- classes
@@ -62,16 +98,15 @@ read_metabolties <- function(object) {
 }
 
 
-#' Get raw data
+#' Slice raw data
 #'
-#' This function slices measurements from .full_sheet into raw_data
+#' This function slices measurements from .full_sheet into raw_data.
+#'
 #' @param object MetAlyzer object
-#'
-#' @return
 #'
 #' @keywords internal
 
-read_raw_data <- function(object) {
+slice_raw_data <- function(object) {
   raw_data <- object@.full_sheet[object@.data_ranges[["data_rows"]],
                                  object@.data_ranges[["data_cols"]]]
   raw_data <- as.data.frame(raw_data)
@@ -81,14 +116,15 @@ read_raw_data <- function(object) {
 }
 
 
-#' Get meta data
+#' Slice meta data
 #'
-#' This function slices meta data from .full_sheet into meta_data
+#' This function slices meta data from .full_sheet into meta_data.
+#'
 #' @param object MetAlyzer object
 #'
 #' @keywords internal
 
-read_meta_data <- function(object) {
+slice_meta_data <- function(object) {
   meta_header <- paste(object@.full_sheet[object@.data_ranges[["sample_type_row"]], 1:object@.data_ranges[["class_col"]]])
   meta_data <- as.data.frame(object@.full_sheet[object@.data_ranges[["data_rows"]], 1:object@.data_ranges[["class_col"]]])
   colnames(meta_data) <- meta_header
@@ -100,11 +136,14 @@ read_meta_data <- function(object) {
 }
 
 
-#' Get quantification status
+#' Read quantification status
 #'
 #' This function gets the background color of each cell in .full_sheet and
-#' assigns it to the corresponding quantification status
+#' assigns it to the corresponding quantification status.
+#'
 #' @param object MetAlyzer object
+#'
+#' @importFrom openxlsx loadWorkbook getSheetNames
 #'
 #' @keywords internal
 
@@ -117,8 +156,8 @@ read_quant_status <- function(object) {
     "Invalid" = "FFFFCC",
     "Incomplete" = "???"
   )
-  wb <- openxlsx::loadWorkbook(file = object@file_path)
-  sheet_name <- openxlsx::getSheetNames(file = object@file_path)[object@sheet]
+  wb <- loadWorkbook(file = object@file_path)
+  sheet_name <- getSheetNames(file = object@file_path)[object@sheet]
   styles <- wb$styleObjects
   mat_BG <- matrix(NA, ncol = ncol(object@.full_sheet),
                    nrow = nrow(object@.full_sheet))

@@ -1,9 +1,16 @@
 Package: MetAlyzer
 Type: Package
-Title: Read and analyze MetIDQ output files in Excel format
+Title: Read and Analyze MetIDQ&trade; Software Output Files
 Version: 0.1.0
-Author: Nils Mechtel, Carolin Andresen
-Maintainer: Nils Mechtel <nils.mech@gmail.com>
+Authors@R: 
+    c(person("Nils", "Mechtel",
+            email = "mechtel@stud.uni-heidelberg.de",
+            role = c("aut", "cre"),
+            comment = c(ORCID = "0000-0002-1278-7125")),
+     person("Carolin", "Andresen",
+            email = "c.andresen@dkfz-heidelberg.de",
+            role = c("aut"),
+            comment = c(ORCID = "0000-0002-8960-7719")))
 Depends:
     R (>= 4.0.0)
 Imports:
@@ -12,12 +19,12 @@ Imports:
     tidyr,
     tibble,
     agricolae,
-    methods     
-Description: The MetAlyzer class makes it easy to load MetIDQ output files into R, perform filtering and statistical analysis and prepare for plotting with ggplot2. The resulting format corresponds to input data of the Shiny app MetaboExtract (https://www.metaboextract.shiny.dkfz.de/MetaboExtract/).
+    methods,
+    rlang  
+Description: The MetAlyzer S4 object provides functions to read and reformat metabolomics data for convenient data handling, statistics and downstream analysis. The resulting format corresponds to input data of the Shiny app MetaboExtract (<https://www.metaboextract.shiny.dkfz.de/MetaboExtract/>).
 License: GPL-3
 Encoding: UTF-8
 Language: en-US
-LazyData: true
 RoxygenNote: 7.1.2
 Suggests:
     rmarkdown,

@@ -11,9 +11,9 @@ A S4 class to read and analyze MetIDQ output
 \section{Slots}{
 
 \describe{
-\item{\code{file_path}}{A length-one character vector}
+\item{\code{file_path}}{A length-one character vector giving the file path}
 
-\item{\code{sheet}}{A length-one numeric vector}
+\item{\code{sheet}}{A length-one numeric vector giving the sheet index}
 
 \item{\code{metabolites}}{A character vector with all 630 measured metabolites and
 optional 234 additional metabolism indicators}
@@ -34,10 +34,13 @@ quant_status and meta_data for plotting with ggplot2}
 
 \item{\code{.data_ranges}}{A length-six numeric list with rows and columns
 information for slicing}
+
+\item{\code{.orig_metabolites}}{A character vector storing the unfiltered metabolites
+vector}
 }}
 
 \examples{
-fpath <- system.file("extdata", "Extraction_test.xlsx", package = "MetAlyzer")
+fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
 obj <- MetAlyzerDataset(file_path = fpath)
 obj <- filterMetabolites(obj)
 show(obj)
@@ -46,10 +49,10 @@ summariseQuantData(obj)
 obj <- renameMetaData(obj, Method = Group)
 obj <- filterMetaData(obj, column = Method, keep = 1:6)
 
+\dontrun{
 obj <- createPlottingData(obj, Method, Tissue)
 obj <- imputePlottingData(obj, Method, Metabolite)
 obj <- transformPlottingData(obj)
-\donttest{
-obj <- performANOVA(obj, categorical = Methods)
+obj <- performANOVA(obj, categorical = Method)
 }
 }
