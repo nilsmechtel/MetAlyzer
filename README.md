@@ -1,12 +1,12 @@
 MetAlyzer
 ========
 
-**An R Package to read and analyze MetIDQ&trade; output**
-
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/andresenc/MetAlyzer/workflows/R-CMD-check/badge.svg)](https://github.com/andresenc/MetAlyzer/actions)
 [![license](https://img.shields.io/badge/license-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 <!-- badges: end -->
+
+**An R Package to read and analyze MetIDQ&trade; output**
 
 The package provides methods to read output files from the MetIDQ&trade; software into R. Metabolomics data is read and reformatted into an S4 object for convenient data handling, statistics and downstream analysis.
 
