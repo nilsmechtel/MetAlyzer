@@ -3,7 +3,7 @@ MetAlyzer
 
 **An R Package to read and analyze MetIDQ&trade; output**
 
-The package provides functions to read output files from the MetIDQ&trade; software into R. Metabolomics data is read and reformatted into an S4 object for convenient data handling, statistics and downstream analysis.
+The package provides methods to read output files from the MetIDQ&trade; software into R. Metabolomics data is read and reformatted into an S4 object for convenient data handling, statistics and downstream analysis.
 
 ## Install
 
