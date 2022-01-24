@@ -3,7 +3,6 @@ MetAlyzer
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/andresenc/MetAlyzer/workflows/R-CMD-check/badge.svg)](https://github.com/andresenc/MetAlyzer/actions)
-[![Rdoc](https://www.rdocumentation.org/badges/version/MetAlyzer)](https://www.rdocumentation.org/packages/MetAlyzer)
 [![license](https://img.shields.io/badge/license-GPL--3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0.en.html)
 <!-- badges: end -->
 
