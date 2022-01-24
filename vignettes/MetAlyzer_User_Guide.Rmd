@@ -17,7 +17,7 @@ library(ggplot2)
 library(dplyr)
 ```
 
-The package provides functions to read output files from the MetIDQ:&trade; software into R. Metabolomics data is read and reformatted into an S4 object for convenient data handling, statistics and downstream analysis.
+The package provides methods to read output files from the MetIDQ&trade; software into R. Metabolomics data is read and reformatted into an S4 object for convenient data handling, statistics and downstream analysis.
 
 ## Install
 
@@ -51,7 +51,7 @@ mpath <- system.file("extdata", "example_meta_data.rds", package = "MetAlyzer")
 obj <- MetAlyzerDataset(file_path = fpath)
 show(obj)
 ```
-The overview shows the different slots in the MetAlyzer object. The 630 metabolites are accompanied by 232 metabolite indicators calculated by the MetIDQ:&trade; software.
+The overview shows the different slots in the MetAlyzer object. The 630 metabolites are accompanied by 232 metabolite indicators calculated by the MetIDQ&trade; software.
 
 The slots can be accessed using the functions *metaData*, *rawData*, *quantStatus* and *metabolites*.
 
