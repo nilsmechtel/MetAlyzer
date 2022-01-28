@@ -1,6 +1,6 @@
-#' Show a MetAlyzer object
+#' Show a 'MetAlyzer' object
 #'
-#' This method shows a summary of MetAlyzer slot values.
+#' This method shows a summary of 'MetAlyzer' slot values.
 #'
 #' @param object MetAlyzer object
 #'
@@ -10,11 +10,13 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
+#' obj <- MetAlyzerDataset(file_path = fpath)
+#'
 #' show(obj)
 #' # or
 #' obj
-#' }
+
 
 setMethod("show",
           "MetAlyzer",
@@ -36,9 +38,10 @@ setMethod("show",
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
+#' obj <- MetAlyzerDataset(file_path = fpath)
+#'
 #' summariseQuantData(obj)
-#' }
 
 setGeneric("summariseQuantData",
            function(object)
@@ -66,9 +69,10 @@ setMethod("summariseQuantData",
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
+#' obj <- MetAlyzerDataset(file_path = fpath)
+#'
 #' metaData(obj)
-#' }
 
 setGeneric("metaData",
            function(object)
@@ -95,9 +99,10 @@ setMethod("metaData",
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
+#' obj <- MetAlyzerDataset(file_path = fpath)
+#'
 #' metabolites(obj)
-#' }
 
 setGeneric("metabolites",
            function(object)
@@ -125,9 +130,11 @@ setMethod("metabolites",
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' rawData(obj)
-#' }
+#' fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
+#' obj <- MetAlyzerDataset(file_path = fpath)
+#'
+#' raw_data <- rawData(obj)
+#' raw_data[c(1:5), c(1:5)]
 
 setGeneric("rawData",
            function(object)
@@ -155,9 +162,11 @@ setMethod("rawData",
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' quantStatus(obj)
-#' }
+#' fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
+#' obj <- MetAlyzerDataset(file_path = fpath)
+#'
+#' quant_status <- quantStatus(obj)
+#' quant_status[c(1:5), c(1:5)]
 
 setGeneric("quantStatus",
            function(object)
@@ -184,7 +193,14 @@ setMethod("quantStatus",
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
+#' #' fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
+#' obj <- MetAlyzerDataset(file_path = fpath)
+#'
+#' obj <- createPlottingData(obj, Tissue, Method,
+#' ts = c(0.1, 0.2, 0.3),
+#' valid_vec = c("Valid", "LOQ"), t = 0.5)
+#'
 #' plottingData(obj)
 #' }
 

@@ -2,7 +2,7 @@
 #'
 #' This function reshapes raw_data, quant_status and meta_data and combines them
 #' together with basic statistics in a tibble data frame for plotting with
-#' ggplot2. plotting_data is grouped by metabolites as well as the selection of
+#' 'ggplot2'. plotting_data is grouped by metabolites as well as the selection of
 #' additional variables. Statistics are then calculated per group.
 #' @param object MetAlyzer object
 #' @param ... A selection of columns from meta_data to add to reshaped data frame
@@ -25,7 +25,7 @@ create_plotting_data <- function(object, ..., ts, valid_vec, t) {
 #' Reshape data
 #'
 #' This function reshapes raw_data, quant_status and meta_data and combines them
-#' in a tibble data frame for plotting with ggplot2.
+#' in a tibble data frame for plotting with 'ggplot2'.
 #' @param object MetAlyzer object
 #' @param ... A selection of columns from meta_data to add to reshaped data frame
 #'

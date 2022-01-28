@@ -1,4 +1,4 @@
-#' A S4 class to read and analyze MetIDQ output
+#' A S4 class to read and analyze 'MetIDQ' output
 #'
 #' @slot file_path A length-one character vector giving the file path
 #' @slot sheet A length-one numeric vector giving the sheet index
@@ -30,7 +30,7 @@
 #' obj <- renameMetaData(obj, Method = Group)
 #' obj <- filterMetaData(obj, column = Method, keep = 1:6)
 #'
-#' \dontrun{
+#' \donttest{
 #' obj <- createPlottingData(obj, Method, Tissue)
 #' obj <- imputePlottingData(obj, Method, Metabolite)
 #' obj <- transformPlottingData(obj)

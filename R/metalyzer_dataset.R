@@ -1,6 +1,6 @@
 #' Open file and read data
 #'
-#' This function creates a MetAlyzer object, opens the given MetIDQ output Excel
+#' This function creates a 'MetAlyzer' object, opens the given 'MetIDQ' output Excel
 #' sheet and extracts metabolites, raw data, quantification status and meta data.
 #'
 #' @param file_path file path
@@ -12,9 +12,8 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' obj <- MetAlyzerDataset(file_path = "example_data.xlsx")
-#' }
+#' fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
+#' obj <- MetAlyzerDataset(file_path = fpath)
 
 MetAlyzerDataset <- function(file_path, sheet=1) {
   object <- new("MetAlyzer", file_path = file_path, sheet = sheet)

@@ -1,7 +1,7 @@
 #' Transform plotting data
 #'
 #' This method performs a transformation of imputed concentration values
-#' (imp_Conc) with a given funciton. NA values are skipped. The transformed
+#' (imp_Conc) with a given function. NA values are skipped. The transformed
 #' values are added to plotting_data in an extra column transf_Conc.
 #'
 #' @param object MetAlyzer object

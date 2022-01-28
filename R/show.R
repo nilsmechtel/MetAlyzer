@@ -1,6 +1,6 @@
-#' Show the MetAlyzer object
+#' Show the 'MetAlyzer' object
 #'
-#' This function shows a summary of MetAlyzer slot values.
+#' This function shows a summary of 'MetAlyzer' slot values.
 #'
 #' @param object MetAlyzer object
 #'
