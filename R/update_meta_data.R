@@ -16,9 +16,8 @@ update_meta_data <- function(MetAlyzer, name, new_colum) {
     levels <- unique(new_colum)
   }
   meta_data <- MetAlyzer@meta_data
-  chr_name <- deparse(substitute(name))
-  meta_data[,chr_name] <- factor(NA, levels = levels)
-  meta_data[,chr_name][meta_data$Filter == TRUE] <- new_colum
+  meta_data[,name] <- factor(NA, levels = levels)
+  meta_data[,name][meta_data$Filter == TRUE] <- new_colum
   MetAlyzer@meta_data <- meta_data
   return(MetAlyzer)
 }

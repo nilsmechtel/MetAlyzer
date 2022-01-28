@@ -15,11 +15,12 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
+#' obj <- MetAlyzerDataset(file_path = fpath)
+#'
 #' obj <- filterMetaData(obj, column = Methods, keep = 1:6)
 #' # or
 #' obj <- filterMetaData(obj, column = Methods, remove = 7)
-#' }
 
 setGeneric("filterMetaData",
            function(object, column,
@@ -47,9 +48,10 @@ setMethod("filterMetaData",
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
+#' obj <- MetAlyzerDataset(file_path = fpath)
+#'
 #' obj <- resetMetaData(obj)
-#' }
 
 setGeneric("resetMetaData",
            function(object)
@@ -79,10 +81,11 @@ setMethod("resetMetaData",
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
+#' obj <- MetAlyzerDataset(file_path = fpath)
+#'
 #' obj <- updateMetaData(obj, name = Date, new_colum = format(Sys.Date()))
 #' obj <- updateMetaData(obj, name = Analyzed, new_colum = TRUE)
-#' }
 
 setGeneric("updateMetaData",
            function(object, name, new_colum)
@@ -93,13 +96,14 @@ setGeneric("updateMetaData",
 setMethod("updateMetaData",
           "MetAlyzer",
           function(object, name, new_colum) {
+            name <- deparse(substitute(name))
             update_meta_data(object, name, new_colum)
           }
 )
 
 #' Rename meta data
 #'
-#' This method renames a column of meta_data using rename {dplyr}.
+#' This method renames a column of meta_data using rename 'dplyr'.
 #'
 #' @param object MetAlyzer object
 #' @param ... Use new_name = old_name to rename selected variables
@@ -109,9 +113,10 @@ setMethod("updateMetaData",
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
+#' obj <- MetAlyzerDataset(file_path = fpath)
+#'
 #' obj <- renameMetaData(obj, Method = Group)
-#' }
 
 setGeneric("renameMetaData",
            function(object, ...)
