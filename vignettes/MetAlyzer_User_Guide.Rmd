@@ -130,15 +130,15 @@ In case NAs or zeros are produced, we provide zero imputation as described in ([
 length(which(gg_df$Concentration == 0))
 ```
 
-Now we impute the data for each tissue separately.
+Now we impute the data for each tissue and metabolite separately.
 ```{r imputation}
-obj <- imputePlottingData(obj, Tissue)
+obj <- imputePlottingData(obj, Tissue, Metabolite)
 imp_gg_df <- plottingData(obj)
 ```
 
-After the imputation, the lowest values is non-zero. The imputation can additionally be performed for each metabolite separately (recommended), which we do not show for simplicity since some metabolites only show zero values. The imputed values are written into column "imp_Conc".
+After the imputation, the lowest values is non-zero. The imputed values are written into column "imp_Conc". NAs are not imputed by default.
 ```{r after_imp}
-min(imp_gg_df$imp_Conc)
+min(imp_gg_df$imp_Conc, na.rm = TRUE)
 ```
 
 Raw or imputed concentrations in the object can directly be transformed using the function *transformPlottingData*. By default the data is log2 transformed and written into the column "transf_Conc". 
