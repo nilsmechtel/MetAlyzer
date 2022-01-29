@@ -4,7 +4,7 @@ author: "Nils Mechtel & Carolin Andresen"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 Vignette: >
-  %\VignetteIndexEntry{Read and Analyze 'MetIDQ&trade;' Software Output Files}
+  %\VignetteIndexEntry{Read and Analyze MetIDQ&trade; Software Output Files}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
   %\VignettePackage{MetAlyzer}
