@@ -17,11 +17,11 @@
 #' @export
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
 #' obj <- MetAlyzerDataset(file_path = fpath)
 #'
-#' obj <- createPlottingData(obj, Tissue, Method,
+#' obj <- createPlottingData(obj, Tissue, Group,
 #' ts = c(0.1, 0.2, 0.3),
 #' valid_vec = c("Valid", "LOQ"), t = 0.5)
 #' }
@@ -61,7 +61,7 @@ setMethod("createPlottingData",
 #' @export
 #'
 #' @examples
-#' To see an example, please check out the vignette.
+#' # To see an example, please check out the vignette.
 
 setGeneric("imputePlottingData",
            function(object, ...,
@@ -94,7 +94,7 @@ setMethod("imputePlottingData",
 #' @export
 #'
 #' @examples
-#' To see an example, please check out the vignette.
+#' # To see an example, please check out the vignette.
 
 setGeneric("transformPlottingData",
            function(object,
@@ -130,7 +130,7 @@ setMethod("transformPlottingData",
 #' @export
 #'
 #' @examples
-#' To see an example, please check out the vignette.
+#' # To see an example, please check out the vignette.
 
 setGeneric("performANOVA",
            function(object, categorical)
@@ -158,7 +158,9 @@ setMethod("performANOVA",
 #' @export
 #'
 #' @examples
-
+#' \dontrun{
+#' obj <- setPlottingData(obj, updated_plotting_data)
+#' }
 
 setGeneric("setPlottingData",
            function(object, plotting_data)

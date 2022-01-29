@@ -193,7 +193,7 @@ setMethod("quantStatus",
 #' @export
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' #' fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
 #' obj <- MetAlyzerDataset(file_path = fpath)
 #'

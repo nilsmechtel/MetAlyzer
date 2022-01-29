@@ -30,7 +30,7 @@
 #' obj <- renameMetaData(obj, Method = Group)
 #' obj <- filterMetaData(obj, column = Method, keep = 1:6)
 #'
-#' \donttest{
+#' \dontrun{
 #' obj <- createPlottingData(obj, Method, Tissue)
 #' obj <- imputePlottingData(obj, Method, Metabolite)
 #' obj <- transformPlottingData(obj)

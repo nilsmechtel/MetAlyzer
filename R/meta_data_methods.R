@@ -18,9 +18,9 @@
 #' fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
 #' obj <- MetAlyzerDataset(file_path = fpath)
 #'
-#' obj <- filterMetaData(obj, column = Methods, keep = 1:6)
+#' obj <- filterMetaData(obj, column = Group, keep = 1:6)
 #' # or
-#' obj <- filterMetaData(obj, column = Methods, remove = 7)
+#' obj <- filterMetaData(obj, column = Group, remove = 7)
 
 setGeneric("filterMetaData",
            function(object, column,
