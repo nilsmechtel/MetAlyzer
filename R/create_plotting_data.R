@@ -35,11 +35,11 @@ create_plotting_data <- function(object, ..., ts, valid_vec, t) {
 #'
 #' @keywords internal
 
-plotting_data <- function(object, ...) {
-  meta_data <- get_filtered_data(object, slot = "meta", verbose = FALSE)
-  raw_data <- get_filtered_data(object, slot = "data", verbose = FALSE)
-  quant_status <- get_filtered_data(object, slot = "quant", verbose = FALSE)
-  if (all(nrow(raw_data)>0, nrow(quant_status)>0)) {
+plotting_data <- function(object, ..., ungrouped = NULL) {
+  meta_data <- get_filtered_data(object, slot = "meta")
+  raw_data <- get_filtered_data(object, slot = "data")
+  quant_status <- get_filtered_data(object, slot = "quant")
+  if (nrow(meta_data) > 0) {
     extra_columns <- select(meta_data, ...)
     raw_data <- bind_cols(raw_data, extra_columns)
     gathered_data <- gather(raw_data, key = "Metabolite",
@@ -72,6 +72,8 @@ plotting_data <- function(object, ...) {
                                           levels = levels)
     }
     return(plotting_data)
+  } else {
+    return(data.frame())
   }
 }
 

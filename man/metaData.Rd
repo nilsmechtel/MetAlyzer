@@ -28,5 +28,6 @@ all columns.
 fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
 obj <- MetAlyzerDataset(file_path = fpath)
 
-metaData(obj)
+meta_data <- metaData(obj)
+head(meta_data)
 }

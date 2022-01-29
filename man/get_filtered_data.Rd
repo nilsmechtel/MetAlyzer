@@ -4,14 +4,12 @@
 \alias{get_filtered_data}
 \title{Get filtered data}
 \usage{
-get_filtered_data(object, slot, verbose = TRUE)
+get_filtered_data(object, slot)
 }
 \arguments{
 \item{object}{MetAlyzer object}
 
 \item{slot}{A character value specifying which data frame to slice}
-
-\item{verbose}{If TRUE prints which filtered data frame is returned}
 }
 \description{
 This function returns the filtered meta_data, raw_data or quant_status

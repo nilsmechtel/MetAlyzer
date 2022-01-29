@@ -8,7 +8,7 @@
 #' @keywords internal
 
 sum_quant_data <- function(object) {
-  quant_status <- get_filtered_data(object, slot = "quant", verbose = FALSE)
+  quant_status <- get_filtered_data(object, slot = "quant")
   nas <- sum(is.na(quant_status))
   total <- nrow(quant_status) * ncol(quant_status)
   print_number <- function(name) {

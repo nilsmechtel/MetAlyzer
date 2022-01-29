@@ -26,7 +26,5 @@ This method replaces plotting_data with an updated version.
 }}
 
 \examples{
-\dontrun{
-obj <- setPlottingData(obj, updated_plotting_data)
-}
+# To see an example, please check out the vignette.
 }

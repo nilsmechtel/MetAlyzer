@@ -9,8 +9,8 @@
 #' @keywords internal
 
 show_obj <- function(object) {
-  meta_data <- get_filtered_data(object, slot = "meta", verbose = FALSE)
-  quant_status <- get_filtered_data(object, slot = "quant", verbose = FALSE)
+  meta_data <- get_filtered_data(object, slot = "meta")
+  quant_status <- get_filtered_data(object, slot = "quant")
   if (length(object@file_path) > 0) {
     s_fp <- strsplit(normalizePath(object@file_path), "/")[[1]]
     file <- tail(s_fp, 1)

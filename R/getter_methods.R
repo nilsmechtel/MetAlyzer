@@ -72,7 +72,8 @@ setMethod("summariseQuantData",
 #' fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
 #' obj <- MetAlyzerDataset(file_path = fpath)
 #'
-#' metaData(obj)
+#' meta_data <- metaData(obj)
+#' head(meta_data)
 
 setGeneric("metaData",
            function(object)
@@ -134,7 +135,7 @@ setMethod("metabolites",
 #' obj <- MetAlyzerDataset(file_path = fpath)
 #'
 #' raw_data <- rawData(obj)
-#' raw_data[c(1:5), c(1:5)]
+#' head(raw_data, c(5, 5))
 
 setGeneric("rawData",
            function(object)
@@ -166,7 +167,7 @@ setMethod("rawData",
 #' obj <- MetAlyzerDataset(file_path = fpath)
 #'
 #' quant_status <- quantStatus(obj)
-#' quant_status[c(1:5), c(1:5)]
+#' head(quant_status, c(5, 5))
 
 setGeneric("quantStatus",
            function(object)
@@ -193,13 +194,10 @@ setMethod("quantStatus",
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
 #' obj <- MetAlyzerDataset(file_path = fpath)
-#'
-#' obj <- createPlottingData(obj, Tissue, Method,
-#' ts = c(0.1, 0.2, 0.3),
-#' valid_vec = c("Valid", "LOQ"), t = 0.5)
+#' obj <- createPlottingData(obj, Tissue, Group)
 #'
 #' plottingData(obj)
 #' }

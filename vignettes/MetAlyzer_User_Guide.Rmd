@@ -4,7 +4,7 @@ author: "Nils Mechtel & Carolin Andresen"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 Vignette: >
-  %\VignetteIndexEntry{Read and analyze MetIDQ output files in Excel format}
+  %\VignetteIndexEntry{Read and Analyze 'MetIDQ&trade;' Software Output Files}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
   %\VignettePackage{MetAlyzer}
@@ -168,3 +168,10 @@ anv_gg_df <- plottingData(obj)
 head(data.frame(anv_gg_df))
 ```
 
+Any method labeled with an "A" can now be considered optimal among all tested methods.
+
+```{r, ANOVA_optimal}
+anv_gg_df$optimal <- sapply(anv_gg_df$ANOVA_group, function(g) grepl("A", g))
+obj <- setPlottingData(obj, anv_gg_df)
+head(data.frame(anv_gg_df))
+```

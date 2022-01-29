@@ -153,7 +153,7 @@ read_quant_status <- function(object) {
     "LOD" = "6A5ACD", # < LOD
     "ISTD Out of Range" = "FFFF33",
     "Invalid" = "FFFFCC",
-    "Incomplete" = "???"
+    "Incomplete" = "FFCCCC"
   )
   wb <- loadWorkbook(file = object@file_path)
   sheet_name <- getSheetNames(file = object@file_path)[object@sheet]
@@ -177,7 +177,7 @@ read_quant_status <- function(object) {
   quant_status <- as.data.frame(mat_BG)[object@.data_ranges[["data_rows"]],
                                  object@.data_ranges[["data_cols"]]]
   colnames(quant_status) <- object@metabolites
-  quant_status[is.na(object@raw_data)] <- NA
+  # quant_status[is.na(object@raw_data)] <- NA
   quant_status[] <- lapply(quant_status, function(x) {
     factor(x, levels = names(status_list))
   })
