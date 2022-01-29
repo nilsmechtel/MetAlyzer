@@ -147,6 +147,7 @@ obj <- transformPlottingData(obj)
 trans_gg_df <- plottingData(obj)
 head(trans_gg_df)
 ```
+
 To plot imputed and transformed data, we filter again for glutamic acid:
 ```{r, glu_plot_transformed, fig.width=7, fig.height=4.5}
 trans_glu_gg_df <- filter(trans_gg_df, Metabolite == "Glu")
