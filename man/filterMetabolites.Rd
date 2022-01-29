@@ -41,8 +41,9 @@ overwrites the "class_name" argument!
 }}
 
 \examples{
-\dontrun{
+fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
+obj <- MetAlyzerDataset(file_path = fpath)
+
 obj <- filterMetabolites(obj, class_name = "Metabolism Indicators")
 obj <- filterMetabolites(obj, metabo_vec = c("C0", "C2", "C3"))
-}
 }

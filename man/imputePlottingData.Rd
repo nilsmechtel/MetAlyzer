@@ -33,7 +33,5 @@ column imp_Conc.
 }}
 
 \examples{
-\dontrun{
-imputePlottingData(obj, Tissue, Metabolite, i = 0.2, imputeNA = FALSE)
-}
+# To see an example, please check out the vignette.
 }

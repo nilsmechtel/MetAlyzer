@@ -25,6 +25,13 @@ This method returns the plotting_data tibble data frame.
 
 \examples{
 \dontrun{
+#' fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
+obj <- MetAlyzerDataset(file_path = fpath)
+
+obj <- createPlottingData(obj, Tissue, Method,
+ts = c(0.1, 0.2, 0.3),
+valid_vec = c("Valid", "LOQ"), t = 0.5)
+
 plottingData(obj)
 }
 }

@@ -25,7 +25,9 @@ metabolites (columns).
 }}
 
 \examples{
-\dontrun{
-rawData(obj)
-}
+fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
+obj <- MetAlyzerDataset(file_path = fpath)
+
+raw_data <- rawData(obj)
+raw_data[c(1:5), c(1:5)]
 }

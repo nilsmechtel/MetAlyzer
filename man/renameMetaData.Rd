@@ -18,7 +18,7 @@ renameMetaData(object, ...)
 An updated MetAlyzer object
 }
 \description{
-This method renames a column of meta_data using rename {dplyr}.
+This method renames a column of meta_data using rename 'dplyr'.
 }
 \section{Methods (by class)}{
 \itemize{
@@ -26,7 +26,8 @@ This method renames a column of meta_data using rename {dplyr}.
 }}
 
 \examples{
-\dontrun{
+fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
+obj <- MetAlyzerDataset(file_path = fpath)
+
 obj <- renameMetaData(obj, Method = Group)
-}
 }

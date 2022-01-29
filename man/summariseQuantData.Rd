@@ -25,7 +25,8 @@ percentage.
 }}
 
 \examples{
-\dontrun{
+fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
+obj <- MetAlyzerDataset(file_path = fpath)
+
 summariseQuantData(obj)
-}
 }

@@ -24,7 +24,8 @@ This method returns the filtered metabolites vector.
 }}
 
 \examples{
-\dontrun{
+fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
+obj <- MetAlyzerDataset(file_path = fpath)
+
 metabolites(obj)
-}
 }

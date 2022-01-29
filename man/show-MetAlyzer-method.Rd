@@ -2,7 +2,7 @@
 % Please edit documentation in R/getter_methods.R
 \name{show,MetAlyzer-method}
 \alias{show,MetAlyzer-method}
-\title{Show a MetAlyzer object}
+\title{Show a 'MetAlyzer' object}
 \usage{
 \S4method{show}{MetAlyzer}(object)
 }
@@ -13,12 +13,13 @@
 A summary of the MetAlyzer object
 }
 \description{
-This method shows a summary of MetAlyzer slot values.
+This method shows a summary of 'MetAlyzer' slot values.
 }
 \examples{
-\dontrun{
+fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
+obj <- MetAlyzerDataset(file_path = fpath)
+
 show(obj)
 # or
 obj
-}
 }

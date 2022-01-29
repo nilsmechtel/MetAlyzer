@@ -29,8 +29,5 @@ values are added to plotting_data in an extra column transf_Conc.
 }}
 
 \examples{
-\dontrun{
-obj <- transformPlottingData(obj, func = log2)
-obj <- transformPlottingData(obj, func = log)
-}
+# To see an example, please check out the vignette.
 }

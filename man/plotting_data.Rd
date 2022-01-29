@@ -13,6 +13,6 @@ plotting_data(object, ...)
 }
 \description{
 This function reshapes raw_data, quant_status and meta_data and combines them
-in a tibble data frame for plotting with ggplot2.
+in a tibble data frame for plotting with 'ggplot2'.
 }
 \keyword{internal}

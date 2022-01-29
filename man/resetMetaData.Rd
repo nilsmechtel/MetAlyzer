@@ -24,7 +24,8 @@ This method resets the filter of meta_data.
 }}
 
 \examples{
-\dontrun{
+fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
+obj <- MetAlyzerDataset(file_path = fpath)
+
 obj <- resetMetaData(obj)
-}
 }

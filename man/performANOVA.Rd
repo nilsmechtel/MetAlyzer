@@ -33,7 +33,5 @@ of the categorical variable compared to all other for each metabolite.
 }}
 
 \examples{
-\dontrun{
-obj <- performANOVA(obj, categorical = Methods)
-}
+# To see an example, please check out the vignette.
 }

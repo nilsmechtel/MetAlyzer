@@ -2,7 +2,7 @@
 % Please edit documentation in R/show.R
 \name{show_obj}
 \alias{show_obj}
-\title{Show the MetAlyzer object}
+\title{Show the 'MetAlyzer' object}
 \usage{
 show_obj(object)
 }
@@ -10,6 +10,6 @@ show_obj(object)
 \item{object}{MetAlyzer object}
 }
 \description{
-This function shows a summary of MetAlyzer slot values.
+This function shows a summary of 'MetAlyzer' slot values.
 }
 \keyword{internal}

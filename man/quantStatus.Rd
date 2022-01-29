@@ -25,7 +25,9 @@ and metabolites (columns).
 }}
 
 \examples{
-\dontrun{
-quantStatus(obj)
-}
+fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
+obj <- MetAlyzerDataset(file_path = fpath)
+
+quant_status <- quantStatus(obj)
+quant_status[c(1:5), c(1:5)]
 }

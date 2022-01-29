@@ -29,8 +29,9 @@ This method adds another column to filtered meta_data.
 }}
 
 \examples{
-\dontrun{
+fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
+obj <- MetAlyzerDataset(file_path = fpath)
+
 obj <- updateMetaData(obj, name = Date, new_colum = format(Sys.Date()))
 obj <- updateMetaData(obj, name = Analyzed, new_colum = TRUE)
-}
 }
