@@ -194,7 +194,7 @@ setMethod("quantStatus",
 #'
 #' @examples
 #' \dontrun{
-#' #' fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
+#' fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
 #' obj <- MetAlyzerDataset(file_path = fpath)
 #'
 #' obj <- createPlottingData(obj, Tissue, Method,
