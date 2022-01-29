@@ -96,8 +96,7 @@ setGeneric("updateMetaData",
 setMethod("updateMetaData",
           "MetAlyzer",
           function(object, name, new_colum) {
-            name <- deparse(substitute(name))
-            update_meta_data(object, name, new_colum)
+            update_meta_data(object, deparse(substitute(name)), new_colum)
           }
 )
 

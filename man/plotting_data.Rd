@@ -4,12 +4,15 @@
 \alias{plotting_data}
 \title{Reshape data}
 \usage{
-plotting_data(object, ...)
+plotting_data(object, ..., ungrouped)
 }
 \arguments{
 \item{object}{MetAlyzer object}
 
 \item{...}{A selection of columns from meta_data to add to reshaped data frame}
+
+\item{ungrouped}{A column from meta_data to add to reshaped data frame that
+will not be used as grouping variables}
 }
 \description{
 This function reshapes raw_data, quant_status and meta_data and combines them

@@ -8,6 +8,7 @@
 createPlottingData(
   object,
   ...,
+  ungrouped = NULL,
   ts = c(0.1, 0.2, 0.3),
   valid_vec = c("Valid", "LOQ"),
   t = 0.5
@@ -16,6 +17,7 @@ createPlottingData(
 \S4method{createPlottingData}{MetAlyzer}(
   object,
   ...,
+  ungrouped = NULL,
   ts = c(0.1, 0.2, 0.3),
   valid_vec = c("Valid", "LOQ"),
   t = 0.5
@@ -25,6 +27,9 @@ createPlottingData(
 \item{object}{MetAlyzer object}
 
 \item{...}{A selection of columns from meta_data to add to reshaped data frame}
+
+\item{ungrouped}{A column from meta_data to add to reshaped data frame that
+will not be used as grouping variables}
 
 \item{ts}{A numeric vector of thresholds between 0 and 1 for CV categorization}
 
@@ -53,6 +58,7 @@ fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
 obj <- MetAlyzerDataset(file_path = fpath)
 
 obj <- createPlottingData(obj, Tissue, Group,
+ungrouped = NULL,
 ts = c(0.1, 0.2, 0.3),
 valid_vec = c("Valid", "LOQ"), t = 0.5)
 }
