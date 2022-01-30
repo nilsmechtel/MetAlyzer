@@ -11,7 +11,7 @@ Authors@R:
             email = "carolinandresen@googlemail.com",
             role = c("aut"),
             comment = c(ORCID = "0000-0002-8960-7719")),
-     person("Daniel", "Hübschmann",
+     person("Daniel", "Huebschmann",
             email = "d.huebschmann@dkfz-heidelberg.de",
             role = c("aut"),
             comment = c(ORCID = "0000-0002-6041-7049")))
