@@ -10,7 +10,11 @@ Authors@R:
      person("Carolin", "Andresen",
             email = "carolinandresen@googlemail.com",
             role = c("aut"),
-            comment = c(ORCID = "0000-0002-8960-7719")))
+            comment = c(ORCID = "0000-0002-8960-7719")),
+     person("Daniel", "Hübschmann",
+            email = "d.huebschmann@dkfz-heidelberg.de",
+            role = c("aut"),
+            comment = c(ORCID = "0000-0002-6041-7049")))
 Depends:
     R (>= 4.0.0)
 Imports:
