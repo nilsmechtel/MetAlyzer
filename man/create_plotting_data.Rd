@@ -4,12 +4,15 @@
 \alias{create_plotting_data}
 \title{Create plotting data}
 \usage{
-create_plotting_data(object, ..., ts, valid_vec, t)
+create_plotting_data(object, ..., ungrouped, ts, valid_vec, t)
 }
 \arguments{
 \item{object}{MetAlyzer object}
 
 \item{...}{A selection of columns from meta_data to add to reshaped data frame}
+
+\item{ungrouped}{A column from meta_data to add to reshaped data frame that
+will not be used as grouping variables}
 
 \item{ts}{A numeric vector of thresholds for CV categorization}
 

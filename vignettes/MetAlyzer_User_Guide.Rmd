@@ -103,9 +103,9 @@ head(metaData(obj))
 ```
 
 ### Reformat for plotting
-For further filtering and plotting, the data can be reformatted into a data frame. This allows easy plotting with e.g. ggplot2 and filtering for e.g. metabolites of interest or the quantification status. If replicates are available, some statistics is automatically calculated. For our study we can add the "Method" and "Tissue" to indicate there are replicates for these variables.
+For further filtering and plotting, the data can be reformatted into a data frame. This allows easy plotting with e.g. ggplot2 and filtering by e.g. the metabolites of interest or the quantification status. If replicates are available, some statistics are automatically calculated for each metabolite and each additional grouping variable that is passed. For our study, we can add "Method" and "Tissue" to indicate that there are replicates for these variables. In addition, it is possible to pass another column from the meta data that will be added but not used as a grouping variable for the statistics.
 ```{r plotting_data}
-obj <- createPlottingData(obj, Method, Tissue)
+obj <- createPlottingData(obj, Method, Tissue, ungrouped = Replicate)
 gg_df <- plottingData(obj)
 
 head(gg_df)

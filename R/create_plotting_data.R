@@ -6,6 +6,8 @@
 #' additional variables. Statistics are then calculated per group.
 #' @param object MetAlyzer object
 #' @param ... A selection of columns from meta_data to add to reshaped data frame
+#' @param ungrouped A column from meta_data to add to reshaped data frame that
+#' will not be used as grouping variables
 #' @param ts A numeric vector of thresholds for CV categorization
 #' @param valid_vec A character vector containing each quantification status that
 #' is considered to be a valid measurement
@@ -13,8 +15,8 @@
 #'
 #' @keywords internal
 
-create_plotting_data <- function(object, ..., ts, valid_vec, t) {
-  plotting_data <- plotting_data(object, ...)
+create_plotting_data <- function(object, ..., ungrouped, ts, valid_vec, t) {
+  plotting_data <- plotting_data(object, ..., ungrouped = ungrouped)
   plotting_data <- calc_CV(plotting_data, ts = ts)
   plotting_data <- valid_measurement(plotting_data, valid_vec, t)
   object@plotting_data <- plotting_data
@@ -28,6 +30,8 @@ create_plotting_data <- function(object, ..., ts, valid_vec, t) {
 #' in a tibble data frame for plotting with 'ggplot2'.
 #' @param object MetAlyzer object
 #' @param ... A selection of columns from meta_data to add to reshaped data frame
+#' @param ungrouped A column from meta_data to add to reshaped data frame that
+#' will not be used as grouping variables
 #'
 #' @import dplyr
 #' @importFrom tidyr gather
@@ -35,25 +39,25 @@ create_plotting_data <- function(object, ..., ts, valid_vec, t) {
 #'
 #' @keywords internal
 
-plotting_data <- function(object, ..., ungrouped = NULL) {
+plotting_data <- function(object, ..., ungrouped) {
   meta_data <- get_filtered_data(object, slot = "meta")
   raw_data <- get_filtered_data(object, slot = "data")
   quant_status <- get_filtered_data(object, slot = "quant")
+  if (nchar(ungrouped)==0 | ungrouped == "NULL") {ungrouped <- NULL}
   if (nrow(meta_data) > 0) {
-    extra_columns <- select(meta_data, ...)
+    extra_columns <- select(meta_data, c(... , ungrouped))
     raw_data <- bind_cols(raw_data, extra_columns)
     gathered_data <- gather(raw_data, key = "Metabolite",
-                            value = "Concentration", -c(...))
+                            value = "Concentration", -colnames(extra_columns))
     gathered_status <- gather(quant_status, key = "Metabolite",
                               value = "Status")
-    col_names <- colnames(gathered_data)
+    col_names <- colnames(select(gathered_data, -ungrouped))
     group_cols <- col_names[1:which(col_names == "Metabolite")]
     plotting_data <- gathered_data %>%
       group_by_at(group_cols) %>%
       mutate(Class = sapply(.data$Metabolite, function(x) {
         names(object@metabolites[object@metabolites == x])
       }),
-      Replicates = 1:n(),
       .after = .data$Metabolite)
     plotting_data$Metabolite <- factor(plotting_data$Metabolite,
                                        levels = unique(object@metabolites))
@@ -65,12 +69,16 @@ plotting_data <- function(object, ..., ungrouped = NULL) {
       col <- extra_columns[, col_name]
       if (class(col) == "factor") {
         levels <- levels(col)
+      } else if (!any(grepl("\\D", col))) {
+        levels <- unique(as.character(sort(as.numeric(col))))
       } else {
         levels <- unique(col)
       }
       plotting_data[, col_name] <- factor(unlist(plotting_data[,col_name]),
                                           levels = levels)
     }
+    plotting_data <- arrange_at(plotting_data, c(group_cols, ungrouped))
+
     return(plotting_data)
   } else {
     return(data.frame())

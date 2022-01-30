@@ -7,6 +7,8 @@
 #'
 #' @param object MetAlyzer object
 #' @param ... A selection of columns from meta_data to add to reshaped data frame
+#' @param ungrouped A column from meta_data to add to reshaped data frame that
+#' will not be used as grouping variables
 #' @param ts A numeric vector of thresholds between 0 and 1 for CV categorization
 #' @param valid_vec A character vector containing each quantification status that
 #' is considered to be a valid measurement
@@ -22,6 +24,7 @@
 #' obj <- MetAlyzerDataset(file_path = fpath)
 #'
 #' obj <- createPlottingData(obj, Tissue, Group,
+#' ungrouped = NULL,
 #' ts = c(0.1, 0.2, 0.3),
 #' valid_vec = c("Valid", "LOQ"), t = 0.5)
 #' }
@@ -29,6 +32,7 @@
 
 setGeneric("createPlottingData",
            function(object, ...,
+                    ungrouped=NULL,
                     ts=c(0.1, 0.2, 0.3),
                     valid_vec=c("Valid", "LOQ"),
                     t=0.5)
@@ -38,9 +42,12 @@ setGeneric("createPlottingData",
 #' @describeIn createPlottingData Create plotting data
 setMethod("createPlottingData",
           "MetAlyzer",
-          function(object, ..., ts, valid_vec, t) {
+          function(object, ..., ungrouped, ts, valid_vec, t) {
             create_plotting_data(object, ...,
-                                 ts = ts, valid_vec = valid_vec, t = t)
+                                 ungrouped=deparse(substitute(ungrouped)),
+                                 ts = ts,
+                                 valid_vec = valid_vec,
+                                 t = t)
           }
 )
 
