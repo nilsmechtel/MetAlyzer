@@ -70,26 +70,27 @@ NAs: 0 (0%)
 #### Add meta data:
 ```r
 meta_df <- readRDS(mpath)
-obj <- updateMetaData(obj, "Replicate", meta_df$Replicate)
+obj <- updateMetaData(obj, Replicate, meta_df$Replicate)
 ```
 
 #### Reformat for plotting:
 For further filtering and plotting, the data can be reformatted into a data frame.
 ```{r}
-obj <- createPlottingData(obj, Group, Tissue)
+obj <- createPlottingData(obj, Group, Tissue, ungrouped = Replicate)
 gg_df <- plottingData(obj)
 
 head(gg_df)
 # A tibble: 6 × 12
 # Groups:   Group, Tissue, Metabolite [2]
-  Group Tissue     Metabolite Class          Replicates Concentration  Mean    SD    CV CV_thresh Status Valid
-  <fct> <fct>      <fct>      <fct>               <int>         <dbl> <dbl> <dbl> <dbl> <fct>     <fct>  <lgl>
-1 1     Drosophila C0         Acylcarnitines          1         203    179.  82.4 0.461 more30    Valid  TRUE 
-2 1     Drosophila C0         Acylcarnitines          2          86.8  179.  82.4 0.461 more30    Valid  TRUE 
-3 1     Drosophila C0         Acylcarnitines          3         246    179.  82.4 0.461 more30    Valid  TRUE 
-4 2     Drosophila C0         Acylcarnitines          1         198    231. 124.  0.538 more30    Valid  TRUE 
-5 2     Drosophila C0         Acylcarnitines          2         369    231. 124.  0.538 more30    Valid  TRUE 
-6 2     Drosophila C0         Acylcarnitines          3         127    231. 124.  0.538 more30    Valid  TRUE 
+  Group Tissue     Replicate Metabolite Class         Concentration  Mean    SD    CV CV_thresh Status
+  <fct> <fct>      <fct>     <fct>      <fct>                 <dbl> <dbl> <dbl> <dbl> <fct>     <fct> 
+1 1     Drosophila R1        C0         Acylcarnitin…         203   179.  82.4  0.461 more30    Valid 
+2 1     Drosophila R2        C0         Acylcarnitin…          86.8 179.  82.4  0.461 more30    Valid 
+3 1     Drosophila R3        C0         Acylcarnitin…         246   179.  82.4  0.461 more30    Valid 
+4 1     Drosophila R1        C2         Acylcarnitin…          29.5  26.6  9.72 0.365 more30    Valid 
+5 1     Drosophila R2        C2         Acylcarnitin…          15.8  26.6  9.72 0.365 more30    Valid 
+6 1     Drosophila R3        C2         Acylcarnitin…          34.6  26.6  9.72 0.365 more30    Valid 
+# … with 1 more variable: valid_replicates <lgl>
 ```
 
 #### Plot filter data and plot concentration of glutamic acid:
