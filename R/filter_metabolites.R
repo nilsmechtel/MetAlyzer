@@ -10,7 +10,7 @@
 #' @keywords internal
 
 filter_metabolites <- function(object, class_name, metabo_vec) {
-  metabolites <- object@metabolites
+  metabolites <- object@metabolites[["filtered"]]
   orig_length <- length(metabolites)
   if (!is.null(metabo_vec)) { # if metabo_vec is given
     if (any(metabo_vec %in% metabolites)) {
@@ -21,12 +21,12 @@ filter_metabolites <- function(object, class_name, metabo_vec) {
   }
   diff <- orig_length - length(metabolites)
   if (diff == 1) {
-    cat("1 metabolite was filtered!\n")
+    cat("1 metabolite was removed!\n")
   } else if (diff > 1) {
-    cat(paste(diff, "metabolites were filtered!\n"))
+    cat(paste(diff, "metabolites were removed!\n"))
   } else {
-    cat("No metabolites were filtered!\n")
+    cat("No metabolites were removed!\n")
   }
-  object@metabolites <- metabolites
+  object@metabolites[["filtered"]] <- metabolites
   return(object)
 }

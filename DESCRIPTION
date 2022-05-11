@@ -1,7 +1,7 @@
 Package: MetAlyzer
 Type: Package
 Title: Read and Analyze 'MetIDQ&trade;' Software Output Files
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: 
     c(person("Nils", "Mechtel",
             email = "nils.mech@gmail.com",
@@ -22,9 +22,13 @@ Imports:
     dplyr,
     tidyr,
     tibble,
-    agricolae,
+    stringr,
+    ggplot2,
+    ggrepel,
     methods,
-    rlang  
+    utils,
+    rlang,
+    grDevices
 Description: The 'MetAlyzer' S4 object provides methods to read and reformat metabolomics data for convenient data handling, statistics and downstream analysis. The resulting format corresponds to input data of the Shiny app 'MetaboExtract' (<https://www.metaboextract.shiny.dkfz.de/MetaboExtract/>).
 License: GPL-3
 Encoding: UTF-8
@@ -32,6 +36,5 @@ Language: en-US
 RoxygenNote: 7.1.2
 Suggests:
     rmarkdown,
-    knitr,
-    ggplot2
+    knitr
 VignetteBuilder: knitr

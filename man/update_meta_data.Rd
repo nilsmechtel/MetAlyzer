@@ -4,10 +4,10 @@
 \alias{update_meta_data}
 \title{Update meta data}
 \usage{
-update_meta_data(MetAlyzer, name, new_colum)
+update_meta_data(object, name, new_colum)
 }
 \arguments{
-\item{MetAlyzer}{MetAlyzer object}
+\item{object}{MetAlyzer object}
 
 \item{name}{The new column name}
 

@@ -7,11 +7,12 @@
 #' @keywords internal
 
 reset_metabolites <- function(object) {
-  orig <- object@.orig_metabolites
-  diff <- length(orig) - length(object@metabolites)
+  original <- object@metabolites[["original"]]
+  filtered <- object@metabolites[["filtered"]]
+  diff <- length(original) - length(filtered)
   if (diff > 0) {
     cat(paste("Restoring", diff, "metabolite(s).\n"))
+    object@metabolites[["filtered"]] <- original
   }
-  object@metabolites <- orig
   return(object)
 }
