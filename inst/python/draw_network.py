@@ -37,21 +37,59 @@ def draw_network_py(nodes_df, edge_df, annotation_df, output, f_width, f_height,
     fig.set_figwidth(f_width)
 
     ax_network = plt.subplot2grid(shape=(5, 100), loc=(0, 0), rowspan=5, colspan=100 - colbar_width)
-    ax_colorbar = plt.subplot2grid(shape=(5, 100), loc=(2, 100 - colbar_width), colspan=colbar_width)
+    #ax_colorbar = plt.subplot2grid(shape=(5, 100), loc=(2, 100 - colbar_width), colspan=colbar_width)
     
     fig.set_facecolor(bg_color)
     ax_network.set_facecolor(bg_color)
     ax_network.axis('off')
-
+    
+    #defining the discrete colors according to the log2fc value
+    color = []
+    for val in nodes_df['log2FC']:
+        if val <= -3 :    color.append('#0066CC')
+        elif -3 < val < -1.5:   color.append('#3399FF')
+        elif -1.5 < val < -0.5:  color.append('#00CCCC')
+        elif 0.5 < val < 1.5:  color.append('#FF9999')
+        elif 1.5 < val < 3:  color.append('#FF6666')
+        elif 3 < val:  color.append('#FF0000')
+        elif -0.5 < val < 0.5:  color.append('#A0A0A0')
+    nodes_df['color'] = color
+    color.append('#0066CC')
+    color.append('#3399FF')
+    color.append('#00CCCC')
+    color.append('#FF9999')
+    color.append('#FF6666')
+    color.append('#FF0000')
+    color.append('#A0A0A0')
+        
     # draw network nodes
     for shape in nodes_df['Shape'].unique():
         shape_spec_nodes = nodes_df['Label'].values[nodes_df['Shape'] == shape]
         shape_spec_log2FC = nodes_df['log2FC'].values[nodes_df['Shape'] == shape]
-
+        shape_spec_color = nodes_df['color'].values[nodes_df['Shape'] == shape]
+        print(shape_spec_color)
+        print(shape_spec_nodes)
+        #print(nodes_df)
         nx.draw_networkx_nodes(G, nx.get_node_attributes(G, 'pos'), ax=ax_network, nodelist=shape_spec_nodes,
                                node_size=node_size, node_shape=shape,
-                               node_color=shape_spec_log2FC, cmap=cmap, vmin=-max_v, vmax=max_v)
+                               node_color=shape_spec_color)
+                               
+    #defining and drawing legend nodes, attributes and labels                          
+    leg_nodes = ['FC > 3', '1.5 < FC < 3', '0.5 < FC < 1.5', '-1.5 < FC < -0.5','-3 < FC < -1.5','FC < -3', 'No fold change']
+    
+    leg_position = {'FC > 3': (2100, 1500),'1.5 < FC < 3': (2100, 1400),'0.5 < FC < 1.5': (2100, 1300),
+                '-1.5 < FC < -0.5': (2100, 1100),'-3 < FC < -1.5': (2100, 1000),'FC < -3': (2100, 900),
+            'No fold change': (2100, 1200)}
+            
+    leg_color = ['#FF0000', '#FF6666', '#FF9999', '#00CCCC', '#3399FF', '#0066CC', '#A0A0A0']
+    
+    nx.draw_networkx_nodes(G, pos = leg_position, ax=ax_network, nodelist=leg_nodes,
+                           node_size=node_size, node_shape='o',
+                           node_color=leg_color)
+    nx.draw_networkx_labels(G, pos = leg_position, labels={n: n for n in leg_nodes},font_size=15, font_color='k', font_family='sans-serif', font_weight='bold')
 
+    
+    
     # draw network edges
     for rad in edge_df['Rad'].unique():
         rad_spec_edges = edges_list[edge_df['Rad'].values == rad]
@@ -63,7 +101,7 @@ def draw_network_py(nodes_df, edge_df, annotation_df, output, f_width, f_height,
                             labels={label: re.sub('#[0-9]+$', '', label) for
                                     label, pos in nx.get_node_attributes(G, 'pos').items()
                                     if label in nodes_df['Label'].values},
-                            font_size=font_size, font_color=font_color)
+                            font_size=font_size, font_color=font_color, font_weight='bold')
 
     # draw network annotations
     nx.draw_networkx_labels(G, nx.get_node_attributes(G, 'pos'), ax=ax_network,
@@ -71,10 +109,6 @@ def draw_network_py(nodes_df, edge_df, annotation_df, output, f_width, f_height,
                                     if label in annotation_df['Annotation'].values},
                             font_size=ann_font_size, font_color=ann_font_color)
 
-    # draw colorbar
-    ColorbarBase(ax=ax_colorbar, cmap=cmap, values=np.arange(-max_v - 1e-5, max_v + 1e-5, 2 * max_v / 10000),
-                 label='log2FC',
-                 orientation='vertical')
     fig.tight_layout()
 
     # save figure
