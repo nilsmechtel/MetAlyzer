@@ -1,5 +1,16 @@
 ##new two ways
 
+#' Two way anova function
+#'
+#' This function allows you to perform two-way anova.
+#' @aggregate_obj The processed data.
+#' @categorical The categories, such as Species or Tissue_type that are providing groups for anova test
+#' @log2_transformation Type of transformation, no transformation: no, log2: l2, log10: l10
+#' @impute If TRUE, zero imputation will be performed, otherwise, no imputation
+#' @ first_con
+#' @ second_con
+#' do_anova_2w()
+
 do_anova_2w <- function(aggregate_obj,             # The processed data
                         categorical,
                         log2_transformation = 'TRUE',   # Type of transformation, no transformation: no, log2: l2, log10: l10
@@ -75,6 +86,13 @@ return(two_ways_res)
 
 ################plotting##########
 
+#' Plotting the results of two way anova
+#'
+#' This function allows you to plot the results of two-way anova.
+#' @two_ways_res The results of the two way anova.
+#' @ first_con
+#' @ second_con
+#' plot_2w_anv()
 
 plot_2w_anv <- function(two_ways_res, first_con = 'drosophila',
                         second_con = 'mouse') 
