@@ -6,6 +6,22 @@
 \usage{
 plot_2w_anv(two_ways_res, first_con = "drosophila", second_con = "mouse")
 }
+\arguments{
+\item{two_ways_res}{The results of the two way anova.}
+
+\item{first_con}{the first condition for the comparisson}
+
+\item{second_con}{the second condition for the comparisson}
+}
+\value{
+a plot depicting the results of the two way anova
+}
 \description{
 This function allows you to plot the results of two-way anova.
+}
+\examples{
+\dontrun{
+print(1)
+}
+plot_2w_anv()
 }

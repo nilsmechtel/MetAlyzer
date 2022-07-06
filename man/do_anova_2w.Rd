@@ -2,7 +2,7 @@
 % Please edit documentation in R/two_way_anova.R
 \name{do_anova_2w}
 \alias{do_anova_2w}
-\title{Two way anova function}
+\title{Two way anova}
 \usage{
 do_anova_2w(
   aggregate_obj,
@@ -13,6 +13,28 @@ do_anova_2w(
   second_con = "mouse"
 )
 }
+\arguments{
+\item{aggregate_obj}{The processed data.}
+
+\item{categorical}{The categories, such as Species or Tissue_type that are providing groups for anova test}
+
+\item{log2_transformation}{Type of transformation, no transformation: no, log2: l2, log10: l10}
+
+\item{impute}{If TRUE, zero imputation will be performed, otherwise, no imputation}
+
+\item{first_con}{the first condition for the comparisson}
+
+\item{second_con}{the second condition for the comparisson}
+}
+\value{
+A data frame containing the results of the two way anova
+}
 \description{
 This function allows you to perform two-way anova.
+}
+\examples{
+\dontrun{
+print(1)
+}
+do_anova_2w()
 }

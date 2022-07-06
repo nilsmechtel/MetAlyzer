@@ -1,14 +1,20 @@
 ##new two ways
 
-#' Two way anova function
+#' Two way anova
 #'
 #' This function allows you to perform two-way anova.
-#' @aggregate_obj The processed data.
-#' @categorical The categories, such as Species or Tissue_type that are providing groups for anova test
-#' @log2_transformation Type of transformation, no transformation: no, log2: l2, log10: l10
-#' @impute If TRUE, zero imputation will be performed, otherwise, no imputation
-#' @ first_con
-#' @ second_con
+#' @param aggregate_obj The processed data.
+#' @param categorical The categories, such as Species or Tissue_type that are providing groups for anova test
+#' @param log2_transformation Type of transformation, no transformation: no, log2: l2, log10: l10
+#' @param impute If TRUE, zero imputation will be performed, otherwise, no imputation
+#' @param first_con the first condition for the comparisson
+#' @param second_con the second condition for the comparisson
+
+#' @return A data frame containing the results of the two way anova
+#' @examples
+#' \dontrun{
+#' print(1)
+#' }
 #' do_anova_2w()
 
 do_anova_2w <- function(aggregate_obj,             # The processed data
@@ -89,9 +95,16 @@ return(two_ways_res)
 #' Plotting the results of two way anova
 #'
 #' This function allows you to plot the results of two-way anova.
-#' @two_ways_res The results of the two way anova.
-#' @ first_con
-#' @ second_con
+#' @param two_ways_res The results of the two way anova.
+#' @param first_con the first condition for the comparisson
+#' @param second_con the second condition for the comparisson
+
+#' @return a plot depicting the results of the two way anova
+
+#' @examples
+#' \dontrun{
+#' print(1)
+#' }
 #' plot_2w_anv()
 
 plot_2w_anv <- function(two_ways_res, first_con = 'drosophila',
