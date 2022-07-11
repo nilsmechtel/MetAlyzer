@@ -9,13 +9,14 @@
 #' @param impute If TRUE, zero imputation will be performed, otherwise, no imputation
 #' @param first_con the first condition for the comparisson
 #' @param second_con the second condition for the comparisson
-
+#'
 #' @return A data frame containing the results of the two way anova
+#'
 #' @examples
 #' \dontrun{
 #' print(1)
 #' }
-#' do_anova_2w()
+
 
 do_anova_2w <- function(aggregate_obj,             # The processed data
                         categorical,
@@ -98,14 +99,14 @@ return(two_ways_res)
 #' @param two_ways_res The results of the two way anova.
 #' @param first_con the first condition for the comparisson
 #' @param second_con the second condition for the comparisson
-
+#'
 #' @return a plot depicting the results of the two way anova
-
+#'
 #' @examples
 #' \dontrun{
 #' print(1)
 #' }
-#' plot_2w_anv()
+
 
 plot_2w_anv <- function(two_ways_res, first_con = 'drosophila',
                         second_con = 'mouse') 
