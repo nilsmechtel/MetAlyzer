@@ -127,7 +127,7 @@ library(ggplot2)
   y_val<--log10( as.numeric(two_ways_res$P_value))
 
   #plotting  
-p<-ggplot(two_ways_res, aes(x = two_ways_res$Metabolites, y = y_val, color = two_ways_res$Significance))+geom_point()+
+two_way_p<-ggplot(two_ways_res, aes(x = two_ways_res$Metabolites, y = y_val, color = two_ways_res$Significance))+geom_point()+
   theme(axis.line.x = element_line(color="black", size = 0.1),
         axis.line.y = element_line(color="black", size = 0.1),
         axis.text.x = element_blank(),
@@ -135,12 +135,12 @@ p<-ggplot(two_ways_res, aes(x = two_ways_res$Metabolites, y = y_val, color = two
 
 
 
-p + labs(color = "Significance")+geom_hline(yintercept=1.3,color = "black")+xlab("Metabolite") + ylab("-log10 P-value")
+two_way_p + labs(color = "Significance")+geom_hline(yintercept=1.3,color = "black")+xlab("Metabolite") + ylab("-log10 P-value")
 
 
 
 img_n <- paste0('ano_', first_con, '_vs_', second_con, ".png")
 ggsave(img_n)
-
+return(two_way_p)
 
 }

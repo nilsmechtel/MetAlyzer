@@ -23,5 +23,4 @@ This function allows you to plot the results of two-way anova.
 \dontrun{
 print(1)
 }
-plot_2w_anv()
 }

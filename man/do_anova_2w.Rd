@@ -36,5 +36,4 @@ This function allows you to perform two-way anova.
 \dontrun{
 print(1)
 }
-do_anova_2w()
 }
