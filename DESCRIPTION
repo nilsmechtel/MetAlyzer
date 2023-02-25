@@ -33,7 +33,7 @@ Description: The 'MetAlyzer' S4 object provides methods to read and reformat met
 License: GPL-3
 Encoding: UTF-8
 Language: en-US
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.3
 Suggests:
     rmarkdown,
     knitr
