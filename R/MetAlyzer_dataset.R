@@ -2,6 +2,8 @@
 #'
 #' This function creates a 'MetAlyzer' object, opens the given 'MetIDQ' output Excel
 #' sheet and extracts metabolites, raw data, quantification status and meta data.
+#' The column "Sample Type" and the row "Class" are used as anchor cells in the
+#' Excel sheet and are therefore a requirement.
 #'
 #' @param file_path file path
 #' @param sheet sheet index

@@ -92,6 +92,7 @@ calculate_log2FC <- function(aggregated_data, categorical,
 #' @param df A subset data frame
 #' @param ...
 #'
+#' @import dplyr
 #' @importFrom stats lm
 #' @importFrom rlang .data
 #'
@@ -107,8 +108,8 @@ apply_linear_model <- function(df, ...) {
     pval <- NA
   } else {
     fit1 <- stats::lm(Value ~ Group, data = df)
-    fit_dim <- dim(summary(fit1, )$coefficients)
     l2fc <- fit1$coefficients[2]
+    fit_dim <- dim(summary(fit1)$coefficients)
     pval <- summary(fit1)$coefficients[fit_dim[1],fit_dim[2]]
   }
   output_df <- data.frame(Class = class,
