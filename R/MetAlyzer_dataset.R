@@ -210,12 +210,12 @@ unify_hex <- function(hex) {
 read_quant_status <- function(file_path, sheet, n_row, n_col,
                               data_ranges, metabolites) {
   status_list <- list(
-    "Valid" = "#00CD66",
-    "LOQ" = "#87CEEB", # <LLOQ or > ULOQ
-    "LOD" = "#6A5ACD", # < LOD
-    "ISTD Out of Range" = "#FFFF33",
+    "Valid" = c("#B9DE83", "#00CD66"),
+    "LOQ" = c("#B2D1DC","#7FB2C5", "#87CEEB"), # <LLOQ or > ULOQ
+    "LOD" = c("#A28BA3", "#6A5ACD"), # < LOD
+    "ISTD Out of Range" = c("#FFF099", "#FFFF33"),
     "Invalid" = "#FFFFCC",
-    "Incomplete" = "#FFCCCC"
+    "Incomplete" = c("#CBD2D7", "#FFCCCC")
   )
   wb <- loadWorkbook(file = file_path)
   sheet_name <- getSheetNames(file = file_path)[sheet]
@@ -226,12 +226,13 @@ read_quant_status <- function(file_path, sheet, n_row, n_col,
       rgb <- x$style$fill$fillFg
       rgb <- ifelse(length(rgb) == 0, "", rgb)
       hex_code <- unify_hex(rgb)
-      if (hex_code %in% status_list) {
+      matching_status <- names(status_list)[sapply(status_list, function(colors) {hex_code %in% colors})]
+      if (length(matching_status) > 0) {
         if (hex_code != rgb) {
           cat("Converting color code:",
               paste0("\"", rgb, "\""), "->", paste0("\"", hex_code, "\""), "\n")
         }
-        status <- names(which(status_list == hex_code))
+        status <- matching_status[1] # take the first matching status
         rows <- x$rows # row indices
         cols <- x$cols # column indices
         for (i in 1:length(rows)) {
