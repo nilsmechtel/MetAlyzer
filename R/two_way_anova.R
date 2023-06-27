@@ -18,7 +18,7 @@
 #' }
 
 
-do_anova_2w <- function(aggregate_obj,             # The processed data
+two_way_anova <- function(aggregate_obj,             # The processed data
                         categorical,
                         log2_transformation = 'TRUE',   # Type of transformation, no transformation: no, log2: l2, log10: l10
                         impute = 'FALSE',            # If TRUE, zero imputation will be performed, otherwise, no imputation

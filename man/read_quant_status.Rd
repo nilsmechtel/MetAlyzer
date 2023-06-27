@@ -4,7 +4,15 @@
 \alias{read_quant_status}
 \title{Read quantification status}
 \usage{
-read_quant_status(file_path, sheet, n_row, n_col, data_ranges, metabolites)
+read_quant_status(
+  file_path,
+  sheet,
+  n_row,
+  n_col,
+  data_ranges,
+  metabolites,
+  status_list
+)
 }
 \arguments{
 \item{file_path}{file_path}

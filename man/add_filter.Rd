@@ -18,8 +18,3 @@ An updated aggregated_data data frame
 This function adds a new boolean column to aggregated_data based whether a
 given criterion is met (TRUE) or not (FALSE).
 }
-\examples{
-\dontrun{
-print(1)
-}
-}

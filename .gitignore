@@ -3,3 +3,5 @@
 *.RData
 .Rproj.user/
 inst/doc
+.vscode/tasks.json
+MetAlyzer.code-workspace

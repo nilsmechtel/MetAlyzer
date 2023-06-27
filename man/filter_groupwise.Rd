@@ -34,8 +34,3 @@ This function takes a boolean column from aggregated_data and filters based
 on the percentage of samples within each group that meet the filter criterion
 (=TRUE).
 }
-\examples{
-\dontrun{
-print(1)
-}
-}

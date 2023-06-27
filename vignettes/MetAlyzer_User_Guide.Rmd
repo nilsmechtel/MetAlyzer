@@ -17,165 +17,202 @@ library(ggplot2)
 library(dplyr)
 ```
 
-The package provides methods to read output files from the MetIDQ&trade; software into R. Metabolomics data is read and reformatted into an S4 object for convenient data handling, statistics and downstream analysis.
+The package provides methods to read output files from the MetIDQ™ software into R. Metabolomics data is read and reformatted into an S4 object for convenient data handling, statistics and downstream analysis.
 
 ## Install
 
 There is a version available on CRAN.
 
-```r
+``` r
 install.packages("MetAlyzer")
 ```
 
 ## Overview
 
-![](`r rprojroot::is_r_package$find_file('vignettes/MetAlyzer_workflow.png')`){width=100%}
+![](%60r%20rprojroot::is_r_package$find_file('vignettes/MetAlyzer_workflow.png')%60){width="100%"}
 
-The package takes metabolomic measurements as ".xlsx" files generated from the MetIDQ&trade; software. Additionally, meta data for each sample can be provided for further analysis.
+The package takes metabolomic measurements as ".xlsx" files generated from the MetIDQ™ software. Additionally, meta data for each sample can be provided for further analysis.
 
 Effective quantification of metabolites requires a reliable signal. The limit of detection (LOD) is defined as 3 times signal-to-noise of the baseline, calculated by the software MetIDQ for each metabolite. Values are classified as "Valid", "LOQ" (below limit of quantification) or "LOD" (below limit of detection). This information is encoded in the color in the ".xlsx" table. Further color codes can include "ISTD Out of Range", "Invalid" and "Incomplete". The MetAlyzer packages allow to read both information, the value and the quantification status, gives statistics about the quantification efficacy and allows filtering based on the LOD.
 
-![Example of excel sheet.](`r rprojroot::is_r_package$find_file('vignettes/screenshot_xlsx.png')`){width=100%}
+![Example of excel sheet.](%60r%20rprojroot::is_r_package$find_file('vignettes/screenshot_xlsx.png')%60){width="100%"}
 
 ## Get started
+
 To present the functionalities of the package, we use a data set published by [Gegner <i>et al</i>. 2022](https://doi.org/10.1101/2021.12.16.472947). This data set used 6 (1 to 6) different extraction methods to quantify 630 metabolites in triplicates for 4 tissue types (Drosophila, Mouse Liver, Mouse Kidney, Zebrafish Liver).
 
-### Set data paths to the example data and a meta data file:
-```{r set_data_path}
-fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
-mpath <- system.file("extdata", "example_meta_data.rds", package = "MetAlyzer")
-```
+<!-- ### Set data paths to the example data and a meta data file: -->
 
-### Initialize MetAlyzer object and load data:
+<!-- # ```{r set_data_path} -->
+
+<!-- # fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer") -->
+
+<!-- # mpath <- system.file("extdata", "example_meta_data.rds", package = "MetAlyzer") -->
+
+<!-- # ``` -->
+
+### Load data from Excel into a MetAlyzer object:
+
 ```{r initialize}
-data <- MetAlyzer_dataset(file_path = fpath)
+MetAlyzer_proj <- MetAlyzer_dataset(file_path = fpath)
 show(data)
 ```
-The overview shows the different slots in the MetAlyzer object. The 630 metabolites are accompanied by 232 metabolite indicators calculated by the MetIDQ&trade; software.
+
+The overview shows the different slots in the MetAlyzer object. The 630 metabolites are accompanied by 232 metabolite indicators calculated by the MetIDQ™ software.
 
 The slots can be accessed using the functions *metaData*, *rawData*, *quantStatus* and *metabolites*.
 
 **For example:**
-```{r getter}
-head(metaData(data))
 
-head(quantStatus(data), c(5, 5))
+```{r getter}
+meta_data <- metaData(data)
+head(meta_data)
 ```
 
-### Filter metabolites and meta data
+```{r getter}
+metabolites(data)[1:5]
+```
+
+```{r getter}
+quantification_status <- quantStatus(data)
+head(quantification_status, c(5, 5))
+
+summarizeQuantData(data)
+```
+
+```{r getter}
+summarizeRawData(data)
+```
+
+### Manage metabolites and meta data
+
 To subset the data set, the functions *filterMetabolites* and *filterMetaData* can be used to filter for certain metabolite classes or meta data. The original data are kept, so the filtering can be reset to the original data set using *resetMetabolites* and *resetMetaData*.
 
 **For example, we want to exclude the metabolite indicators:**
+
 ```{r filter_metabolites}
 data <- filterMetabolites(data, class_name = "Metabolism Indicators")
 ```
 
-**There are also 2 blank samples in the data that we want to remove:**
-The extraction methods are encoded in the column "Group" of the meta data. We only keep those samples that are named c(1:6).
+**There are also 2 blank samples in the data that we want to remove:** The extraction methods are encoded in the column "Group" of the meta data. We only keep those samples that are named c(1:6).
+
 ```{r filter_meta_data}
 data <- filterMetaData(data, column = `Sample Description`, keep = c(1:6))
 ```
 
-### Show statistics
-The function *summarizeQuantData* shows a summary of the quantification statistics of the data set and returns a vector of metabolites for each status. E.g. 45.36% of the metabolites across the data set were below the LOD.
-```{r summarise_quant_data}
-status_list <- summarizeQuantData(data)
-```
-Likewise, *summarizeRawData* shows a summary of the raw concentration statistics and returns a vector of metabolites with NA values.
-```{r summarise_raw_data}
-na_metabolites <- summarizeRawData(data)
-```
-### Add meta data
-As the different extraction methods were measured in triplicates, we want to add this meta data using the function *updateMetaData*.
-First we load the meta data.
-```{r read_meta_data}
-additional_meta_data <- readRDS(mpath)
-head(additional_meta_data)
-```
+<!-- ### Show statistics -->
 
-And then add the replicate information.
-```{r update_meta_data}
-data <- updateMetaData(data, name = Replicate,
-                       new_colum = additional_meta_data$Replicate)
-show(data)
-```
+<!-- The function *summarizeQuantData* shows a summary of the quantification statistics of the data set and returns a vector of metabolites for each status. E.g. 45.36% of the metabolites across the data set were below the LOD. -->
 
-### Rename meta data
-In the meta data, the description of the 6 extraction methods is encoded in the column "Group". For downstream analyses, we want to rename this column into "Method" using *renameMetaData*.
-```{r rename_meta_data}
-data <- renameMetaData(data, Method = `Sample Description`)
-head(metaData(data))
-```
+<!-- ```{r summarise_quant_data} -->
+<!-- status_list <- summarizeQuantData(data) -->
+<!-- ``` -->
 
-### Aggregate and reformat data
-From here on we examine the tissues separately. The filter can be reset using *resetMetaData* in order to analyze a different tissue.
-```{r subset_data}
-data <- filterMetaData(data, column = Tissue, keep = "Mouse Liver")
-```
+<!-- Likewise, *summarizeRawData* shows a summary of the raw concentration statistics and returns a vector of metabolites with NA values. -->
 
-For further filtering and plotting, the data can be reformatted into a data frame. This allows easy filtering by e.g. the metabolites of interest or the quantification status and plotting with e.g. ggplot2. If replicates are available, some statistics are automatically calculated for each metabolite and each additional grouping variable that is passed. For our study, we can add "Method" and "Tissue" to indicate that there are replicates for these variables. In addition, it is possible to pass another column from the meta data that will be added but not used as a grouping variable for the statistics.
+<!-- ```{r summarise_raw_data} -->
+<!-- na_metabolites <- summarizeRawData(data) -->
+<!-- ``` -->
 
-```{r aggregated_data}
-aggregated_data <- aggregateData(data, Method, Tissue, id_col = Replicate)
+<!-- ### Add meta data -->
 
-head(aggregated_data)
-```
+<!-- As the different extraction methods were measured in triplicates, we want to add this meta data using the function *updateMetaData*. First we load the meta data. -->
 
-In case NAs or zeros are produced, we provide zero imputation as described in ([Gegner <i>et al</i>.](https://doi.org/10.1101/2021.12.16.472947)). Before, the imputation, there are 12,212 zero values in the data set.
-```{r imputation}
-cat("Number of zero values before imputation:",
-    sum(rawData(data) == 0))
+<!-- ```{r read_meta_data} -->
+<!-- additional_meta_data <- readRDS(mpath) -->
+<!-- head(additional_meta_data) -->
+<!-- ``` -->
 
-cat("Number of zero values after imputation:",
-    sum(aggregated_data$imputed_Conc == 0, na.rm = TRUE))
-```
+<!-- And then add the replicate information. -->
 
-Imputed concentrations are directly log2 transformed and can be found in the column "log2_Conc".
+<!-- ```{r update_meta_data} -->
+<!-- data <- updateMetaData(data, name = Replicate, -->
+<!--                        new_colum = additional_meta_data$Replicate) -->
+<!-- show(data) -->
+<!-- ``` -->
 
-For example, we can filter for glutamic acid (Glu) and plot the concentration.
-```{r, glu_plot, fig.width=7, fig.height=4.5}
-glu_df <- filter(aggregated_data, Metabolite == "Glu")
+<!-- ### Rename meta data -->
 
-ggplot(glu_df, aes(Method, Concentration, color = Status)) +
-  geom_point() +
-  scale_color_manual(values = c("Valid" = "#00CD66",
-                                "LOQ" = "#87CEEB",
-                                "LOD" = "#6A5ACD")) + 
-  ylab("Concentration [pmol/mg Tissue]") + 
-  facet_grid(~ Tissue)
-```
+<!-- In the meta data, the description of the 6 extraction methods is encoded in the column "Group". For downstream analyses, we want to rename this column into "Method" using *renameMetaData*. -->
 
+<!-- ```{r rename_meta_data} -->
+<!-- data <- renameMetaData(data, Method = `Sample Description`) -->
+<!-- head(metaData(data)) -->
+<!-- ``` -->
 
+<!-- ### Aggregate and reformat data -->
 
+<!-- From here on we examine the tissues separately. The filter can be reset using *resetMetaData* in order to analyze a different tissue. -->
 
-To plot imputed and transformed data, we choose the column "log2_Conc":
-```{r, glu_plot_transformed, fig.width=7, fig.height=4.5}
-ggplot(glu_df, aes(Method, log2_Conc, color = Status)) +
-  geom_point() +
-  scale_color_manual(values = c("Valid" = "#00CD66",
-                                "LOQ" = "#87CEEB",
-                                "LOD" = "#6A5ACD")) +
-  facet_grid(~ Tissue)
-```
+<!-- ```{r subset_data} -->
+<!-- data <- filterMetaData(data, column = Tissue, keep = "Mouse Liver") -->
+<!-- ``` -->
 
-### ANOVA
-As described in ([Gegner <i>et al</i>.](https://doi.org/10.1101/2021.12.16.472947)), an ANOVA can be used to identify metabolites which are significantly higher in one or more methods compared to all other for each metabolite.
+<!-- For further filtering and plotting, the data can be reformatted into a data frame. This allows easy filtering by e.g. the metabolites of interest or the quantification status and plotting with e.g. ggplot2. If replicates are available, some statistics are automatically calculated for each metabolite and each additional grouping variable that is passed. For our study, we can add "Method" and "Tissue" to indicate that there are replicates for these variables. In addition, it is possible to pass another column from the meta data that will be added but not used as a grouping variable for the statistics. -->
 
-For this analysis only those metabolites are considered for which at least one method (>0) could get valid replicates.
-```{r, ANOVA}
-aggregated_data <- filter_groupwise(aggregated_data, Metabolite,
-                                    filter_col = Valid_Replicates,
-                                    lower_bound = 0)
+<!-- ```{r aggregated_data} -->
+<!-- aggregated_data <- aggregateData(data, Method, Tissue, id_col = Replicate) -->
 
-aggregated_data <- perform_ANOVA(aggregated_data, categorical = Method)
-head(data.frame(aggregated_data[, c(1:5, 14, 15)]))
-```
+<!-- head(aggregated_data) -->
+<!-- ``` -->
 
-Any method labeled with an "A" can now be considered optimal among all tested methods.
+<!-- In case NAs or zeros are produced, we provide zero imputation as described in ([Gegner <i>et al</i>.](https://doi.org/10.1101/2021.12.16.472947)). Before, the imputation, there are 12,212 zero values in the data set. -->
 
-```{r, ANOVA_optimal}
-aggregated_data$optimal <- sapply(aggregated_data$ANOVA_Group, function(group) {
-  grepl("A", group)
-})
-head(data.frame(aggregated_data[, c(1:5, 15, 16)]))
-```
+<!-- ```{r imputation} -->
+<!-- cat("Number of zero values before imputation:", -->
+<!--     sum(rawData(data) == 0)) -->
+
+<!-- cat("Number of zero values after imputation:", -->
+<!--     sum(aggregated_data$imputed_Conc == 0, na.rm = TRUE)) -->
+<!-- ``` -->
+
+<!-- Imputed concentrations are directly log2 transformed and can be found in the column "log2_Conc". -->
+
+<!-- For example, we can filter for glutamic acid (Glu) and plot the concentration. -->
+
+<!-- ```{r, glu_plot, fig.width=7, fig.height=4.5} -->
+<!-- glu_df <- filter(aggregated_data, Metabolite == "Glu") -->
+
+<!-- ggplot(glu_df, aes(Method, Concentration, color = Status)) + -->
+<!--   geom_point() + -->
+<!--   scale_color_manual(values = c("Valid" = "#00CD66", -->
+<!--                                 "LOQ" = "#87CEEB", -->
+<!--                                 "LOD" = "#6A5ACD")) +  -->
+<!--   ylab("Concentration [pmol/mg Tissue]") +  -->
+<!--   facet_grid(~ Tissue) -->
+<!-- ``` -->
+
+<!-- To plot imputed and transformed data, we choose the column "log2_Conc": -->
+
+<!-- ```{r, glu_plot_transformed, fig.width=7, fig.height=4.5} -->
+<!-- ggplot(glu_df, aes(Method, log2_Conc, color = Status)) + -->
+<!--   geom_point() + -->
+<!--   scale_color_manual(values = c("Valid" = "#00CD66", -->
+<!--                                 "LOQ" = "#87CEEB", -->
+<!--                                 "LOD" = "#6A5ACD")) + -->
+<!--   facet_grid(~ Tissue) -->
+<!-- ``` -->
+
+<!-- ### ANOVA -->
+
+<!-- As described in ([Gegner <i>et al</i>.](https://doi.org/10.1101/2021.12.16.472947)), an ANOVA can be used to identify metabolites which are significantly higher in one or more methods compared to all other for each metabolite. -->
+
+<!-- For this analysis only those metabolites are considered for which at least one method (\>0) could get valid replicates. -->
+
+<!-- ```{r, ANOVA} -->
+<!-- aggregated_data <- filter_groupwise(aggregated_data, Metabolite, -->
+<!--                                     filter_col = Valid_Replicates, -->
+<!--                                     lower_bound = 0) -->
+
+<!-- aggregated_data <- perform_ANOVA(aggregated_data, categorical = Method) -->
+<!-- head(data.frame(aggregated_data[, c(1:5, 14, 15)])) -->
+<!-- ``` -->
+
+<!-- Any method labeled with an "A" can now be considered optimal among all tested methods. -->
+
+<!-- ```{r, ANOVA_optimal} -->
+<!-- aggregated_data$optimal <- sapply(aggregated_data$ANOVA_Group, function(group) { -->
+<!--   grepl("A", group) -->
+<!-- }) -->
+<!-- head(data.frame(aggregated_data[, c(1:5, 15, 16)])) -->
+<!-- ``` -->

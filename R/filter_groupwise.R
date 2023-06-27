@@ -18,11 +18,6 @@
 #' @import dplyr
 #' @importFrom rlang .data
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' print(1)
-#' }
 
 filter_groupwise <- function(aggregated_data, ...,
                              filter_col=.data$Valid_Replicates,

@@ -19,94 +19,88 @@ There is a version available on CRAN.
 install.packages("MetAlyzer")
 ```
 
-## Quick start
+For the latest version install from GitHub
+```r
+library(devtools)
+install_github("nilsmechtel/MetAlyzer")
+```
 
-![Overview](vignettes/MetAlyzer_overview.png)
+## Quickstart
 
 The package takes metabolomic measurements and the quantification status (e.g. "Valid", "LOQ", "LOD") as ".xlsx" files generated from the MetIDQ&trade; software. Additionally, meta data for each sample can be provided for further analysis.
 
-#### Set data path and read meta data
-```r
-fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
-mpath <- system.file("extdata", "example_meta_data.rds", package = "MetAlyzer")
-```
+![MetAlyzer](vignettes/MetAlyzer_class.png)
+
+This is an extract from one of the provided example data sets.
+![Example_Data](vignettes/screenshot_xlsx.png)
 
 #### Create MetAlyzer object:
 ```r
-obj <- MetAlyzerDataset(file_path = fpath)
-```
-
-#### Show MetAlyzer object:
-```r
-show(obj)
+> metalyzer <- MetAlyzer_dataset(file_path = extraction_data())
+> show(metalyzer)
 -------------------------------------
-File name: example_data.xlsx 
+File name: extraction_data.xlsx
 Sheet: 1 
 File path: /Library/Frameworks/R.framework/Versions/4.0/Resources/library/MetAlyzer/extdata 
 Metabolites: 862 
 Classes: 24 
 Including metabolism indicators: TRUE 
 Number of samples: 74 
-Columns meta data: "Plate Bar Code"; "Sample Bar Code"; "Sample Type"; "Group"; "Tissue"; "Sample Volume"; "Measurement Time"
-Ploting data created: FALSE
-```
-
-#### Use filter functions to exclude the metabolite indicators and only keep Group 1 to 6:
-```r
-obj <- filterMetabolites(obj, class_name = "Metabolism Indicators")
-232 metabolites were filtered!
-obj <- filterMetaData(obj, column = Group, keep = c(1:6))
+Columns meta data: "Plate Bar Code"; "Sample Bar Code"; "Sample Type"; "Sample Description"; "Tissue"; "Sample Volume"; "Measurement Time"
+Aggregated data available:  FALSE
+-------------------------------------
 ```
 
 #### Show statistics:
 ```r
-summariseQuantData(obj)
+> na_metabolites <- summariseConcValues(metalyzer)
 -------------------------------------
-Valid: 21951 (48.39%)
-LOQ: 2832 (6.24%)
-LOD: 20577 (45.36%)
-NAs: 0 (0%)
+Quantiles:
+        0%        25%        50%        75%       100% 
+     0.000      0.028      1.960     22.700 288149.000 
+
+NAs: 4941 (7.96%)
+-------------------------------------
 ```
 
-#### Add meta data:
 ```r
-meta_df <- readRDS(mpath)
-obj <- updateMetaData(obj, Replicate, meta_df$Replicate)
+> status_list <- summariseQuantData(metalyzer)
+-------------------------------------
+Valid: 24056 (38.76%)
+LOQ: 5790 (9.33%)
+LOD: 20577 (33.15%)
+Invalid: 11641 (18.76%)
+NAs: 0 (0%)
+-------------------------------------
 ```
 
-#### Reformat for plotting:
-For further filtering and plotting, the data can be reformatted into a data frame.
+### Downstream analysis:
+For further filtering, statistical analysis and plotting, the data can be reformatted and aggregated into a tibble data frame.
+
+![Downstream_Analysis](vignettes/aggregated_data.png)
+
 ```{r}
-obj <- createPlottingData(obj, Group, Tissue, ungrouped = Replicate)
-gg_df <- plottingData(obj)
-
-head(gg_df)
-# A tibble: 6 × 12
-# Groups:   Group, Tissue, Metabolite [2]
-  Group Tissue     Replicate Metabolite Class         Concentration  Mean    SD    CV CV_thresh Status
-  <fct> <fct>      <fct>     <fct>      <fct>                 <dbl> <dbl> <dbl> <dbl> <fct>     <fct> 
-1 1     Drosophila R1        C0         Acylcarnitin…         203   179.  82.4  0.461 more30    Valid 
-2 1     Drosophila R2        C0         Acylcarnitin…          86.8 179.  82.4  0.461 more30    Valid 
-3 1     Drosophila R3        C0         Acylcarnitin…         246   179.  82.4  0.461 more30    Valid 
-4 1     Drosophila R1        C2         Acylcarnitin…          29.5  26.6  9.72 0.365 more30    Valid 
-5 1     Drosophila R2        C2         Acylcarnitin…          15.8  26.6  9.72 0.365 more30    Valid 
-6 1     Drosophila R3        C2         Acylcarnitin…          34.6  26.6  9.72 0.365 more30    Valid 
-# … with 1 more variable: valid_replicates <lgl>
+> renameMetaData(metalyzer, Method = `Sample Description`)
+> filterMetaData(metalyzer, !is.na(Tissue))
+> aggregated_data <- aggregateData(metalyzer, Tissue, Method)
+> aggregated_data
+# A tibble: 62,064 × 8
+# Groups:   Tissue, Method, Metabolite [20,688]
+   ID    Tissue    Method Metabolite Class Concentration Status Valid_Replicates
+   <fct> <fct>     <fct>  <fct>      <fct>         <dbl> <fct>  <lgl>           
+ 1 9     Drosophi… 1      C0         Acyl…       203     Valid  TRUE            
+ 2 10    Drosophi… 1      C0         Acyl…        86.8   Valid  TRUE            
+ 3 11    Drosophi… 1      C0         Acyl…       246     Valid  TRUE            
+ 4 9     Drosophi… 1      C2         Acyl…        29.5   Valid  TRUE            
+ 5 10    Drosophi… 1      C2         Acyl…        15.8   Valid  TRUE            
+ 6 11    Drosophi… 1      C2         Acyl…        34.6   Valid  TRUE            
+ 7 9     Drosophi… 1      C3         Acyl…        39.2   Valid  TRUE            
+ 8 10    Drosophi… 1      C3         Acyl…         9.29  Valid  TRUE            
+ 9 11    Drosophi… 1      C3         Acyl…        49.9   Valid  TRUE            
+10 9     Drosophi… 1      C3-DC (C4… Acyl…         0.057 LOD    FALSE           
+# ℹ 62,054 more rows
+# ℹ Use `print(n = ...)` to see more rows
 ```
-
-#### Plot filter data and plot concentration of glutamic acid:
-```{r}
-glu_gg_df <- filter(gg_df, Metabolite == "Glu")
-
-ggplot(glu_gg_df, aes(Group, Concentration, color = Status)) +
-  geom_point() +
-  scale_color_manual(values = c("Valid" = "#00CD66",
-                                "LOQ" = "#87CEEB",
-                                "LOD" = "#6A5ACD")) + 
-  facet_grid(~ Tissue)
-```
-![](vignettes/example_ggplot.png)
-
 
 ## Detailed instructions
-**For a comprehensive tutorial, please check out the vignette.**
+**For a comprehensive tutorial, please check out the vignette (\<Link_to_User_Manual>).**

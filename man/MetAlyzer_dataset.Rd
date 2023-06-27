@@ -4,7 +4,13 @@
 \alias{MetAlyzer_dataset}
 \title{Open file and read data}
 \usage{
-MetAlyzer_dataset(file_path, sheet = 1)
+MetAlyzer_dataset(
+  file_path,
+  sheet = 1,
+  status_list = list(Valid = c("#B9DE83", "#00CD66"), LOQ = c("#B2D1DC", "#7FB2C5",
+    "#87CEEB"), LOD = c("#A28BA3", "#6A5ACD"), `ISTD Out of Range` = c("#FFF099",
+    "#FFFF33"), Invalid = "#FFFFCC", Incomplete = c("#CBD2D7", "#FFCCCC"))
+)
 }
 \arguments{
 \item{file_path}{file path}
@@ -15,14 +21,12 @@ MetAlyzer_dataset(file_path, sheet = 1)
 An MetAlyzer object
 }
 \description{
-This function creates a 'MetAlyzer' object, opens the given 'MetIDQ' output Excel
-sheet and extracts metabolites, raw data, quantification status and meta data.
-The column "Sample Type" and the row "Class" are used as anchor cells in the
-Excel sheet and are therefore a requirement.
+This function creates a 'MetAlyzer' object, opens the given
+'MetIDQ' output Excel sheet and extracts metabolites, concentration data,
+quantification status and meta data. The column "Sample Type" and the row
+"Class" are used as anchor cells in the Excel sheet and are therefore a
+requirement.
 }
 \examples{
-\dontrun{
-fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer")
-data <- MetAlyzerDataset(file_path = fpath)
-}
+data <- MetAlyzer_dataset(file_path = extraction_data())
 }

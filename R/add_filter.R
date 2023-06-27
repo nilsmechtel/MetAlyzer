@@ -10,11 +10,6 @@
 #'
 #' @import dplyr
 #' @export
-#'
-#' @examples
-#' \dontrun{
-#' print(1)
-#' }
 
 add_filter <- function(aggregated_data, ...) {
   orig_n_col <- ncol(aggregated_data)

@@ -11,6 +11,6 @@ get_data_range(full_sheet)
 }
 \description{
 This function extracts rows and column indices to slice the .full_sheet into
-metabolites, raw_data and meta_data.
+metabolites, conc_values and meta_data.
 }
 \keyword{internal}
