@@ -4,7 +4,7 @@
 \alias{filterMetaData}
 \title{Filter meta data}
 \usage{
-filterMetaData(metalyzer, ...)
+filterMetaData(metalyzer, ..., inplace = TRUE)
 }
 \arguments{
 \item{metalyzer}{MetAlyzer object}
@@ -18,7 +18,9 @@ filter out samples.
 \examples{
 metalyzer <- MetAlyzer_dataset(file_path = extraction_data())
 
+filterMetaData(metalyzer, !is.na(Tissue))
 filterMetaData(metalyzer, `Sample Description` \%in\% 1:6)
 # or
-filterMetaData(metalyzer, `Sample Description` != 3)
+metalyzer <- filterMetaData(metalyzer, !is.na(Tissue), inplace = FALSE)
+metalyzer <- filterMetaData(metalyzer, `Sample Description` \%in\% 1:6, inplace = FALSE)
 }

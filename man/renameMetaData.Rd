@@ -4,7 +4,7 @@
 \alias{renameMetaData}
 \title{Rename meta data}
 \usage{
-renameMetaData(metalyzer, ...)
+renameMetaData(metalyzer, ..., inplace = TRUE)
 }
 \arguments{
 \item{metalyzer}{MetAlyzer object}
@@ -18,4 +18,6 @@ This function renames a column of meta_data.
 metalyzer <- MetAlyzer_dataset(file_path = extraction_data())
 
 renameMetaData(metalyzer, Method = `Sample Description`)
+# or
+metalyzer <- renameMetaData(metalyzer, Method = `Sample Description`, inplace = FALSE)
 }

@@ -173,7 +173,6 @@ getAggregatedData <- function(metalyzer) {
 #' show(metalyzer)
 #' # or
 #' metalyzer
-
 setMethod("show",
           "MetAlyzer",
           function(metalyzer) {
@@ -217,7 +216,7 @@ setMethod("show",
           })
 
 
-#' Summarise concentration values
+#' Summarize concentration values
 #'
 #' This function prints quantiles and NAs of raw data.
 #'
@@ -228,10 +227,9 @@ setMethod("show",
 #' @examples
 #' metalyzer <- MetAlyzer_dataset(file_path = extraction_data())
 #'
-#' na_metabolites <- summariseConcValues(metalyzer)
+#' na_metabolites <- summarizeConcValues(metalyzer)
 #' na_metabolites
-
-summariseConcValues <- function(metalyzer) {
+summarizeConcValues <- function(metalyzer) {
   conc_values <- getConcValues(metalyzer)
   nas <- sum(is.na(conc_values))
   total <- nrow(conc_values) * ncol(conc_values)
@@ -248,7 +246,7 @@ summariseConcValues <- function(metalyzer) {
 }
 
 
-#' @title Summarise quantification status
+#' @title Summarize quantification status
 #'
 #' @description This function lists the number of each quantification status and
 #' its percentage.
@@ -260,9 +258,9 @@ summariseConcValues <- function(metalyzer) {
 #' @examples
 #' metalyzer <- MetAlyzer_dataset(file_path = extraction_data())
 #'
-#' status_list <- summariseQuantData(metalyzer)
+#' status_list <- summarizeQuantData(metalyzer)
 #' names(status_list)
-summariseQuantData <- function(metalyzer) {
+summarizeQuantData <- function(metalyzer) {
   # Print number of quantification status
   print_number <- function(quant_status, status, total) {
     number <- sum(quant_status == status, na.rm = TRUE)
@@ -315,10 +313,15 @@ summariseQuantData <- function(metalyzer) {
 #' @examples
 #' metalyzer <- MetAlyzer_dataset(file_path = extraction_data())
 #'
+#' filterMetaData(metalyzer, !is.na(Tissue))
 #' filterMetaData(metalyzer, `Sample Description` %in% 1:6)
 #' # or
-#' filterMetaData(metalyzer, `Sample Description` != 3)
-filterMetaData <- function(metalyzer, ...) {
+#' metalyzer <- filterMetaData(metalyzer, !is.na(Tissue), inplace = FALSE)
+#' metalyzer <- filterMetaData(metalyzer, `Sample Description` %in% 1:6, inplace = FALSE)
+filterMetaData <- function(metalyzer, ..., inplace = TRUE) {
+  env <- parent.frame()  # Get the parent environment
+  var_name <- deparse(substitute(metalyzer))  # Get the name of the metalyzer object
+
   meta_data <- metalyzer@meta_data
   aggregated_data <- metalyzer@aggregated_data
   orig_len <- sum(meta_data$Filter)
@@ -346,7 +349,13 @@ filterMetaData <- function(metalyzer, ...) {
   } else {
     cat("No samples were excluded!\n")
   }
-  metalyzer <<- metalyzer
+
+  if (inplace) {
+    # Assign the modified metalyzer object back to the parent environment
+    assign(var_name, metalyzer, envir = env)
+  } else {
+    return(metalyzer)
+  }
 }
 
 
@@ -361,13 +370,24 @@ filterMetaData <- function(metalyzer, ...) {
 #' metalyzer <- MetAlyzer_dataset(file_path = extraction_data())
 #'
 #' resetMetaData(metalyzer)
-resetMetaData <- function(metalyzer) {
+#' # or
+#' metalyzer <- resetMetaData(metalyzer, inplace = FALSE)
+resetMetaData <- function(metalyzer, inplace = TRUE) {
+  env <- parent.frame()  # Get the parent environment
+  var_name <- deparse(substitute(metalyzer))  # Get the name of the metalyzer object
+
   filter_col <- metalyzer@meta_data$Filter
   if (any(filter_col == FALSE)) {
     cat(paste("Restoring", sum(filter_col == FALSE), "sample(s).\n"))
   }
   metalyzer@meta_data$Filter <- TRUE
-  metalyzer <<- metalyzer
+
+  if (inplace) {
+    # Assign the modified metalyzer object back to the parent environment
+    assign(var_name, metalyzer, envir = env)
+  } else {
+    return(metalyzer)
+  }
 }
 
 
@@ -383,7 +403,12 @@ resetMetaData <- function(metalyzer) {
 #' metalyzer <- MetAlyzer_dataset(file_path = extraction_data())
 #'
 #' updateMetaData(metalyzer, Date = Sys.Date(), Analyzed = TRUE)
-updateMetaData <- function(metalyzer, ...) {
+#' # or
+#' metalyzer <- updateMetaData(metalyzer, Date = Sys.Date(), Analyzed = TRUE, inplace = FALSE)
+updateMetaData <- function(metalyzer, ..., inplace = TRUE) {
+  env <- parent.frame()  # Get the parent environment
+  var_name <- deparse(substitute(metalyzer))  # Get the name of the metalyzer object
+
   meta_data <- metalyzer@meta_data
   new_cols <- list(...)
 
@@ -398,7 +423,13 @@ updateMetaData <- function(metalyzer, ...) {
     meta_data[, col_name][meta_data$Filter == TRUE] <- new_col
   }
   metalyzer@meta_data <- meta_data
-  metalyzer <<- metalyzer
+  
+  if (inplace) {
+    # Assign the modified metalyzer object back to the parent environment
+    assign(var_name, metalyzer, envir = env)
+  } else {
+    return(metalyzer)
+  }
 }
 
 
@@ -414,9 +445,20 @@ updateMetaData <- function(metalyzer, ...) {
 #' metalyzer <- MetAlyzer_dataset(file_path = extraction_data())
 #'
 #' renameMetaData(metalyzer, Method = `Sample Description`)
-renameMetaData <- function(metalyzer, ...) {
+#' # or
+#' metalyzer <- renameMetaData(metalyzer, Method = `Sample Description`, inplace = FALSE)
+renameMetaData <- function(metalyzer, ..., inplace = TRUE) {
+  env <- parent.frame()  # Get the parent environment
+  var_name <- deparse(substitute(metalyzer))  # Get the name of the metalyzer object
+
   metalyzer@meta_data <- dplyr::rename(metalyzer@meta_data, ...)
-  metalyzer <<- metalyzer
+
+  if (inplace) {
+    # Assign the modified metalyzer object back to the parent environment
+    assign(var_name, metalyzer, envir = env)
+  } else {
+    return(metalyzer)
+  }
 }
 
 
@@ -439,8 +481,13 @@ renameMetaData <- function(metalyzer, ...) {
 #'
 #' drop_metabolites = c("C0", "C2", "C3", "Metabolism Indicators")
 #' filterMetabolites(metalyzer, drop_metabolites)
+#' # or
+#' metalyzer <- filterMetabolites(metalyzer, drop_metabolites, inplace = FALSE)
 filterMetabolites <- function(metalyzer,
-                              drop_metabolites = c("Metabolism Indicators")) {
+                              drop_metabolites = c("Metabolism Indicators"),
+                              inplace = TRUE) {
+  env <- parent.frame()  # Get the parent environment
+  var_name <- deparse(substitute(metalyzer))  # Get the name of the metalyzer object
 
   metabolites <- metalyzer@metabolites[["filtered"]]
   aggregated_data <- metalyzer@aggregated_data
@@ -489,7 +536,13 @@ filterMetabolites <- function(metalyzer,
   }
   metalyzer@metabolites[["filtered"]] <- metabolites
   metalyzer@aggregated_data <- aggregated_data
-  metalyzer <<- metalyzer
+  
+  if (inplace) {
+    # Assign the modified metalyzer object back to the parent environment
+    assign(var_name, metalyzer, envir = env)
+  } else {
+    return(metalyzer)
+  }
 }
 
 #' @title Reset metabolites
@@ -503,8 +556,13 @@ filterMetabolites <- function(metalyzer,
 #' metalyzer <- MetAlyzer_dataset(file_path = extraction_data())
 #'
 #' resetMetabolites(metalyzer)
+#' # or
+#' metalyzer <- resetMetabolites(metalyzer, inplace = FALSE)
 
-resetMetabolites <- function(metalyzer) {
+resetMetabolites <- function(metalyzer, inplace = TRUE) {
+  env <- parent.frame()  # Get the parent environment
+  var_name <- deparse(substitute(metalyzer))  # Get the name of the metalyzer object
+
   original <- metalyzer@metabolites[["original"]]
   filtered <- metalyzer@metabolites[["filtered"]]
   diff <- length(original) - length(filtered)
@@ -512,7 +570,13 @@ resetMetabolites <- function(metalyzer) {
     cat(paste("Restoring", diff, "metabolite(s).\n"))
     metalyzer@metabolites[["filtered"]] <- original
   }
-  metalyzer <<- metalyzer
+  
+  if (inplace) {
+    # Assign the modified metalyzer object back to the parent environment
+    assign(var_name, metalyzer, envir = env)
+  } else {
+    return(metalyzer)
+  }
 }
 
 #' @title Drop invalid metabolites
@@ -534,8 +598,13 @@ resetMetabolites <- function(metalyzer) {
 #' aggregateData(metalyzer, Tissue, Method)
 #'
 #' dropInvalidMetabolites(metalyzer)
+#' # or
+#' metalyzer <- dropInvalidMetabolites(metalyzer, inplace = FALSE)
 
-dropInvalidMetabolites <- function(metalyzer, valid_perc = 0) {
+dropInvalidMetabolites <- function(metalyzer, valid_perc = 0, inplace = TRUE) {
+  env <- parent.frame()  # Get the parent environment
+  var_name <- deparse(substitute(metalyzer))  # Get the name of the metalyzer object
+
   aggregated_data <- getAggregatedData(metalyzer)
   if (nrow(aggregated_data) == 0) {
 
@@ -553,12 +622,17 @@ dropInvalidMetabolites <- function(metalyzer, valid_perc = 0) {
     invalid_metabolites <- as.character(df$Metabolite)
     metalyzer <- filterMetabolites(metalyzer, invalid_metabolites)
   }
-  metalyzer <<- metalyzer
+  
+  if (inplace) {
+    # Assign the modified metalyzer object back to the parent environment
+    assign(var_name, metalyzer, envir = env)
+  } else {
+    return(metalyzer)
+  }
 }
 
 
 # === Export data ===
-
 
 #' @title Export filtered raw data as csv
 #'
@@ -574,8 +648,6 @@ dropInvalidMetabolites <- function(metalyzer, valid_perc = 0) {
 #' metalyzer <- MetAlyzer_dataset(file_path = extraction_data())
 #'
 #' exportConcValues(metalyzer, `Sample Description`, Tissue)
-
-
 exportConcValues <- function(metalyzer,
                             ...,
                             file_path = "metabolomics_data.csv") {
@@ -619,13 +691,21 @@ exportConcValues <- function(metalyzer,
 #' filterMetaData(metalyzer, !is.na(Tissue))
 #'
 #' aggregated_data <- aggregateData(metalyzer, Tissue, Method)
+#' # or
+#' result <- aggregateData(metalyzer, Tissue, Method, inplace = FALSE)
+#' metalyzer <- result$metalyzer
+#' aggregated_data <- result$aggregated_data
 aggregateData <- function(metalyzer,
                           ...,
                           status_list = list(
                             "Valid" = c("Valid", "LOQ"),
                             "Valid threshold" = 0.5,
                             "KO" = c()
-                          )) {
+                          ),
+                          inplace = TRUE) {
+  env <- parent.frame()  # Get the parent environment
+  var_name <- deparse(substitute(metalyzer))  # Get the name of the metalyzer object
+
   meta_data <- getMetaData(metalyzer)
   if (nrow(meta_data) > 0) {
     metabolites <- getMetabolites(metalyzer)
@@ -656,6 +736,13 @@ aggregateData <- function(metalyzer,
     cat("It seems no data has been loaded.\n")
     cat("Returning empty data.frame to 'aggregated_data' slot.\n")
   }
-  metalyzer <<- metalyzer
-  return(aggregated_data)
+  
+  if (inplace) {
+    # Assign the modified metalyzer object back to the parent environment
+    assign(var_name, metalyzer, envir = env)
+    return(aggregated_data)
+  } else {
+    result <- list("metalyzer" = metalyzer, "aggregated_data" = aggregated_data)
+    return(result)
+  }
 }

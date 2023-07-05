@@ -4,7 +4,11 @@
 \alias{filterMetabolites}
 \title{Filter metabolites}
 \usage{
-filterMetabolites(metalyzer, drop_metabolites = c("Metabolism Indicators"))
+filterMetabolites(
+  metalyzer,
+  drop_metabolites = c("Metabolism Indicators"),
+  inplace = TRUE
+)
 }
 \arguments{
 \item{metalyzer}{MetAlyzer object}
@@ -22,4 +26,6 @@ metalyzer <- MetAlyzer_dataset(file_path = extraction_data())
 
 drop_metabolites = c("C0", "C2", "C3", "Metabolism Indicators")
 filterMetabolites(metalyzer, drop_metabolites)
+# or
+metalyzer <- filterMetabolites(metalyzer, drop_metabolites, inplace = FALSE)
 }

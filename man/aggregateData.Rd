@@ -7,7 +7,8 @@
 aggregateData(
   metalyzer,
   ...,
-  status_list = list(Valid = c("Valid", "LOQ"), `Valid threshold` = 0.5, KO = c())
+  status_list = list(Valid = c("Valid", "LOQ"), `Valid threshold` = 0.5, KO = c()),
+  inplace = TRUE
 )
 }
 \arguments{
@@ -38,4 +39,8 @@ renameMetaData(metalyzer, Method = `Sample Description`)
 filterMetaData(metalyzer, !is.na(Tissue))
 
 aggregated_data <- aggregateData(metalyzer, Tissue, Method)
+# or
+result <- aggregateData(metalyzer, Tissue, Method, inplace = FALSE)
+metalyzer <- result$metalyzer
+aggregated_data <- result$aggregated_data
 }

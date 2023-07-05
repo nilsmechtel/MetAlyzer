@@ -4,7 +4,7 @@
 \alias{dropInvalidMetabolites}
 \title{Drop invalid metabolites}
 \usage{
-dropInvalidMetabolites(metalyzer, valid_perc = 0)
+dropInvalidMetabolites(metalyzer, valid_perc = 0, inplace = TRUE)
 }
 \arguments{
 \item{metalyzer}{MetAlyzer object}
@@ -24,4 +24,6 @@ filterMetaData(metalyzer, !is.na(Tissue))
 aggregateData(metalyzer, Tissue, Method)
 
 dropInvalidMetabolites(metalyzer)
+# or
+metalyzer <- dropInvalidMetabolites(metalyzer, inplace = FALSE)
 }

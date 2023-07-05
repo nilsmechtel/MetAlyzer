@@ -4,7 +4,7 @@
 \alias{updateMetaData}
 \title{Update meta data}
 \usage{
-updateMetaData(metalyzer, ...)
+updateMetaData(metalyzer, ..., inplace = TRUE)
 }
 \arguments{
 \item{metalyzer}{MetAlyzer object}
@@ -18,4 +18,6 @@ This function adds another column to filtered meta_data.
 metalyzer <- MetAlyzer_dataset(file_path = extraction_data())
 
 updateMetaData(metalyzer, Date = Sys.Date(), Analyzed = TRUE)
+# or
+metalyzer <- updateMetaData(metalyzer, Date = Sys.Date(), Analyzed = TRUE, inplace = FALSE)
 }

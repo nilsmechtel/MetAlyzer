@@ -4,7 +4,7 @@
 \alias{resetMetaData}
 \title{Reset meta data}
 \usage{
-resetMetaData(metalyzer)
+resetMetaData(metalyzer, inplace = TRUE)
 }
 \arguments{
 \item{metalyzer}{MetAlyzer object}
@@ -16,4 +16,6 @@ This function resets the filter of meta_data.
 metalyzer <- MetAlyzer_dataset(file_path = extraction_data())
 
 resetMetaData(metalyzer)
+# or
+metalyzer <- resetMetaData(metalyzer, inplace = FALSE)
 }
