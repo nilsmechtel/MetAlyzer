@@ -24,7 +24,7 @@ MetAlyzer <- setClass(
   "MetAlyzer",
   slots = list(
     file_path = "character",
-    sheet = "numeric",
+    sheet = "numeric"
   )
 )
 
@@ -165,19 +165,20 @@ getAggregatedData <- function(metalyzer) {
 #' show(metalyzer)
 #' # or
 #' metalyzer
+
 setMethod("show",
           "MetAlyzer",
           function(metalyzer) {
-            if (length(metalyzer@file_path) > 0) {
-              s_fp <- strsplit(normalizePath(metalyzer@file_path), "/")[[1]]
+            if (length(metadata(metalyzer)$file_path) > 0) {
+              s_fp <- strsplit(normalizePath(metadata(metalyzer)$file_path), "/")[[1]]
               file <- tail(s_fp, 1)
               path <- paste(s_fp[seq_len(length(s_fp) - 1)], collapse = "/")
             } else {
               file <- "<empty>"
               path <- "<empty>"
             }
-            if (length(metalyzer@sheet) > 0) {
-              sheet <- metalyzer@sheet
+            if (length(metadata(metalyzer)$sheet) > 0) {
+              sheet <- metadata(metalyzer)$sheet
             } else {
               sheet <- "<empty>"
             }
@@ -206,7 +207,36 @@ setMethod("show",
             )
             cat("-------------------------------------\n")
           })
+### <--! Does not work rn because of the "MetAlyzer" class -->
 
+#' Summarize concentration values
+#'
+#' This function prints quantiles and NAs of raw data.
+#'
+#' @param metalyzer MetAlyzer object
+#' @return A vector with metabolites that contain NAs
+#' @export
+#'
+#' @examples
+#' metalyzer <- MetAlyzer_dataset(file_path = extraction_data())
+#'
+#' na_metabolites <- summarizeConcValues(metalyzer)
+#' na_metabolites
+summarizeConcValues <- function(metalyzer) {
+  conc_values <- getConcValues(metalyzer)
+  nas <- sum(is.na(conc_values))
+  total <- nrow(conc_values) * ncol(conc_values)
+  n_nas <- colSums(is.na(conc_values))
+  na_metabolites <- colData(metalyzer)$original[n_nas > 0] #colnames(conc_values)[n_nas > 0] , also possible but maybe conc_values gets cleaned colnames
+
+  cat("-------------------------------------\n")
+  cat("Quantiles:\n")
+  print(stats::quantile(conc_values, na.rm = TRUE))
+  cat(paste0("\nNAs: ", nas, " (", round(nas / total * 100, 2), "%)\n"))
+  cat("-------------------------------------\n")
+
+  return(na_metabolites)
+}
 
 # === Aggregate data ===
 
