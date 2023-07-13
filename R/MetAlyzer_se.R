@@ -43,16 +43,21 @@ MetAlyzer_dataset <- function(
                                     metabolites,
                                     status_list = status_list
                                     )
-
-  colData <- data.frame(metabolites, metabolites)
-  colnames(colData) <- c("original", "filtered")
+  classes <- names(metabolites)
+  colData <- data.frame(metabolites)
+  # Add filtering column
+  colData$filtered <- TRUE
+  colData$classes <- classes
+  colnames(colData) <- c("original", "filtered", "class")
   rowData <- meta_data
-
-  se <- SummarizedExperiment(assays = list(conc_values = conc_values, quant_status = quant_status),
+  aggregated_data <- data.frame()
+  se <- SummarizedExperiment(assays = list(conc_values = conc_values, 
+                                           quant_status = quant_status),
                              colData = colData,
                              rowData = rowData,
                              metadata = list(file_path = file_path,
-                                             sheet = sheet)
+                                             sheet = sheet,
+                                             aggregated_data = aggregated_data)
                             )
   return(se)
 }
