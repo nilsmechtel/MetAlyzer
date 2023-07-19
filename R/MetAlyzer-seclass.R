@@ -32,7 +32,7 @@ MetAlyzer <- setClass(
 
 #' @title Get metabolites
 #'
-#' @description This function returns the filtered metabolites vector.
+#' @description This function returns a data frame with filtered metabolites and the respective class.
 #'
 #' @param metalyzer A MetAlyzer object.
 #' @return The filtered metabolites vector.
@@ -42,15 +42,15 @@ MetAlyzer <- setClass(
 #' metalyzer <- MetAlyzer_dataset(file_path = extraction_data())
 #' 
 #' metabolites <- getMetabolites(metalyzer)
-#' metabolites[1:10]
+#' metabolites[1:10,]
 getMetabolites <- function(metalyzer) {
   metabolites <- as.data.frame(colData(metalyzer))
   if (length(metabolites) > 0) {
     metabolites <- metabolites %>%
     dplyr::filter(filtered) %>%
-    dplyr::select(original)
+    dplyr::select(-filtered)
   }
-  metabolites <- as.vector(metabolites)
+  metabolites <- metabolites
   return(metabolites)
 }
 
@@ -71,6 +71,7 @@ getMetabolites <- function(metalyzer) {
 #' head(meta_data)
 getMetaData <- function(metalyzer) {
   meta_data <- as.data.frame(rowData(metalyzer))
+  colnames(meta_data) <- gsub("\\.", " ", colnames(meta_data))
   if (nrow(meta_data) > 0) {
     meta_data <- meta_data %>%
       dplyr::filter(Filter) %>%
@@ -95,9 +96,9 @@ getMetaData <- function(metalyzer) {
 #' conc_values <- getConcValues(metalyzer)
 #' head(conc_values, c(5, 5))
 getConcValues <- function(metalyzer) {
-  conc_values <- assay(metalyzer, "conc_values")
+  conc_values <- assays(metalyzer)$conc_values
   filtered_sample <- as.data.frame(rowData(metalyzer))$Filter
-  filtered_metabolites <- getMetabolites(metalyzer)
+  filtered_metabolites <- colData(metalyzer)$filtered
   if (nrow(conc_values) > 0) {
     conc_values <- conc_values[
       filtered_sample,
@@ -122,9 +123,9 @@ getConcValues <- function(metalyzer) {
 #' quant_status <- getQuantStatus(metalyzer)
 #' head(quant_status, c(5, 5))
 getQuantStatus <- function(metalyzer) {
-  quant_status <- assay(metalyzer, "quant_status")
+  quant_status <- assays(metalyzer)$"quant_status"
   filtered_sample <- as.data.frame(rowData(metalyzer))$Filter
-  filtered_metabolites <- getMetabolites(metalyzer)
+  filtered_metabolites <- colData(metalyzer)$filtered
   if (nrow(quant_status) > 0) {
     quant_status <- quant_status[
       filtered_sample,
@@ -150,70 +151,9 @@ getQuantStatus <- function(metalyzer) {
 #'
 #' aggregated_data <- getAggregatedData(metalyzer)
 getAggregatedData <- function(metalyzer) {
-  aggregated_data <- assay(metalyzer, "aggregated_data")
+  aggregated_data <- metadata(metalyzer)$aggregated_data
   return(aggregated_data)
 }
-
-# === Display MetAlyzer class ===
-
-#' @title Show a 'MetAlyzer' object
-#'
-#' @description This function shows a summary of the 'MetAlyzer' slot values.
-#'
-#' @param metalyzer MetAlyzer object
-#' @return A summary of the MetAlyzer object
-#' @importFrom methods show
-#' @export
-#'
-#' @examples
-#' metalyzer <- MetAlyzer_dataset(file_path = extraction_data())
-#'
-#' show(metalyzer)
-#' # or
-#' metalyzer
-
-setMethod("show",
-          "MetAlyzer",
-          function(metalyzer) {
-            if (length(metadata(metalyzer)$file_path) > 0) {
-              s_fp <- strsplit(normalizePath(metadata(metalyzer)$file_path), "/")[[1]]
-              file <- tail(s_fp, 1)
-              path <- paste(s_fp[seq_len(length(s_fp) - 1)], collapse = "/")
-            } else {
-              file <- "<empty>"
-              path <- "<empty>"
-            }
-            if (length(metadata(metalyzer)$sheet) > 0) {
-              sheet <- metadata(metalyzer)$sheet
-            } else {
-              sheet <- "<empty>"
-            }
-            meta_data <- getMetaData(metalyzer)
-            metabolites <- getMetabolites(metalyzer)
-
-            cat("-------------------------------------\n")
-            cat("\"MetAlyzer\" object:\n")
-            cat("File name: ", file, "\n")
-            cat("Sheet: ", sheet, "\n")
-            cat("File path: ", path, "\n")
-            cat("Metabolites: ", length(metabolites), "\n")
-            cat("Classes: ", length(unique(names(metabolites))), "\n")
-            if (length(metabolites) > 0) {
-              cat("Including metabolism indicators: ",
-                  "Metabolism Indicators" %in% names(metabolites), "\n")
-            }
-            cat("Number of samples: ", nrow(meta_data), "\n")
-            if (ncol(meta_data) > 0) {
-              cat("Columns meta data: ",
-                  paste(colnames(meta_data), collapse = "; "), "\n")
-            }
-            cat("Aggregated data available: ",
-                nrow(getAggregatedData(metalyzer)) > 0,
-                "\n"
-            )
-            cat("-------------------------------------\n")
-          })
-### <--! Does not work rn because of the "MetAlyzer" class -->
 
 #' Summarize concentration values
 #'
@@ -233,7 +173,7 @@ summarizeConcValues <- function(metalyzer) {
   nas <- sum(is.na(conc_values))
   total <- nrow(conc_values) * ncol(conc_values)
   n_nas <- colSums(is.na(conc_values))
-  na_metabolites <- colData(metalyzer)$original[n_nas > 0] #colnames(conc_values)[n_nas > 0] , also possible but maybe conc_values gets cleaned colnames
+  na_metabolites <- colnames(conc_values)[n_nas > 0] 
 
   cat("-------------------------------------\n")
   cat("Quantiles:\n")
@@ -241,7 +181,7 @@ summarizeConcValues <- function(metalyzer) {
   cat(paste0("\nNAs: ", nas, " (", round(nas / total * 100, 2), "%)\n"))
   cat("-------------------------------------\n")
 
-  return(na_metabolites) ### why is that here??
+  return(na_metabolites) 
 }
 
 #' @title Summarize quantification status
@@ -702,14 +642,17 @@ aggregateData <- function(metalyzer,
 
   meta_data <- getMetaData(metalyzer)
   if (nrow(meta_data) > 0) {
-    metabolites <- getMetabolites(metalyzer)
+    metabolites <- getMetabolites(metalyzer)$original
+    classes <- getMetabolites(metalyzer)$Class
     conc_values <- getConcValues(metalyzer)
     quant_status <- getQuantStatus(metalyzer)
     meta_columns <- select(meta_data, ...)
 
     cat("Reshape and merge data...  ")
     aggregated_data <- reshape_data(
+      metalyzer,
       metabolites,
+      classes,
       meta_columns,
       conc_values,
       quant_status

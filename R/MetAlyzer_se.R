@@ -1,8 +1,8 @@
 #' @title Open file and read data
 #'
-#' @description This function creates a 'MetAlyzer' object, opens the given
-#' 'MetIDQ' output Excel sheet and extracts metabolites, concentration data,
-#' quantification status and meta data. The column "Sample Type" and the row
+#' @description This function creates a SummarizedExperiment (SE), opens the given
+#' 'MetIDQ' output Excel sheet and extracts metabolites (colData), concentration data (assay),
+#' quantification status(assay) and meta data (rowData). The column "Sample Type" and the row
 #' "Class" are used as anchor cells in the Excel sheet and are therefore a
 #' requirement.
 #'
@@ -47,8 +47,8 @@ MetAlyzer_dataset <- function(
   colData <- data.frame(metabolites)
   # Add filtering column
   colData$filtered <- TRUE
-  colData$classes <- classes
-  colnames(colData) <- c("original", "filtered", "class")
+  colData$Class <- classes
+  colnames(colData) <- c("original", "filtered", "Class")
   rowData <- meta_data
   aggregated_data <- data.frame()
   se <- SummarizedExperiment(assays = list(conc_values = conc_values, 
@@ -59,6 +59,7 @@ MetAlyzer_dataset <- function(
                                              sheet = sheet,
                                              aggregated_data = aggregated_data)
                             )
+  metadata(se)$aggregated_data <- aggregateData(se)
   return(se)
 }
 
