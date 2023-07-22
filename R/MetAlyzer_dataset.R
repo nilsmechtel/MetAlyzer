@@ -28,8 +28,8 @@ MetAlyzer_dataset <- function(
       "Incomplete" = c("#CBD2D7", "#FFCCCC")
     )
   ) {
-  object <- new("MetAlyzer", file_path = file_path, sheet = sheet)
-  full_sheet <- open_file(object)
+  starter_list <- list(file_path = as.character(file_path), sheet = sheet)
+  full_sheet <- open_file(starter_list)
   data_ranges <- get_data_range(full_sheet)
 
   metabolites <- slice_metabolties(full_sheet, data_ranges)
@@ -73,9 +73,9 @@ MetAlyzer_dataset <- function(
 #' @importFrom openxlsx read.xlsx
 #'
 #' @keywords internal
-open_file <- function(object) {
-  full_sheet <- read.xlsx(object@file_path,
-                          sheet = object@sheet,
+open_file <- function(starter_list) {
+  full_sheet <- read.xlsx(starter_list$file_path,
+                          sheet = starter_list$sheet,
                           colNames = FALSE,
                           skipEmptyRows = FALSE,
                           skipEmptyCols = FALSE)

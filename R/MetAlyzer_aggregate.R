@@ -13,8 +13,7 @@
 #'
 #' @keywords internal
 
-reshape_data <- function(metalyzer,
-                        metabolites,
+reshape_data <- function(metabolites,
                         classes,
                         meta_columns,
                         conc_values,

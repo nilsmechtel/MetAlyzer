@@ -1,33 +1,3 @@
-#' @title MetAlyzer Class
-#'
-#' @description A S4 class to read and analyze 'MetIDQ' output
-#'
-#' @slot file_path A length-one character vector giving the file path.
-#' @slot sheet A length-one numeric vector giving the sheet index.
-#' @slot metabolites A named list of two character vectors, named "original"
-#'   and "filtered", containing all 630 measured metabolites and optional
-#'   234 additional metabolism indicators.
-#' @slot meta_data A data frame containing any meta data.
-#'   Dimension: (samples * meta variables).
-#' @slot conc_values A data frame containing measured concentration values
-#'   for each metabolite of each sample. Dimension: (samples * metabolites).
-#' @slot quant_status A data frame containing the quantification status of
-#'   each measurement. Dimension: (samples * metabolites).
-#' @slot aggregated_data A tibble data frame combining selected variables
-#'   from meta_data, metabolite names and classes, conc_values and
-#'   quant_status in separate columns.
-#'
-#' @name MetAlyzer
-#' @docType class
-#' @export
-MetAlyzer <- setClass(
-  "MetAlyzer",
-  slots = list(
-    file_path = "character",
-    sheet = "numeric"
-  )
-)
-
 # === Getters for MetAlyzer Class Slots ===
 
 #' @title Get metabolites
@@ -154,6 +124,67 @@ getAggregatedData <- function(metalyzer) {
   aggregated_data <- metadata(metalyzer)$aggregated_data
   return(aggregated_data)
 }
+
+# === Display MetAlyzer class ===
+
+#' @title Show a 'MetAlyzer' object
+#'
+#' @description This function shows a summary of the 'MetAlyzer' slot values.
+#'
+#' @param metalyzer MetAlyzer object
+#' @return A summary of the MetAlyzer object
+#' @importFrom methods show
+#' @export
+#'
+#' @examples
+#' metalyzer <- MetAlyzer_dataset(file_path = extraction_data())
+#'
+#' show(metalyzer)
+#' # or
+#' metalyzer
+setMethod("show",
+          "SummarizedExperiment",
+          function(object) {
+            if (length(metadata(object)$file_path) > 0) {
+              s_fp <- strsplit(normalizePath(metadata(object)$file_path), "/")[[1]]
+              file <- tail(s_fp, 1)
+              path <- paste(s_fp[seq_len(length(s_fp) - 1)], collapse = "/")
+            } else {
+              file <- "<empty>"
+              path <- "<empty>"
+            }
+            if (length(metadata(object)$sheet) > 0) {
+              sheet <- metadata(object)$sheet
+            } else {
+              sheet <- "<empty>"
+            }
+            meta_data <- getMetaData(object)
+            metabolites <- getMetabolites(object)$original
+            classes <- getMetabolites(object)$Class
+
+            cat("-------------------------------------\n")
+            cat("\"MetAlyzer\" object:\n")
+            cat("File name: ", file, "\n")
+            cat("Sheet: ", sheet, "\n")
+            cat("File path: ", path, "\n")
+            cat("Metabolites: ", length(metabolites), "\n")
+            cat("Classes: ", length(unique(classes)), "\n")
+            if (length(metabolites) > 0) {
+              cat("Including metabolism indicators: ",
+                  "Metabolism Indicators" %in% classes, "\n")
+            }
+            cat("Number of samples: ", nrow(meta_data), "\n")
+            if (ncol(meta_data) > 0) {
+              cat("Columns meta data: ",
+                  paste(colnames(meta_data), collapse = "; "), "\n")
+            }
+            cat("Aggregated data available: ",
+                nrow(getAggregatedData(metalyzer)) > 0,
+                "\n"
+            )
+            cat("-------------------------------------\n")
+          })
+
 
 #' Summarize concentration values
 #'
@@ -650,7 +681,6 @@ aggregateData <- function(metalyzer,
 
     cat("Reshape and merge data...  ")
     aggregated_data <- reshape_data(
-      metalyzer,
       metabolites,
       classes,
       meta_columns,
