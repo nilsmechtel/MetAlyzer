@@ -1,8 +1,8 @@
 #' @title Open file and read data
 #'
-#' @description This function creates a 'MetAlyzer' object, opens the given
-#' 'MetIDQ' output Excel sheet and extracts metabolites, concentration data,
-#' quantification status and meta data. The column "Sample Type" and the row
+#' @description This function creates a SummarizedExperiment (SE), opens the given
+#' 'MetIDQ' output Excel sheet and extracts metabolites (colData), concentration data (assay),
+#' quantification status(assay) and meta data (rowData). The column "Sample Type" and the row
 #' "Class" are used as anchor cells in the Excel sheet and are therefore a
 #' requirement.
 #'
@@ -28,24 +28,39 @@ MetAlyzer_dataset <- function(
       "Incomplete" = c("#CBD2D7", "#FFCCCC")
     )
   ) {
-  object <- new("MetAlyzer", file_path = file_path, sheet = sheet)
-  full_sheet <- open_file(object)
+  starter_list <- list(file_path = as.character(file_path), sheet = sheet)
+  full_sheet <- open_file(starter_list)
   data_ranges <- get_data_range(full_sheet)
 
   metabolites <- slice_metabolties(full_sheet, data_ranges)
-  object@metabolites <- list("original" = metabolites,
-                             "filtered" = metabolites)
-  object@meta_data <- slice_meta_data(full_sheet, data_ranges)
-  object@conc_values <- slice_conc_values(full_sheet, data_ranges, metabolites)
-  object@quant_status <- read_quant_status(
-                                           file_path, sheet,
-                                           nrow(full_sheet),
-                                           ncol(full_sheet),
-                                           data_ranges,
-                                           metabolites,
-                                           status_list = status_list
-                                           )
-  return(object)
+  meta_data <- slice_meta_data(full_sheet, data_ranges)
+  conc_values <- slice_conc_values(full_sheet, data_ranges, metabolites)
+  quant_status <- read_quant_status(
+                                    file_path, sheet,
+                                    nrow(full_sheet),
+                                    ncol(full_sheet),
+                                    data_ranges,
+                                    metabolites,
+                                    status_list = status_list
+                                    )
+  classes <- names(metabolites)
+  colData <- data.frame(metabolites)
+  # Add filtering column
+  colData$filtered <- TRUE
+  colData$Class <- classes
+  colnames(colData) <- c("original", "filtered", "Class")
+  rowData <- meta_data
+  aggregated_data <- data.frame()
+  se <- SummarizedExperiment(assays = list(conc_values = conc_values, 
+                                           quant_status = quant_status),
+                             colData = colData,
+                             rowData = rowData,
+                             metadata = list(file_path = file_path,
+                                             sheet = sheet,
+                                             aggregated_data = aggregated_data)
+                            )
+  metadata(se)$aggregated_data <- aggregateData(se)
+  return(se)
 }
 
 #' Open Excel file
@@ -58,9 +73,9 @@ MetAlyzer_dataset <- function(
 #' @importFrom openxlsx read.xlsx
 #'
 #' @keywords internal
-open_file <- function(object) {
-  full_sheet <- read.xlsx(object@file_path,
-                          sheet = object@sheet,
+open_file <- function(starter_list) {
+  full_sheet <- read.xlsx(starter_list$file_path,
+                          sheet = starter_list$sheet,
                           colNames = FALSE,
                           skipEmptyRows = FALSE,
                           skipEmptyCols = FALSE)

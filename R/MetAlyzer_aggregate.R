@@ -14,6 +14,7 @@
 #' @keywords internal
 
 reshape_data <- function(metabolites,
+                        classes,
                         meta_columns,
                         conc_values,
                         quant_status) {
@@ -32,14 +33,14 @@ reshape_data <- function(metabolites,
     aggregated_data <- gathered_data %>%
       dplyr::group_by_at(group_cols) %>%
       dplyr::mutate(Class = sapply(Metabolite, function(x) {
-        names(metabolites[metabolites == x])
+        classes[metabolites == x]
       }),
       .after = Metabolite)
 
     aggregated_data$Metabolite <- factor(aggregated_data$Metabolite,
                                           levels = unique(metabolites))
     aggregated_data$Class <- factor(aggregated_data$Class,
-                                    levels = unique(names(metabolites)))
+                                    levels = unique(classes))
     aggregated_data$Status <- factor(gathered_status$Status,
                                       levels = levels(quant_status[,1]))
     for (col_name in colnames(meta_columns)) {
