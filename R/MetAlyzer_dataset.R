@@ -9,59 +9,135 @@
 #' @param file_path file path
 #' @param sheet sheet index
 #'
-#' @return An MetAlyzer object
+#' @return A Summarized Experiment object
 #'
-#' @importFrom methods new
 #' @export
 #'
 #' @examples
-#' data <- MetAlyzer_dataset(file_path = extraction_data())
+#' se <- MetAlyzer_dataset(file_path = extraction_data())
 MetAlyzer_dataset <- function(
     file_path,
-    sheet=1,
+    sheet = 1,
     status_list = list(
       "Valid" = c("#B9DE83", "#00CD66"),
-      "LOQ" = c("#B2D1DC","#7FB2C5", "#87CEEB"), # <LLOQ or > ULOQ
+      "LOQ" = c("#B2D1DC", "#7FB2C5", "#87CEEB"), # <LLOQ or > ULOQ
       "LOD" = c("#A28BA3", "#6A5ACD"), # < LOD
       "ISTD Out of Range" = c("#FFF099", "#FFFF33"),
       "Invalid" = "#FFFFCC",
       "Incomplete" = c("#CBD2D7", "#FFCCCC")
-    )
-  ) {
-  starter_list <- list(file_path = as.character(file_path), sheet = sheet)
-  full_sheet <- open_file(starter_list)
-  data_ranges <- get_data_range(full_sheet)
+    ),
+    silent = FALSE) {
+  # Print MetAlyzer logo
+  if (silent == FALSE) {
+    metalyzer_ascii_logo() # TODO: add MetAlyzer::
+  }
 
-  metabolites <- slice_metabolties(full_sheet, data_ranges)
-  meta_data <- slice_meta_data(full_sheet, data_ranges)
-  conc_values <- slice_conc_values(full_sheet, data_ranges, metabolites)
+  # Open MetIDQ Excel sheet
+  starter_list <- list(
+    "file_path" = as.character(file_path),
+    "sheet" = as.numeric(sheet)
+  )
+  full_sheet <- open_file(starter_list) # TODO: add MetAlyzer::
+  data_ranges <- get_data_range(full_sheet) # TODO: add MetAlyzer::
+
+  # Extract metabolites, meta data and concentration values
+  metabolites <- slice_metabolites(full_sheet, data_ranges) # TODO: add MetAlyzer::
+  meta_data <- slice_meta_data(full_sheet, data_ranges) # TODO: add MetAlyzer::
+  conc_values <- slice_conc_values(full_sheet, data_ranges, metabolites) # TODO: add MetAlyzer::
+
+  # Read quantification status
   quant_status <- read_quant_status(
-                                    file_path, sheet,
-                                    nrow(full_sheet),
-                                    ncol(full_sheet),
-                                    data_ranges,
-                                    metabolites,
-                                    status_list = status_list
-                                    )
-  classes <- names(metabolites)
-  colData <- data.frame(metabolites)
-  # Add filtering column
-  colData$filtered <- TRUE
-  colData$Class <- classes
-  colnames(colData) <- c("original", "filtered", "Class")
-  rowData <- meta_data
-  aggregated_data <- data.frame()
-  se <- SummarizedExperiment(assays = list(conc_values = conc_values, 
-                                           quant_status = quant_status),
-                             colData = colData,
-                             rowData = rowData,
-                             metadata = list(file_path = file_path,
-                                             sheet = sheet,
-                                             aggregated_data = aggregated_data)
-                            )
-  metadata(se)$aggregated_data <- aggregateData(se)
+    starter_list = starter_list,
+    sheet_dim = c(nrow(full_sheet), ncol(full_sheet)),
+    data_ranges = data_ranges,
+    status_list = status_list,
+    metabolites = metabolites
+  ) # TODO: add MetAlyzer::
+
+  # Aggregate data and add it to the metadata of SE object
+  aggregated_data <- aggregate_data(
+    metabolites = metabolites,
+    meta_data = meta_data,
+    conc_values = conc_values,
+    quant_status = quant_status
+  ) # TODO: add MetAlyzer::
+
+  # Fill Summarized Experiment
+  # rowData: features
+  # colData: samples
+  # assays: conc_values, quant_status
+  # metadata: file_path, sheet, aggregated_data
+
+  rowData <- data.frame(
+    "metabolic_classes" = names(metabolites),
+    row.names = metabolites
+  )
+  colData <- meta_data
+  assays <- list(
+    "conc_values" = t(conc_values),
+    "quant_status" = t(quant_status)
+  )
+  metadata <- list(
+    "file_path" = file_path,
+    "sheet_index" = sheet,
+    "status_list" = status_list,
+    "aggregated_data" = aggregated_data
+  )
+  se <- SummarizedExperiment::SummarizedExperiment(
+    assays = assays,
+    colData = colData,
+    rowData = rowData,
+    metadata = metadata,
+  )
+
+  # Print summary of conc_values and quant_status
+  summarizeConcValues(se)
+  summarizeQuantData(se)
+
   return(se)
 }
+
+#' MetAlyzer logo
+#'
+#' This function prints "MetAlyzer" as an ASCII logo
+#'
+#' @keywords internal
+metalyzer_ascii_logo <- function() {
+  # http://patorjk.com/software/taag/#p=display&f=3D-ASCII&t=MetAlyzer Hello Hel
+  line1 <- "\n"
+  line2a <- " _____ ______   _______  _________  ________  ___           ___   "
+  line2b <- " ___ ________  _______   ________"
+  line3a <- "|\\   _ \\  _   \\|\\  ___ \\|\\___   ___\\\\   __  \\|\\  \\     "
+  line3b <- "    |\\  \\  /  /|\\_____  \\|\\  ___ \\ |\\   __  \\"
+  line4a <- "\\ \\  \\\\\\__\\ \\  \\ \\   __/\\|___ \\  \\_\\ \\  \\|\\  \\ \\"
+  line4b <- "  \\        \\ \\  \\/  / /\\|___/  /\\ \\   __/|\\ \\  \\|\\  \\"
+  line5a <- " \\ \\  \\\\|__| \\  \\ \\  \\_|/__  \\ \\  \\ \\ \\   __  \\ \\  "
+  line5b <- "\\        \\ \\    / /     /  / /\\ \\  \\_|/_\\ \\   _  _\\"
+  line6a <- "  \\ \\  \\    \\ \\  \\ \\  \\_|\\ \\  \\ \\  \\ \\ \\  \\ \\  \\"
+  line6b <- " \\  \\____    \\/  /  /     /  /_/__\\ \\  \\_|\\ \\ \\  \\\\  \\"
+  line6c <- "| "
+  line7a <- "   \\ \\__\\    \\ \\__\\ \\_______\\  \\ \\__\\ \\ \\__\\ \\__\\ "
+  line7b <- "\\_______\\__/  / /      |\\________\\ \\_______\\ \\__\\\\ _\\ "
+  line8a <- "    \\|__|     \\|__|\\|_______|   \\|__|  \\|__|\\|__|\\|_______|"
+  line8b <- "\\___/ /        \\|_______|\\|_______|\\|__|\\|__|"
+  line9 <- "                                                          \\|___|/"
+  line10 <- "\n"
+
+  logo_string <- c(
+    line1,
+    paste(line2a, line2b, sep = ""),
+    paste(line3a, line3b, sep = ""),
+    paste(line4a, line4b, sep = ""),
+    paste(line5a, line5b, sep = ""),
+    paste(line6a, line6b, line6c, sep = ""),
+    paste(line7a, line7b, sep = ""),
+    paste(line8a, line8b, sep = ""),
+    line9,
+    line10
+  )
+  cat(logo_string, sep = "\n")
+}
+
 
 #' Open Excel file
 #'
@@ -70,15 +146,14 @@ MetAlyzer_dataset <- function(
 #'
 #' @param object MetAlyzer object
 #'
-#' @importFrom openxlsx read.xlsx
-#'
 #' @keywords internal
 open_file <- function(starter_list) {
-  full_sheet <- read.xlsx(starter_list$file_path,
-                          sheet = starter_list$sheet,
-                          colNames = FALSE,
-                          skipEmptyRows = FALSE,
-                          skipEmptyCols = FALSE)
+  full_sheet <- openxlsx::read.xlsx(starter_list$file_path,
+    sheet = starter_list$sheet,
+    colNames = FALSE,
+    skipEmptyRows = FALSE,
+    skipEmptyCols = FALSE
+  )
   full_sheet <- as.matrix(full_sheet)
   full_sheet[full_sheet == "NA"] <- NA # all entries are strings
   return(full_sheet)
@@ -100,7 +175,7 @@ get_data_range <- function(full_sheet) {
   # row of header "Class"
   row_class <- which(full_sheet == "Class") %% nrow(full_sheet)
   # column of header "Class"
-  col_class <- ceiling(which(full_sheet == "Class") / nrow(full_sheet)) 
+  col_class <- ceiling(which(full_sheet == "Class") / nrow(full_sheet))
 
   if (!"Sample Type" %in% full_sheet) {
     stop('The column "Sample Type" is missing. Data could not be detected...')
@@ -116,12 +191,14 @@ get_data_range <- function(full_sheet) {
   names(rows_data) <- NULL
   cols_data <- (col_class + 1):ncol(full_sheet) # columns
 
-  data_ranges <- list("class_row" = row_class,
-                      "class_col" = col_class,
-                      "sample_type_row" = row_sample_type,
-                      "sample_type_col" = col_sample_type,
-                      "data_rows" = rows_data,
-                      "data_cols" = cols_data)
+  data_ranges <- list(
+    "class_row" = row_class,
+    "class_col" = col_class,
+    "sample_type_row" = row_sample_type,
+    "sample_type_col" = col_sample_type,
+    "data_rows" = rows_data,
+    "data_cols" = cols_data
+  )
   return(data_ranges)
 }
 
@@ -135,12 +212,16 @@ get_data_range <- function(full_sheet) {
 #' @param data_ranges data_ranges
 #'
 #' @keywords internal
-slice_metabolties <- function(full_sheet, data_ranges) {
+slice_metabolites <- function(full_sheet, data_ranges) {
   ## metabolites are a row above classes
-  metabolites <- full_sheet[data_ranges[["class_row"]]-1,
-                            data_ranges[["data_cols"]]]
-  classes <- full_sheet[data_ranges[["class_row"]],
-                        data_ranges[["data_cols"]]]
+  metabolites <- full_sheet[
+    data_ranges$class_row - 1,
+    data_ranges$data_cols
+  ]
+  classes <- full_sheet[
+    data_ranges$class_row,
+    data_ranges$data_cols
+  ]
   names(metabolites) <- classes
   return(metabolites)
 }
@@ -156,8 +237,10 @@ slice_metabolties <- function(full_sheet, data_ranges) {
 #'
 #' @keywords internal
 slice_conc_values <- function(full_sheet, data_ranges, metabolites) {
-  conc_values <- full_sheet[data_ranges[["data_rows"]],
-                         data_ranges[["data_cols"]]]
+  conc_values <- full_sheet[
+    data_ranges$data_rows,
+    data_ranges$data_cols
+  ]
   conc_values <- as.data.frame(conc_values)
   colnames(conc_values) <- metabolites
   conc_values[] <- lapply(conc_values[], as.numeric)
@@ -174,10 +257,14 @@ slice_conc_values <- function(full_sheet, data_ranges, metabolites) {
 #'
 #' @keywords internal
 slice_meta_data <- function(full_sheet, data_ranges) {
-  meta_header <- paste(full_sheet[data_ranges[["sample_type_row"]],
-                                  1:data_ranges[["class_col"]]])
-  meta_data <- as.data.frame(full_sheet[data_ranges[["data_rows"]],
-                                        1:data_ranges[["class_col"]]])
+  meta_header <- paste(full_sheet[
+    data_ranges[["sample_type_row"]],
+    1:data_ranges[["class_col"]]
+  ])
+  meta_data <- as.data.frame(full_sheet[
+    data_ranges$data_rows,
+    1:data_ranges[["class_col"]]
+  ])
   colnames(meta_data) <- meta_header
   meta_data <- meta_data[
     colSums(is.na(meta_data)) != nrow(meta_data)
@@ -186,7 +273,6 @@ slice_meta_data <- function(full_sheet, data_ranges) {
   colnames(meta_data)[nas] <- paste0(
     "X", seq_along(nas)
   ) # replace NAs in colnames with X and consecutive numbers
-  meta_data$Filter <- TRUE # add extra column for filtering
   return(meta_data)
 }
 
@@ -208,13 +294,17 @@ unify_hex <- function(hex) {
   } else if (n_digits == 8) {
     hex_code <- paste0("#", paste(hex_digits[3:8], collapse = ""))
   } else if (n_digits == 3) {
-    hex_code <- paste0("#", hex_digits[1], hex_digits[1],
-                      hex_digits[2], hex_digits[2],
-                      hex_digits[3], hex_digits[3])
+    hex_code <- paste0(
+      "#", hex_digits[1], hex_digits[1],
+      hex_digits[2], hex_digits[2],
+      hex_digits[3], hex_digits[3]
+    )
   } else if (n_digits == 4) {
-    hex_code <- paste0("#", hex_digits[2], hex_digits[2],
-                      hex_digits[3], hex_digits[3],
-                      hex_digits[4], hex_digits[4])
+    hex_code <- paste0(
+      "#", hex_digits[2], hex_digits[2],
+      hex_digits[3], hex_digits[3],
+      hex_digits[4], hex_digits[4]
+    )
   } else {
     hex_code <- ""
   }
@@ -234,26 +324,36 @@ unify_hex <- function(hex) {
 #' @param data_ranges data_ranges
 #' @param metabolites metabolites
 #'
-#'
 #' @keywords internal
-read_quant_status <- function(file_path, sheet, n_row, n_col,
-                              data_ranges, metabolites, status_list) {
-  wb <- openxlsx::loadWorkbook(file = file_path)
-  sheet_name <- openxlsx::getSheetNames(file = file_path)[sheet]
+read_quant_status <- function(
+    starter_list,
+    sheet_dim,
+    data_ranges,
+    metabolites,
+    status_list) {
+  wb <- openxlsx::loadWorkbook(file = starter_list$file_path)
+  sheet_name <- openxlsx::getSheetNames(
+    file = starter_list$file_path
+  )[starter_list$sheet]
   styles <- wb$styleObjects
-  mat_bg <- matrix(NA, ncol = n_col, nrow = n_row)
+  mat_bg <- matrix(NA, nrow = sheet_dim[1], ncol = sheet_dim[2])
   for (x in styles) { # iterate through different cell styles in the sheet
     if (x$sheet == sheet_name) {
       rgb <- x$style$fill$fillFg
       rgb <- ifelse(length(rgb) == 0, "", rgb)
       hex_code <- unify_hex(rgb)
       matching_status <- names(status_list)[
-        sapply(status_list, function(colors) {hex_code %in% colors})
+        sapply(status_list, function(colors) {
+          hex_code %in% colors
+        })
       ]
       if (length(matching_status) > 0) {
         if (hex_code != rgb) {
-          cat("Converting color code:",
-              paste0("\"", rgb, "\""), "->", paste0("\"", hex_code, "\""), "\n")
+          cat(
+            "Info: Reading color code \"", rgb, "\" as \"", hex_code, "\"",
+            "\n",
+            sep = ""
+          )
         }
         status <- matching_status[1] # take the first matching status
         rows <- x$rows # row indices
@@ -264,11 +364,73 @@ read_quant_status <- function(file_path, sheet, n_row, n_col,
       }
     }
   }
-  quant_status <- as.data.frame(mat_bg)[data_ranges[["data_rows"]],
-                                        data_ranges[["data_cols"]]]
+  quant_status <- as.data.frame(mat_bg)[
+    data_ranges$data_rows,
+    data_ranges$data_cols
+  ]
   colnames(quant_status) <- metabolites
-  quant_status[] <- lapply(quant_status, function(x) {
-    factor(x, levels = names(status_list))
-  })
   return(quant_status)
+}
+
+#' @title Aggregate data
+#'
+#' @description This function reshapes conc_values, quant_status,
+#' metatabolitesand sample IDs and combines them into a tibble data frame
+#' for filtering with dplyr and plotting with 'ggplot2'. "aggregated_data"
+#' is grouped by metabolites.
+#'
+#' @param metabolites metabolites MetAlyzer object
+#' @param meta_columns A selection of columns from meta_data to add to
+#' aggregated data frame
+#' @param conc_values conc_values of a MetAlyzer object
+#' @param quant_status quant_status of a MetAlyzer object
+#'
+#' @return The aggregated data tibble data frame
+#' @import dplyr
+#'
+#' @keywords internal
+
+aggregate_data <- function(
+    metabolites,
+    meta_data,
+    conc_values,
+    quant_status) {
+  classes <- names(metabolites)
+
+  comb_data <- dplyr::mutate(
+    conc_values,
+    ID = rownames(meta_data),
+    .before = 1
+  )
+  gathered_data <- tidyr::gather(comb_data,
+    key = Metabolite,
+    value = Concentration,
+    -ID
+  )
+  gathered_status <- tidyr::gather(quant_status,
+    key = Metabolite,
+    value = Status
+  )
+
+  aggregated_data <- gathered_data %>%
+    dplyr::group_by(Metabolite) %>%
+    dplyr::mutate(
+      Class = sapply(Metabolite, function(x) {
+        classes[metabolites == x]
+      }),
+      .after = Metabolite
+    )
+
+  aggregated_data$Metabolite <- factor(aggregated_data$Metabolite,
+    levels = unique(metabolites)
+  )
+  aggregated_data$Class <- factor(aggregated_data$Class,
+    levels = unique(classes)
+  )
+  aggregated_data$Status <- factor(gathered_status$Status,
+    levels = levels(quant_status[, 1])
+  )
+  aggregated_data <- arrange(aggregated_data, Metabolite)
+
+  return(droplevels(aggregated_data))
 }

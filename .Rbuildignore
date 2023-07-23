@@ -5,8 +5,8 @@
 ^cran-comments\.md$
 ^CRAN-RELEASE$
 ^LICENSE$
-^.*\.code-workspace$
-^.*\.Rproj$
+*\.code-workspace$
+*\.Rproj$
 
 ^inst/python$
 
