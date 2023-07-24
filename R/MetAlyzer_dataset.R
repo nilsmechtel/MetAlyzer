@@ -10,9 +10,7 @@
 #' @param sheet A numeric index specifying which sheet of the Excel file to use.
 #' @param status_list A list of HEX color codes for each quantification status.
 #' @param silent If TRUE, mute any print command.
-#'
 #' @return A Summarized Experiment object
-#'
 #' @export
 #'
 #' @examples
@@ -31,7 +29,7 @@ MetAlyzer_dataset <- function(
     silent = FALSE) {
   # Print MetAlyzer logo
   if (silent == FALSE) {
-    MetAlyzer::metalyzer_ascii_logo()
+    metalyzer_ascii_logo()
   }
 
   # Open MetIDQ Excel sheet
@@ -39,16 +37,16 @@ MetAlyzer_dataset <- function(
     "file_path" = as.character(file_path),
     "sheet" = as.numeric(sheet)
   )
-  full_sheet <- MetAlyzer::open_file(starter_list)
-  data_ranges <- MetAlyzer::get_data_range(full_sheet)
+  full_sheet <- open_file(starter_list)
+  data_ranges <- get_data_range(full_sheet)
 
   # Extract metabolites, meta data and concentration values
-  metabolites <- MetAlyzer::slice_metabolites(full_sheet, data_ranges)
-  meta_data <- MetAlyzer::slice_meta_data(full_sheet, data_ranges)
-  conc_values <- MetAlyzer::slice_conc_values(full_sheet, data_ranges, metabolites)
+  metabolites <- slice_metabolites(full_sheet, data_ranges)
+  meta_data <- slice_meta_data(full_sheet, data_ranges)
+  conc_values <- slice_conc_values(full_sheet, data_ranges, metabolites)
 
   # Read quantification status
-  quant_status <- MetAlyzer::read_quant_status(
+  quant_status <- read_quant_status(
     starter_list = starter_list,
     sheet_dim = c(nrow(full_sheet), ncol(full_sheet)),
     data_ranges = data_ranges,
@@ -58,7 +56,7 @@ MetAlyzer_dataset <- function(
   )
 
   # Aggregate data and add it to the metadata of SE object
-  aggregated_data <- MetAlyzer::aggregate_data(
+  aggregated_data <- aggregate_data(
     metabolites = metabolites,
     meta_data = meta_data,
     conc_values = conc_values,
@@ -379,9 +377,9 @@ read_quant_status <- function(
   return(quant_status)
 }
 
-#' @title Aggregate data
+#' Aggregate data
 #'
-#' @description This function reshapes conc_values, quant_status,
+#' This function reshapes conc_values, quant_status,
 #' metatabolitesand sample IDs and combines them into a tibble data frame
 #' for filtering with dplyr and plotting with 'ggplot2'. "aggregated_data"
 #' is grouped by metabolites.
@@ -394,7 +392,6 @@ read_quant_status <- function(
 #' @import dplyr
 #'
 #' @keywords internal
-
 aggregate_data <- function(
     metabolites,
     meta_data,
