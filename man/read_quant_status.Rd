@@ -5,27 +5,26 @@
 \title{Read quantification status}
 \usage{
 read_quant_status(
-  file_path,
-  sheet,
-  n_row,
-  n_col,
+  starter_list,
+  sheet_dim,
   data_ranges,
   metabolites,
-  status_list
+  status_list,
+  silent
 )
 }
 \arguments{
-\item{file_path}{file_path}
+\item{starter_list}{starter_list}
 
-\item{sheet}{sheet}
-
-\item{n_row}{n_row}
-
-\item{n_col}{n_col}
+\item{sheet_dim}{sheet_dim}
 
 \item{data_ranges}{data_ranges}
 
 \item{metabolites}{metabolites}
+
+\item{status_list}{status_list}
+
+\item{silent}{silent}
 }
 \description{
 This function gets the background color of each cell in .full_sheet and

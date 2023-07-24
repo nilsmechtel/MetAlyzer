@@ -4,7 +4,7 @@
 \alias{open_file}
 \title{Open Excel file}
 \usage{
-open_file(object)
+open_file(starter_list)
 }
 \arguments{
 \item{object}{MetAlyzer object}

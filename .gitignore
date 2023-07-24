@@ -1,7 +1,6 @@
 *.DS_Store
 *.Rhistory
 *.RData
-.Rproj.user/
-inst/doc
+*.Rproj.user/
 .vscode/tasks.json
-MetAlyzer.code-workspace
+*.code-workspace

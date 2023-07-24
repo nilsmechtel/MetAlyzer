@@ -5,14 +5,19 @@
 ^cran-comments\.md$
 ^CRAN-RELEASE$
 ^LICENSE$
-*\.code-workspace$
-*\.Rproj$
+^MetAlyzer\.code-workspace$
+^\.Rproj$
 
 ^inst/python$
 
+^R/add_filter\.R$
+^R/calc_cv\.R$
 ^R/calculate_log2FC\.R$
 ^R/do_anova_2w\.R$
+^R/filter_groupwise\.R$
+^R/impute_data\.R$
 ^R/perform_ANOVA\.R$
+^R/transform_data\.R$
 ^R/two_way_anova\.R$
 
 ^R/draw_FC_network\.R$

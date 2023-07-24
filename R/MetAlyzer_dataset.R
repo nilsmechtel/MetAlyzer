@@ -1,20 +1,22 @@
 #' @title Open file and read data
 #'
-#' @description This function creates a SummarizedExperiment (SE), opens the given
-#' 'MetIDQ' output Excel sheet and extracts metabolites (colData), concentration data (assay),
-#' quantification status(assay) and meta data (rowData). The column "Sample Type" and the row
-#' "Class" are used as anchor cells in the Excel sheet and are therefore a
-#' requirement.
+#' @description This function creates a SummarizedExperiment (SE) from the given
+#' 'MetIDQ' output Excel sheet: metabolites (rowData), meta data (colData),
+#' concentration data (assay), quantification status(assay)
+#' The column "Sample Type" and the row "Class" are used as anchor cells in the
+#' Excel sheet and are therefore a requirement.
 #'
-#' @param file_path file path
-#' @param sheet sheet index
+#' @param file_path A character specifying the file path to the Excel file.
+#' @param sheet A numeric index specifying which sheet of the Excel file to use.
+#' @param status_list A list of HEX color codes for each quantification status.
+#' @param silent If TRUE, mute any print command.
 #'
 #' @return A Summarized Experiment object
 #'
 #' @export
 #'
 #' @examples
-#' se <- MetAlyzer_dataset(file_path = extraction_data())
+#' metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
 MetAlyzer_dataset <- function(
     file_path,
     sheet = 1,
@@ -29,7 +31,7 @@ MetAlyzer_dataset <- function(
     silent = FALSE) {
   # Print MetAlyzer logo
   if (silent == FALSE) {
-    metalyzer_ascii_logo() # TODO: add MetAlyzer::
+    MetAlyzer::metalyzer_ascii_logo()
   }
 
   # Open MetIDQ Excel sheet
@@ -37,30 +39,32 @@ MetAlyzer_dataset <- function(
     "file_path" = as.character(file_path),
     "sheet" = as.numeric(sheet)
   )
-  full_sheet <- open_file(starter_list) # TODO: add MetAlyzer::
-  data_ranges <- get_data_range(full_sheet) # TODO: add MetAlyzer::
+  full_sheet <- MetAlyzer::open_file(starter_list)
+  data_ranges <- MetAlyzer::get_data_range(full_sheet)
 
   # Extract metabolites, meta data and concentration values
-  metabolites <- slice_metabolites(full_sheet, data_ranges) # TODO: add MetAlyzer::
-  meta_data <- slice_meta_data(full_sheet, data_ranges) # TODO: add MetAlyzer::
-  conc_values <- slice_conc_values(full_sheet, data_ranges, metabolites) # TODO: add MetAlyzer::
+  metabolites <- MetAlyzer::slice_metabolites(full_sheet, data_ranges)
+  meta_data <- MetAlyzer::slice_meta_data(full_sheet, data_ranges)
+  conc_values <- MetAlyzer::slice_conc_values(full_sheet, data_ranges, metabolites)
 
   # Read quantification status
-  quant_status <- read_quant_status(
+  quant_status <- MetAlyzer::read_quant_status(
     starter_list = starter_list,
     sheet_dim = c(nrow(full_sheet), ncol(full_sheet)),
     data_ranges = data_ranges,
+    metabolites = metabolites,
     status_list = status_list,
-    metabolites = metabolites
-  ) # TODO: add MetAlyzer::
+    silent = silent
+  )
 
   # Aggregate data and add it to the metadata of SE object
-  aggregated_data <- aggregate_data(
+  aggregated_data <- MetAlyzer::aggregate_data(
     metabolites = metabolites,
     meta_data = meta_data,
     conc_values = conc_values,
-    quant_status = quant_status
-  ) # TODO: add MetAlyzer::
+    quant_status = quant_status,
+    status_vec = names(status_list)
+  )
 
   # Fill Summarized Experiment
   # rowData: features
@@ -91,8 +95,10 @@ MetAlyzer_dataset <- function(
   )
 
   # Print summary of conc_values and quant_status
-  summarizeConcValues(se)
-  summarizeQuantData(se)
+  if (silent == FALSE) {
+    summarizeConcValues(se)
+    summarizeQuantData(se)
+  }
 
   return(se)
 }
@@ -114,13 +120,13 @@ metalyzer_ascii_logo <- function() {
   line5a <- " \\ \\  \\\\|__| \\  \\ \\  \\_|/__  \\ \\  \\ \\ \\   __  \\ \\  "
   line5b <- "\\        \\ \\    / /     /  / /\\ \\  \\_|/_\\ \\   _  _\\"
   line6a <- "  \\ \\  \\    \\ \\  \\ \\  \\_|\\ \\  \\ \\  \\ \\ \\  \\ \\  \\"
-  line6b <- " \\  \\____    \\/  /  /     /  /_/__\\ \\  \\_|\\ \\ \\  \\\\  \\"
+  line6b <- " \\  \\____    \\/   / /     /  /_/__\\ \\  \\_|\\ \\ \\  \\\\  \\"
   line6c <- "| "
   line7a <- "   \\ \\__\\    \\ \\__\\ \\_______\\  \\ \\__\\ \\ \\__\\ \\__\\ "
-  line7b <- "\\_______\\__/  / /      |\\________\\ \\_______\\ \\__\\\\ _\\ "
+  line7b <- "\\_______\\__/   / /     |\\________\\ \\_______\\ \\__\\\\ _\\ "
   line8a <- "    \\|__|     \\|__|\\|_______|   \\|__|  \\|__|\\|__|\\|_______|"
-  line8b <- "\\___/ /        \\|_______|\\|_______|\\|__|\\|__|"
-  line9 <- "                                                          \\|___|/"
+  line8b <- "\\____/ /       \\|_______|\\|_______|\\|__|\\|__|"
+  line9 <- "                                                          \\|____|/"
   line10 <- "\n"
 
   logo_string <- c(
@@ -317,12 +323,12 @@ unify_hex <- function(hex) {
 #' This function gets the background color of each cell in .full_sheet and
 #' assigns it to the corresponding quantification status.
 #'
-#' @param file_path file_path
-#' @param sheet sheet
-#' @param n_row n_row
-#' @param n_col n_col
+#' @param starter_list starter_list
+#' @param sheet_dim sheet_dim
 #' @param data_ranges data_ranges
 #' @param metabolites metabolites
+#' @param status_list status_list
+#' @param silent silent
 #'
 #' @keywords internal
 read_quant_status <- function(
@@ -330,7 +336,8 @@ read_quant_status <- function(
     sheet_dim,
     data_ranges,
     metabolites,
-    status_list) {
+    status_list,
+    silent) {
   wb <- openxlsx::loadWorkbook(file = starter_list$file_path)
   sheet_name <- openxlsx::getSheetNames(
     file = starter_list$file_path
@@ -348,7 +355,7 @@ read_quant_status <- function(
         })
       ]
       if (length(matching_status) > 0) {
-        if (hex_code != rgb) {
+        if (hex_code != rgb && silent == FALSE) {
           cat(
             "Info: Reading color code \"", rgb, "\" as \"", hex_code, "\"",
             "\n",
@@ -384,8 +391,6 @@ read_quant_status <- function(
 #' aggregated data frame
 #' @param conc_values conc_values of a MetAlyzer object
 #' @param quant_status quant_status of a MetAlyzer object
-#'
-#' @return The aggregated data tibble data frame
 #' @import dplyr
 #'
 #' @keywords internal
@@ -394,7 +399,8 @@ aggregate_data <- function(
     metabolites,
     meta_data,
     conc_values,
-    quant_status) {
+    quant_status,
+    status_vec) {
   classes <- names(metabolites)
 
   comb_data <- dplyr::mutate(
@@ -421,6 +427,9 @@ aggregate_data <- function(
       .after = Metabolite
     )
 
+  aggregated_data$ID <- factor(aggregated_data$ID,
+    levels = rownames(meta_data)
+  )
   aggregated_data$Metabolite <- factor(aggregated_data$Metabolite,
     levels = unique(metabolites)
   )
@@ -428,7 +437,7 @@ aggregate_data <- function(
     levels = unique(classes)
   )
   aggregated_data$Status <- factor(gathered_status$Status,
-    levels = levels(quant_status[, 1])
+    levels = status_vec
   )
   aggregated_data <- arrange(aggregated_data, Metabolite)
 
