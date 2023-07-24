@@ -35,7 +35,7 @@ This is an extract from one of the provided example data sets.
 ![Example_Data](vignettes/screenshot_xlsx.png)
 
 #### Create MetAlyzer object:
-```r
+```{r}
 > metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
 
 
