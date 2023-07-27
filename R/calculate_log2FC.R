@@ -18,15 +18,16 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' print(1)
-#' }
+#' metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
+#' metalyzer_se <- renameMetaData(metalyzer_se, Method = `Sample Description`)
+#' 
+#' log2FC <- calculate_log2FC(metalyzer, Tissue, perc_of_min = 0.2, impute_NA = TRUE)
 
-calculate_log2FC <- function(metalyzer, categorical, impute_to = 0.2, impute_NA = TRUE,
+calculate_log2FC <- function(metalyzer_se, categorical, perc_of_min = 0.2, impute_NA = FALSE,
                              installation_type = "binary") {
-  metalyzer <- impute_data(metalyzer, impute_to, impute_NA)
-  metalyzer <- transform_plotting_data(metalyzer)
-  aggregated_data <- metadata(metalyzer)$aggregated_data
+  metalyzer_se <- impute_data(metalyzer_se, perc_of_min, impute_NA)
+  metalyzer_se <- transform_plotting_data(metalyzer_se)
+  aggregated_data <- metadata(metalyzer_se)$aggregated_data
   cat_str <- deparse(substitute(categorical))
 
   ## Check for qvalue and BiocManager installation
@@ -122,88 +123,4 @@ apply_linear_model <- function(df, ...) {
                           pval = pval,
                           row.names = NULL)
   return(output_df)
-}
-
-#' Zero imputation
-#'
-#' This function performs zero imputation with the minimal positive value times
-#' impute_to.
-#'
-#' @param vec A vector with Concentration values
-#' @param impute_to A numeric value below 1
-#' @param impute_NA Logical value whether to impute NA values
-#'
-#' @keywords internal
-
-zero_imputation <- function(vec, impute_to, impute_NA) {
-  non_zero <- vec[vec > 0 & !is.na(vec)]
-  imp_v <- ifelse(length(non_zero) > 0, min(non_zero) * impute_to, NA)
-  vec[vec == 0] <- imp_v
-  if (impute_NA) {
-    vec[is.na(vec)] <- imp_v
-  }
-  return(vec)
-}
-
-#' Impute aggregated data
-#'
-#' This function imputes zero concentration values (Concentration) with the
-#' minimal positive value multiplied by impute_to. If all values are zero or NA,
-#' they are set to NA. The imputed values are added to plotting_data in an extra
-#' column imputed_Conc.
-#'
-#' @param aggregated_data aggregated_data tibble data frame
-#' @param impute_to A numeric value below 1
-#' @param impute_NA Logical value whether to impute NA values
-#'
-#' @importFrom rlang .data
-#'
-#' @keywords internal
-
-impute_data <- function(metalyzer, impute_to, impute_NA) {
-  aggregated_data <- metadata(metalyzer)$aggregated_data
-  grouping_vars <- as.character(groups(aggregated_data))
-  aggregated_data <- aggregated_data %>%
-    group_by(Metabolite) %>%
-    mutate(imputed_Conc = zero_imputation(Concentration, impute_to, impute_NA),
-           .after = Concentration) %>%
-    group_by_at(grouping_vars)
-  metadata(metalyzer)$aggregated_data <- aggregated_data
-  return(metalyzer)
-}
-
-#' Transformation
-#'
-#' This function performs transformation of imputed concentration values
-#' (imputed_Conc).
-#'
-#' @param vec A vector of imputed concentration values
-#' @param func A function for transformation
-#'
-#' @keywords internal
-
-transform <- function(vec, func) {
-  vec[vec > 0 & !is.na(vec)] <- func(vec[vec > 0 & !is.na(vec)])
-  return(vec)
-}
-
-#' Transform aggregated data
-#'
-#' This function performs a transformation of imputed concentration values
-#' (imputed_Conc) with a given function. NA values are skipped. The transformed
-#' values are added to aggregated_data in an extra column transf_Conc.
-#'
-#' @param metalyzer A MetAlyzer object
-#'
-#' @importFrom rlang .data
-#'
-#' @keywords internal
-
-transform_plotting_data <- function(metalyzer) {
-  aggregated_data <- metadata(metalyzer)$aggregated_data
-  aggregated_data <- mutate(aggregated_data,
-                            log2_Conc = transform(imputed_Conc, base::log2),
-                            .after = imputed_Conc)
-  metadata(metalyzer)$aggregated_data <- aggregated_data
-  return(metalyzer)
 }
