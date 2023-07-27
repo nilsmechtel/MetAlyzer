@@ -25,17 +25,18 @@ zero_imputation <- function(vec, perc_of_min, impute_NA) {
 #' are zero or NA, they are set to NA. The imputed values are added
 #' to plotting_data in an extra column imputed_Conc.
 #'
-#' @param aggregated_data aggregated_data tibble data frame
+#' @param metalyzer A MetAlyzer object
 #' @param perc_of_min A numeric value between 0 and 1. Percentage
 #' of the minimal positive value, that is taken for imputation
 #' @param impute_NA Logical value whether to impute NA values
 #' @return An updated aggregated_data tibble data frame
 #' @export
 impute_data <- function(
-    aggregated_data,
-    perc_of_min = 0.2,
-    impute_NA = FALSE
+    metalyzer_se,
+    perc_of_min,
+    impute_NA
   ) {
+  aggregated_data <- metadata(metalyzer_se)$aggregated_data
   cat("Impute concentrations (groupwise: Metabolite) with",
       paste0(round(perc_of_min * 100), "%"),
       "of the minimal positive value...  ")
@@ -47,7 +48,7 @@ impute_data <- function(
       Concentration, perc_of_min, impute_NA),
            .after = Concentration) %>%
     group_by_at(grouping_vars)
-
+  metadata(metalyzer_se)$aggregated_data <- aggregated_data
   cat("finished!\n")
-  return(aggregated_data)
+  return(metalyzer_se)
 }

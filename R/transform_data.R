@@ -23,9 +23,11 @@ transform <- function(vec, func) {
 #' @param aggregated_data aggregated_data tibble data frame
 #' @return An updated aggregated_data tibble data frame
 #' @export
-transform_data <- function(aggregated_data) {
+transform_data <- function(metalyzer_se) {
+  aggregated_data <- metadata(metalyzer_se)$aggregated_data
   aggregated_data <- mutate(aggregated_data,
                             log2_Conc = transform(imputed_Conc, base::log2),
                             .after = imputed_Conc)
-  return(aggregated_data)
+  metadata(metalyzer_se)$aggregated_data <- aggregated_data
+  return(metalyzer_se)
 }
