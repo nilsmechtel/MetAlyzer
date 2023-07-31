@@ -5,7 +5,7 @@
 #' @param metalyzer A Metalyzer object
 #' @param categorical A column specifying the two groups
 #' @param installation_type A character, indicating the type of package to
-#' @param impute_to A numeric value below 1
+#' @param perc_of_min A numeric value below 1
 #' @param impute_NA Logical value whether to impute NA values
 #' download and install. Options: ["binary", "source", "both"]
 #'
@@ -21,15 +21,25 @@
 #' metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
 #' metalyzer_se <- renameMetaData(metalyzer_se, Method = `Sample Description`)
 #' 
-#' log2FC <- calculate_log2FC(metalyzer, Tissue, perc_of_min = 0.2, impute_NA = TRUE)
+#' log2FC <- calculate_log2FC(metalyzer_se, Method, perc_of_min = 0.2, impute_NA = TRUE)
 
 calculate_log2FC <- function(metalyzer_se, categorical, perc_of_min = 0.2, impute_NA = FALSE,
                              installation_type = "binary") {
   metalyzer_se <- impute_data(metalyzer_se, perc_of_min, impute_NA)
-  metalyzer_se <- transform_plotting_data(metalyzer_se)
+  metalyzer_se <- transform_data(metalyzer_se)
   aggregated_data <- metadata(metalyzer_se)$aggregated_data
+  meta_data <- colData(metalyzer_se)
   cat_str <- deparse(substitute(categorical))
 
+  mapping_vec <- unlist(meta_data[cat_str])
+  names(mapping_vec) <- rownames(meta_data[cat_str])
+  aggregated_data <- dplyr::mutate(aggregated_data, 
+  !!cat_str := factor(sapply(ID, function(id) {
+                                   mapping_vec[id]
+                               }),
+  levels = unique(mapping_vec)), .after = ID)
+
+  metadata(metalyzer_se)$aggregated_data <- aggregated_data
   ## Check for qvalue and BiocManager installation
   installed_packages <- utils::installed.packages()[, "Package"]
   if (! "qvalue" %in% installed_packages) {
