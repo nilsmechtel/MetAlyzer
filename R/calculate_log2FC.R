@@ -2,9 +2,11 @@
 #'
 #' This function calculates the log2 fold change of two groups from
 #' plotting_data.
-#' @param aggregated_data aggregated_data
+#' @param metalyzer A Metalyzer object
 #' @param categorical A column specifying the two groups
 #' @param installation_type A character, indicating the type of package to
+#' @param perc_of_min A numeric value below 1
+#' @param impute_NA Logical value whether to impute NA values
 #' download and install. Options: ["binary", "source", "both"]
 #'
 #' @return A data frame containing the log2 fold change for each metabolite
@@ -16,14 +18,28 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' print(1)
-#' }
+#' metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
+#' metalyzer_se <- renameMetaData(metalyzer_se, Method = `Sample Description`)
+#' 
+#' log2FC <- calculate_log2FC(metalyzer_se, Method, perc_of_min = 0.2, impute_NA = TRUE)
 
-calculate_log2FC <- function(aggregated_data, categorical,
+calculate_log2FC <- function(metalyzer_se, categorical, perc_of_min = 0.2, impute_NA = FALSE,
                              installation_type = "binary") {
+  metalyzer_se <- impute_data(metalyzer_se, perc_of_min, impute_NA)
+  metalyzer_se <- transform_data(metalyzer_se)
+  aggregated_data <- metadata(metalyzer_se)$aggregated_data
+  meta_data <- colData(metalyzer_se)
   cat_str <- deparse(substitute(categorical))
 
+  mapping_vec <- unlist(meta_data[cat_str])
+  names(mapping_vec) <- rownames(meta_data[cat_str])
+  aggregated_data <- dplyr::mutate(aggregated_data, 
+  !!cat_str := factor(sapply(ID, function(id) {
+                                   mapping_vec[id]
+                               }),
+  levels = unique(mapping_vec)), .after = ID)
+
+  metadata(metalyzer_se)$aggregated_data <- aggregated_data
   ## Check for qvalue and BiocManager installation
   installed_packages <- utils::installed.packages()[, "Package"]
   if (! "qvalue" %in% installed_packages) {
@@ -39,12 +55,12 @@ calculate_log2FC <- function(aggregated_data, categorical,
 
   df <- aggregated_data %>%
     ungroup(all_of(cat_str)) %>%
-    rename(Value = .data$log2_Conc,
-           Group = !!sym(cat_str)) %>%
-    select(.data$Metabolite,
-           .data$Class,
-           .data$Group,
-           .data$Value)
+    mutate(Value = log2_Conc,
+        Group = !!sym(cat_str)) %>%
+    select(Metabolite,
+           Class,
+           Group,
+           Value)
 
   ## Check if already factor
   group_vec <- df$Group
@@ -78,8 +94,8 @@ calculate_log2FC <- function(aggregated_data, categorical,
   options(warn = -1)
   change_test_df <- df %>%
     group_modify(~ apply_linear_model(df = .x)) %>%
-    ungroup(.data$Metabolite) %>%
-    mutate(qval = qvalue::qvalue(.data$pval, pi0 = 1)$qvalues)
+    ungroup(Metabolite) %>%
+    mutate(qval = qvalue::qvalue(pval, pi0 = 1)$qvalues)
   options(warn = 0)
   return(change_test_df)
 }
@@ -101,7 +117,7 @@ calculate_log2FC <- function(aggregated_data, categorical,
 apply_linear_model <- function(df, ...) {
   class <- df$Class[1]
   df <- df %>%
-    filter(!is.na(.data$Value)) %>%
+    filter(!is.na(Value)) %>%
     droplevels()
   if (length(levels(df$Group)) != 2) {
     l2fc <- NA

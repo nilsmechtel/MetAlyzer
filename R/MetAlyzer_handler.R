@@ -180,8 +180,8 @@ updateMetaData <- function(metalyzer_se, ..., inplace = FALSE) {
     } else {
       levels <- unique(new_col)
     }
-    meta_data[, col_name] <- factor(NA, levels = levels)
-    meta_data[, col_name][meta_data$Filter == TRUE] <- new_col
+    meta_data[, col_name] <- factor(new_col, levels = levels)
+  #  meta_data[, col_name][meta_data$Filter == TRUE] <- new_col  # raff nicht warum das hier ist, die Filter col ist doch weg
   }
   SummarizedExperiment::colData(metalyzer_se) <- meta_data
 
