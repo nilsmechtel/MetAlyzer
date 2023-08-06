@@ -23,7 +23,7 @@ The package provides methods to read output files from the MetIDQ™ software in
 
 There is a version available on CRAN.
 
-``` r
+``` {r}
 install.packages("MetAlyzer")
 ```
 
@@ -39,159 +39,179 @@ Effective quantification of metabolites requires a reliable signal. The limit of
 
 ## Get started
 
-To present the functionalities of the package, we use a data set published by [Gegner <i>et al</i>. 2022](https://doi.org/10.1101/2021.12.16.472947). This data set used 6 (1 to 6) different extraction methods to quantify 630 metabolites in triplicates for 4 tissue types (Drosophila, Mouse Liver, Mouse Kidney, Zebrafish Liver).
+To present the functionalities of the package, we use a data set published by [Gegner <i>et al</i>. 2022](https://doi.org/10.1101/2021.12.16.472947). This data set used 6 (1 to 6) different extraction methods to quantify 630 metabolites in triplicates for 4 tissue types (Drosophila, Mouse Liver, Mouse Kidney, Zebrafish Liver). It is also included in the MetAlyzer Package and can be accessed via:
+Set data paths to the example data and a meta data file:
 
-<!-- ### Set data paths to the example data and a meta data file: -->
+```{r set_data_path}
+fpath <- system.file("extdata", "extraction_data.xlsx", package = "MetAlyzer") 
 
-<!-- # ```{r set_data_path} -->
+mpath <- system.file("extdata", "example_meta_data.rds", package = "MetAlyzer") 
+```
 
-<!-- # fpath <- system.file("extdata", "example_data.xlsx", package = "MetAlyzer") -->
-
-<!-- # mpath <- system.file("extdata", "example_meta_data.rds", package = "MetAlyzer") -->
-
-<!-- # ``` -->
-
-### Load data from Excel into a MetAlyzer object:
+Now we load the data into R using the function *MetAlyzer_dataset* and store it in an MetAlyzer object:
 
 ```{r initialize}
 MetAlyzer_proj <- MetAlyzer_dataset(file_path = fpath)
-show(data)
 ```
 
-The overview shows the different slots in the MetAlyzer object. The 630 metabolites are accompanied by 232 metabolite indicators calculated by the MetIDQ™ software.
+This generates a SummarizedExperiment (SE) using data extracted from the Excel sheet. The SE includes assay information with concentration values and quantification status, while the row Data section contains metabolites and their respective classes. It is important to note that there are 630 metabolites, and 232 metabolite indicators calculated using the MetIDQ™ software. The column Data contains the provided metadata. Furthermore, the SE's metadata section stores the file path, sheet number, status list, and aggregated data for downstream visualizations.
 
-The slots can be accessed using the functions *metaData*, *rawData*, *quantStatus* and *metabolites*.
+The various elements within the SummarizedExperiment (SE) can be accessed in a manner consistent with a typical SE.
 
 **For example:**
 
 ```{r getter}
-meta_data <- metaData(data)
+meta_data <- SummarizedExperiment::colData(MetAlyzer_proj)
 head(meta_data)
 ```
 
 ```{r getter}
-metabolites(data)[1:5]
+metabolites <- SummarizedExperiment::rowData(MetAlyzer_proj)
+head(metabolites)
 ```
 
 ```{r getter}
-quantification_status <- quantStatus(data)
+quantification_status <- SummarizedExperiment::assays(MetAlyzer_proj)$quant_status
 head(quantification_status, c(5, 5))
-
-summarizeQuantData(data)
 ```
 
 ```{r getter}
-summarizeRawData(data)
+concentration_values <- SummarizedExperiment::assays(MetAlyzer_proj)$conc_values
+head(concentration_values, c(5, 5))
+```
+
+### Show statistics
+
+The function *summarizeQuantData* gives an overview of the quantification status of the metabolites. E.g 34.16% of metabolites where below the Limit of Detection.
+
+```{r summarizeQuantData}
+summarizeQuantData(MetAlyzer_proj)
+```
+
+ The function *summarizeConcValues* prints the quantiles and the amount / percentage of NAs in the concentration data.
+
+```{r summarizeConcValues}
+summarizeConcValues(MetAlyzer_proj)
 ```
 
 ### Manage metabolites and meta data
 
-To subset the data set, the functions *filterMetabolites* and *filterMetaData* can be used to filter for certain metabolite classes or meta data. The original data are kept, so the filtering can be reset to the original data set using *resetMetabolites* and *resetMetaData*.
+To subset the data set, the functions *filterMetabolites* and *filterMetaData* can be used to filter for certain metabolites / classes or meta data. The original data is not kept, so to reset the filtering the Summarized Experiment has to be reinitialized.
 
 **For example, we want to exclude the metabolite indicators:**
 
 ```{r filter_metabolites}
-data <- filterMetabolites(data, class_name = "Metabolism Indicators")
+MetAlyzer_proj <- filterMetabolites(MetAlyzer_proj, "Metabolism Indicators")
 ```
 
-**There are also 2 blank samples in the data that we want to remove:** The extraction methods are encoded in the column "Group" of the meta data. We only keep those samples that are named c(1:6).
+**There are also 2 blank samples in the data that we want to remove:** The extraction methods are encoded in the column "Sample Description" of the meta data. We only keep those samples that are named c(1:6).
 
 ```{r filter_meta_data}
-data <- filterMetaData(data, column = `Sample Description`, keep = c(1:6))
+MetAlyzer_proj <- filterMetaData(MetAlyzer_proj, `Sample Description` %in% 1:6)
 ```
 
-<!-- ### Show statistics -->
 
-<!-- The function *summarizeQuantData* shows a summary of the quantification statistics of the data set and returns a vector of metabolites for each status. E.g. 45.36% of the metabolites across the data set were below the LOD. -->
+**The meta data column names can be changed after creating the Summarized Experiment:** For example, we want to rename the column "Sample Description" to "Method".
 
-<!-- ```{r summarise_quant_data} -->
-<!-- status_list <- summarizeQuantData(data) -->
-<!-- ``` -->
+```{r updateMetaData}
+MetAlyzer_proj <- renameMetaData(MetAlyzer_proj, Method = 'Sample Description')
+```
 
-<!-- Likewise, *summarizeRawData* shows a summary of the raw concentration statistics and returns a vector of metabolites with NA values. -->
+**Additional meta data can be added after creating the Summarized Experiment:** For example, we want to add the column "Date" with the current date to the meta data.
 
-<!-- ```{r summarise_raw_data} -->
-<!-- na_metabolites <- summarizeRawData(data) -->
-<!-- ``` -->
+```{r updateMetaData}
+MetAlyzer_proj <- updateMetaData(MetAlyzer_proj, Date = Sys.Date(), Analyzed = TRUE)
+```
+**<--! #THIS DOES ONLY WORK WITH EXAMPLE DATA INCLUDED -->**
+We can also add meta data from a excel file. For example, we want to add the colum **$dont know$** from the excel file **$mpath$** to the meta data.
 
-<!-- ### Add meta data -->
+```{r updateMetaData}
+additional_meta_data <- read.xlsx(mpath)
+head(additional_meta_data)
+MetAlyzer_proj <- updateMetaData(MetAlyzer_proj, name = Replicate,
+                                 new_colum = additional_meta_data$Replicate)
+```
 
-<!-- As the different extraction methods were measured in triplicates, we want to add this meta data using the function *updateMetaData*. First we load the meta data. -->
+```{r getter}
+meta_data <- SummarizedExperiment::colData(MetAlyzer_proj)
+head(meta_data)
+```
 
-<!-- ```{r read_meta_data} -->
-<!-- additional_meta_data <- readRDS(mpath) -->
-<!-- head(additional_meta_data) -->
-<!-- ``` -->
+### Analysis and Visuals
 
-<!-- And then add the replicate information. -->
+The Summarized Experiment generated, also contains a tibble data frame with the aggregated data. This data frame is used for further analysis and visualizations.
 
-<!-- ```{r update_meta_data} -->
-<!-- data <- updateMetaData(data, name = Replicate, -->
-<!--                        new_colum = additional_meta_data$Replicate) -->
-<!-- show(data) -->
-<!-- ``` -->
+In case NAs or zeros are produced, we provide zero imputation as described in ([Gegner <i>et al</i>.](https://doi.org/10.1101/2021.12.16.472947)). To impute the NAs we can set the argument *impute_NA* to TRUE. The argument *perc_of_min* specifies the percentage of the minimum concentration value that is used for imputation. The default is 0.2. 
+Imputed concentrations are log2 transformed with the function *transform_data* and can be found in the column "log2_Conc".
 
-<!-- ### Rename meta data -->
+```{r imputation}
+MetAlyzer_proj <- impute_data(MetAlyzer_proj, perc_of_min = 0.2, impute_NA = TRUE)
+MetAlyzer_proj <- transform_data(MetAlyzer_proj)
 
-<!-- In the meta data, the description of the 6 extraction methods is encoded in the column "Group". For downstream analyses, we want to rename this column into "Method" using *renameMetaData*. -->
+cat("Number of zero values before imputation:",
+    sum(metadata(MetAlyzer_proj)$aggregated_data$Concentration == 0, na.rm = TRUE), "\n")
 
-<!-- ```{r rename_meta_data} -->
-<!-- data <- renameMetaData(data, Method = `Sample Description`) -->
-<!-- head(metaData(data)) -->
-<!-- ``` -->
+cat("Number of zero values after imputation:",
+    sum(metadata(MetAlyzer_proj)$aggregated_data$imputed_Conc == 0, na.rm = TRUE), "\n")
+```
 
-<!-- ### Aggregate and reformat data -->
+**<--! #THIS WILL ONLY WORK IF WE INCLUDE METHOD AND TISSUE INTO THE AGGREGATED DATA -->**
+For example, we can filter for glutamic acid (Glu) and plot the concentration.
 
-<!-- From here on we examine the tissues separately. The filter can be reset using *resetMetaData* in order to analyze a different tissue. -->
+```{r, glu_plot, fig.width=7, fig.height=4.5} 
+glu_df <- filter(metadata(MetAlyzer_proj)$aggregated_data, Metabolite == "Glu")
 
-<!-- ```{r subset_data} -->
-<!-- data <- filterMetaData(data, column = Tissue, keep = "Mouse Liver") -->
-<!-- ``` -->
+ggplot(glu_df, aes(Method, Concentration, color = Status)) +
+    geom_point() +
+    scale_color_manual(values = c("Valid" = "#00CD66",
+                                 "LOQ" = "#87CEEB", 
+                                 "LOD" = "#6A5ACD")) +
+    ylab("Concentration [pmol/mg Tissue]") +
+    facet_grid(~ Tissue)
+```
 
-<!-- For further filtering and plotting, the data can be reformatted into a data frame. This allows easy filtering by e.g. the metabolites of interest or the quantification status and plotting with e.g. ggplot2. If replicates are available, some statistics are automatically calculated for each metabolite and each additional grouping variable that is passed. For our study, we can add "Method" and "Tissue" to indicate that there are replicates for these variables. In addition, it is possible to pass another column from the meta data that will be added but not used as a grouping variable for the statistics. -->
+To plot imputed and transformed data, we choose the column "log2_Conc":
 
-<!-- ```{r aggregated_data} -->
-<!-- aggregated_data <- aggregateData(data, Method, Tissue, id_col = Replicate) -->
+```{r, glu_plot_transformed, fig.width=7, fig.height=4.5}
+ggplot(glu_df, aes(Method, log2_Conc, color = Status)) +
+    geom_point() +
+    scale_color_manual(values = c("Valid" = "#00CD66",
+                                 "LOQ" = "#87CEEB",
+                                 "LOD" = "#6A5ACD")) +
+    facet_grid(~ Tissue)
+```
 
-<!-- head(aggregated_data) -->
-<!-- ``` -->
+This is just for visualisation, the imputation and transformation is also included into the function *calculate_log2FC*.
 
-<!-- In case NAs or zeros are produced, we provide zero imputation as described in ([Gegner <i>et al</i>.](https://doi.org/10.1101/2021.12.16.472947)). Before, the imputation, there are 12,212 zero values in the data set. -->
+Next we can calculate the log2 Fold Change between the extraction methods for each metabolite. As the are 6 extraction methods, the function only calculates for the first 2 Methods. We can use the perviously mentioned function *filterMetaData* to specify the groups.
 
-<!-- ```{r imputation} -->
-<!-- cat("Number of zero values before imputation:", -->
-<!--     sum(rawData(data) == 0)) -->
+```{r calculate_log2FC}
+MetAlyzer_proj <- filterMetaData(MetAlyzer_proj, Method %in% 3:6)
+log2FC_df <- calculate_log2FC(MetAlyzer_proj, Method, perc_of_min = 0.2, impute_NA = TRUE)
+```
 
-<!-- cat("Number of zero values after imputation:", -->
-<!--     sum(aggregated_data$imputed_Conc == 0, na.rm = TRUE)) -->
-<!-- ``` -->
+Here we can see the functions calculates between the third and fourth method and drops the method 5 & 6.
 
-<!-- Imputed concentrations are directly log2 transformed and can be found in the column "log2_Conc". -->
+This can be visualized with a volcano plot:
 
-<!-- For example, we can filter for glutamic acid (Glu) and plot the concentration. -->
+```{r plot_log2FCt, fig.width=7, fig.height=4.5}
+p_vulcano <- plot_log2FC(log2FC_df, hide_labels_for = rownames(rowData(MetAlyzer_proj)), vulcano=TRUE)
+p_vulcano
+```
 
-<!-- ```{r, glu_plot, fig.width=7, fig.height=4.5} -->
-<!-- glu_df <- filter(aggregated_data, Metabolite == "Glu") -->
+Or in a scatter plot:
+  
+```{r plot_log2FC, fig.width=7, fig.height=4.5}
+p_fc <- plot_log2FC(log2FC_df, hide_labels_for = rownames(rowData(MetAlyzer_proj)), vulcano=FALSE)
+p_fc
+```
 
-<!-- ggplot(glu_df, aes(Method, Concentration, color = Status)) + -->
-<!--   geom_point() + -->
-<!--   scale_color_manual(values = c("Valid" = "#00CD66", -->
-<!--                                 "LOQ" = "#87CEEB", -->
-<!--                                 "LOD" = "#6A5ACD")) +  -->
-<!--   ylab("Concentration [pmol/mg Tissue]") +  -->
-<!--   facet_grid(~ Tissue) -->
-<!-- ``` -->
+We also provide the log fold change in the different pathways, to better visualize what group of metabolites shows an increase or decrease in concentration between the 2 extraction Methods.
 
-<!-- To plot imputed and transformed data, we choose the column "log2_Conc": -->
-
-<!-- ```{r, glu_plot_transformed, fig.width=7, fig.height=4.5} -->
-<!-- ggplot(glu_df, aes(Method, log2_Conc, color = Status)) + -->
-<!--   geom_point() + -->
-<!--   scale_color_manual(values = c("Valid" = "#00CD66", -->
-<!--                                 "LOQ" = "#87CEEB", -->
-<!--                                 "LOD" = "#6A5ACD")) + -->
-<!--   facet_grid(~ Tissue) -->
-<!-- ``` -->
+```{r plot_network, fig.width=7, fig.height=4.5}
+network <- plot_network(log2FC_df)
+network
+```
 
 <!-- ### ANOVA -->
 
