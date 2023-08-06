@@ -107,7 +107,8 @@ MetAlyzer_dataset <- function(
 #'
 #' @keywords internal
 metalyzer_ascii_logo <- function() {
-  # http://patorjk.com/software/taag/#p=display&f=3D-ASCII&t=MetAlyzer Hello Hel
+  # http://patorjk.com/software/taag/#p=display&f=3D-ASCII&t=MetAlyzer
+  # Also try: Rectangles
   line1 <- "\n"
   line2a <- " _____ ______   _______  _________  ________  ___           ___   "
   line2b <- " ___ ________  _______   ________"
