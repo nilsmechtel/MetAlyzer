@@ -39,14 +39,15 @@ read_named_region <- function(file_path, named_region) {
   last_row <- min(which(rowSums(is.na(df)) == length(header))) - 1
   df <- df[1:last_row, ]
 
-  if ("x" %in% header) {
-    df$x <- as.numeric(df$x)
+  for (numeric_col in c("x", "y", "Radius")) {
+    if (numeric_col %in% header) {
+      df[, numeric_col] <- as.numeric(df[, numeric_col])
+    }
   }
-  if ("y" %in% header) {
-    df$y <- as.numeric(df$y)
-  }
-  if ("Radius" %in% header) {
-    df$Radius <- as.numeric(df$Radius)
+  for (trim_col in c("Label", "Pathway", "Color", "Node1", "Node2")) {
+    if (trim_col %in% header) {
+      df[, trim_col] <- stringr::str_trim(df[, trim_col])
+    }
   }
   rownames(df) <- NULL
   return(df)
@@ -55,7 +56,6 @@ read_named_region <- function(file_path, named_region) {
 
 ## Read network nodes, edges and annotations
 pathways <- read_named_region(pathway_file, "Pathways_Header")
-pathways$Label <- stringr::str_trim(pathways$Label)
 invalid_annotations <- which(
   is.na(pathways$Label) |
   duplicated(pathways$Label) |
@@ -71,14 +71,13 @@ if (length(invalid_annotations) > 0) {
 rownames(pathways) <- pathways$Label
 
 nodes <- read_named_region(pathway_file, "Metabolites_Header")
-nodes$Label <- stringr::str_trim(nodes$Label)
 nodes$Pathway[is.na(nodes$Pathway)] <- ""
 invalid_nodes <- which(
   is.na(nodes$Label) |
   duplicated(nodes$Label) |
   is.na(nodes$x) |
   is.na(nodes$y) |
-  !nodes$Pathway %in% c(pathways$Label, "")
+  !nodes$Pathway %in% c(rownames(pathways), "")
 )
 if (length(invalid_nodes) > 0) {
   # print warning and remove
@@ -86,13 +85,13 @@ if (length(invalid_nodes) > 0) {
   nodes <- nodes[-invalid_nodes, ]
 }
 rownames(nodes) <- nodes$Label
+# Remove #1 at the end
+nodes$Label <- gsub("#[0-9]+", "", nodes$Label)
 
 edges <- read_named_region(pathway_file, "Connections_Header")
-edges$Node1 <- stringr::str_trim(edges$Node1)
-edges$Node2 <- stringr::str_trim(edges$Node2)
 invalid_edges <- which(
-  !edges$Node1 %in% nodes$Label |
-  !edges$Node2 %in% nodes$Label |
+  !edges$Node1 %in% rownames(nodes) |
+  !edges$Node2 %in% rownames(nodes) |
   edges$Node1 == edges$Node2
 )
 if (length(invalid_edges) > 0) {
@@ -106,12 +105,12 @@ edges$x_start <- nodes[edges$Node1, "x"]
 edges$y_start <- nodes[edges$Node1, "y"]
 edges$x_end <- nodes[edges$Node2, "x"]
 edges$y_end <- nodes[edges$Node2, "y"]
-edges$Pathway <- sapply(rownames(edges), function(rowname) {
+edges$Color <- sapply(rownames(edges), function(rowname) {
   from <- edges[rowname, "Node1"]
   to <- edges[rowname, "Node2"]
   from_pathway <- nodes[from, "Pathway"]
   to_pathway <- nodes[to, "Pathway"]
-  color <- "grey"
+  color <- NA
   if (from_pathway == to_pathway & from_pathway != "") {
     color <- pathways[from_pathway, "Color"]
   }
@@ -132,35 +131,38 @@ annotation_size <- 6
 
 network <- ggplot()
 for (radius in unique(edges$Radius)) {
-  tmp_edges <- filter(edges, Radius == radius)
+  rad_edges <- filter(edges, Radius == radius)
+  pathway_edges <- filter(rad_edges, !is.na(Color))
 
   network <- network +
     # Add the round area behind the edges
     geom_curve(
-      data = tmp_edges,
+      data = pathway_edges,
       aes(
         x = x_start,
         y = y_start,
         xend = x_end,
         yend = y_end,
-        color = Pathway
+        color = Color
       ),
       # color = "lightblue",
-      size = area_size,
-      alpha = 0.3,
+      linewidth = area_size,
+      # alpha = 0.3,
       curvature = radius,
       show.legend = FALSE
     ) +
     # Or add the edges as curved lines
     geom_curve(
-      data = tmp_edges,
+      data = rad_edges,
       aes(
         x = nodes[Node1, "x"],
         y = nodes[Node1, "y"],
         xend = nodes[Node2, "x"],
         yend = nodes[Node2, "y"]
       ),
-      color = "grey", size = edge_size, curvature = radius
+      color = "grey",
+      linewidth = edge_size,
+      curvature = radius
     )
 }
 network <- network +
@@ -197,4 +199,4 @@ network <- network +
   theme(plot.title = element_text(hjust = 0.5))
 network
 
-ggsave("network.png", network, width = 15, height = 10, bg = "white")
+ggsave("network.pdf", network, width = 15, height = 10, bg = "white")
