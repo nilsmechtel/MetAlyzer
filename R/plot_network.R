@@ -4,8 +4,6 @@ library(ggplot2)
 library(ggrepel)
 
 
-pathway_file <- "/Users/nilsm/Library/CloudStorage/OneDrive-bwedu/Uni/HiWi/HiWi COS/Package - MetAlyzer/MetAlyzer/inst/extdata/pathway.xlsx" # MetAlyzer::pathway()
-
 read_named_region <- function(file_path, named_region) {
   full_sheet <- openxlsx::read.xlsx(
     file_path,
@@ -53,150 +51,193 @@ read_named_region <- function(file_path, named_region) {
   return(df)
 }
 
+plot_network <- function(log2FC_df, q_value=0.05) {
+  pathway_file <- "/Users/luisherfurth/Codenmachtspass/MetAlyzer-1/inst/extdata/pathway.xlsx"
+  # MetAlyzer::pathway()
 
-## Read network nodes, edges and annotations
-pathways <- read_named_region(pathway_file, "Pathways_Header")
-invalid_annotations <- which(
-  is.na(pathways$Label) |
-  duplicated(pathways$Label) |
-  is.na(pathways$x) |
-  is.na(pathways$y) |
-  is.na(pathways$Color)
-)
-if (length(invalid_annotations) > 0) {
-  # print warning and remove
-  cat("Warning: Removing", length(invalid_annotations), "invalid pathways.\n")
-  pathways <- pathways[-invalid_annotations, ]
-}
-rownames(pathways) <- pathways$Label
-
-nodes <- read_named_region(pathway_file, "Metabolites_Header")
-nodes$Pathway[is.na(nodes$Pathway)] <- ""
-invalid_nodes <- which(
-  is.na(nodes$Label) |
-  duplicated(nodes$Label) |
-  is.na(nodes$x) |
-  is.na(nodes$y) |
-  !nodes$Pathway %in% c(rownames(pathways), "")
-)
-if (length(invalid_nodes) > 0) {
-  # print warning and remove
-  cat("Warning: Removing", length(invalid_nodes), "invalid nodes.\n")
-  nodes <- nodes[-invalid_nodes, ]
-}
-rownames(nodes) <- nodes$Label
-# Remove #1 at the end
-nodes$Label <- gsub("#[0-9]+", "", nodes$Label)
-
-edges <- read_named_region(pathway_file, "Connections_Header")
-invalid_edges <- which(
-  !edges$Node1 %in% rownames(nodes) |
-  !edges$Node2 %in% rownames(nodes) |
-  edges$Node1 == edges$Node2
-)
-if (length(invalid_edges) > 0) {
-  # print warning and remove
-  cat("Warning: Removing", length(invalid_edges), "invalid connections.\n")
-  edges <- edges[-invalid_edges, ]
-}
-
-
-edges$x_start <- nodes[edges$Node1, "x"]
-edges$y_start <- nodes[edges$Node1, "y"]
-edges$x_end <- nodes[edges$Node2, "x"]
-edges$y_end <- nodes[edges$Node2, "y"]
-edges$Color <- sapply(rownames(edges), function(rowname) {
-  from <- edges[rowname, "Node1"]
-  to <- edges[rowname, "Node2"]
-  from_pathway <- nodes[from, "Pathway"]
-  to_pathway <- nodes[to, "Pathway"]
-  color <- NA
-  if (from_pathway == to_pathway & from_pathway != "") {
-    color <- pathways[from_pathway, "Color"]
+  ## Read network nodes, edges and annotations
+  pathways <- read_named_region(pathway_file, "Pathways_Header")
+  invalid_annotations <- which(
+    is.na(pathways$Label) |
+    duplicated(pathways$Label) |
+    is.na(pathways$x) |
+    is.na(pathways$y) |
+    is.na(pathways$Color)
+  )
+  if (length(invalid_annotations) > 0) {
+    # print warning and remove
+    cat("Warning: Removing", length(invalid_annotations), "invalid pathways.\n")
+    pathways <- pathways[-invalid_annotations, ]
   }
-  return(color)
-})
+  rownames(pathways) <- pathways$Label
+
+  nodes <- read_named_region(pathway_file, "Metabolites_Header")
+  nodes$Pathway[is.na(nodes$Pathway)] <- ""
+  invalid_nodes <- which(
+    is.na(nodes$Label) |
+    duplicated(nodes$Label) |
+    is.na(nodes$x) |
+    is.na(nodes$y) |
+    !nodes$Pathway %in% c(rownames(pathways), "")
+  )
+  if (length(invalid_nodes) > 0) {
+    # print warning and remove
+    cat("Warning: Removing", length(invalid_nodes), "invalid nodes.\n")
+    nodes <- nodes[-invalid_nodes, ]
+  }
+  rownames(nodes) <- nodes$Label
+  # Remove #1 at the end
+  nodes$Label <- gsub("#[0-9]+", "", nodes$Label)
+
+  edges <- read_named_region(pathway_file, "Connections_Header")
+  invalid_edges <- which(
+    !edges$Node1 %in% rownames(nodes) |
+    !edges$Node2 %in% rownames(nodes) |
+    edges$Node1 == edges$Node2
+  )
+  if (length(invalid_edges) > 0) {
+    # print warning and remove
+    cat("Warning: Removing", length(invalid_edges), "invalid connections.\n")
+    edges <- edges[-invalid_edges, ]
+  }
 
 
-## Add log2FC to nodes
-nodes$FC_thresh <- floor(runif(rownames(nodes), -3, 4)) # !
+  edges$x_start <- nodes[edges$Node1, "x"]
+  edges$y_start <- nodes[edges$Node1, "y"]
+  edges$x_end <- nodes[edges$Node2, "x"]
+  edges$y_end <- nodes[edges$Node2, "y"]
+  edges$Color <- sapply(rownames(edges), function(rowname) {
+    from <- edges[rowname, "Node1"]
+    to <- edges[rowname, "Node2"]
+    from_pathway <- nodes[from, "Pathway"]
+    to_pathway <- nodes[to, "Pathway"]
+    color <- NA
+    if (from_pathway == to_pathway & from_pathway != "") {
+      color <- pathways[from_pathway, "Color"]
+    }
+    return(color)
+  })
 
-## Draw network
 
-# Create a plot of the network using ggplot2 and ggrepel
-label_size <- 3
-area_size <- 5
-edge_size <- 1
-annotation_size <- 6
 
-network <- ggplot()
-for (radius in unique(edges$Radius)) {
-  rad_edges <- filter(edges, Radius == radius)
-  pathway_edges <- filter(rad_edges, !is.na(Color))
+  ## Add log2FC to nodes_df
+  signif_df <- filter(log2FC_df,
+                      !is.na(.data$log2FC),
+                      !is.na(.data$qval),
+                      .data$qval <= q_value)
 
+  nodes$FC_thresh <- sapply(strsplit(nodes$Metabolites, ";"), function(m_vec) {
+    if (length(m_vec) > 1) {
+      # Nodes with more than 1 metabolite assigned
+      tmp_df <- filter(signif_df, .data$Metabolite %in% m_vec)
+      if (nrow(tmp_df) > 0) {
+        # At least one of the metabolites is significantly change
+        # -> take the mean log2 fold change
+        l2fc <- sum(tmp_df$log2FC) / length(m_vec)
+      } else {
+        if (any(tmp_df$Metabolite %in% levels(log2FC_df$Metabolite))) {
+          # At least one metabolite was measured but none are significantly changed
+          l2fc <- 0
+        } else {
+          # None of the metabolites were measured
+          l2fc <- NA
+        }
+      }
+    } else {
+      # Nodes with 0 or 1 metabolite assigned
+      if (m_vec %in% signif_df$Metabolite) {
+        # Metabolite is significantly changed
+        l2fc <- signif_df$log2FC[which(signif_df$Metabolite == m_vec)]
+      } else if (m_vec %in% levels(log2FC_df$Metabolite)) {
+        # Metabolite was measured but is not significantly changed
+        l2fc <- 0
+      } else {
+        # Metabolite was not measured
+        l2fc <- NA
+      }
+    }
+    return(l2fc)
+  })
+
+  ## Draw network
+
+  # Create a plot of the network using ggplot2 and ggrepel
+  label_size <- 3
+  area_size <- 5
+  edge_size <- 1
+  annotation_size <- 6
+
+  network <- ggplot()
+  for (radius in unique(edges$Radius)) {
+    rad_edges <- filter(edges, Radius == radius)
+    pathway_edges <- filter(rad_edges, !is.na(Color))
+
+    network <- network +
+      # Add the round area behind the edges
+      geom_curve(
+        data = pathway_edges,
+        aes(
+          x = x_start,
+          y = y_start,
+          xend = x_end,
+          yend = y_end,
+          color = Color
+        ),
+        # color = "lightblue",
+        linewidth = area_size,
+        # alpha = 0.3,
+        curvature = radius,
+        show.legend = FALSE
+      ) +
+      # Or add the edges as curved lines
+      geom_curve(
+        data = rad_edges,
+        aes(
+          x = nodes[Node1, "x"],
+          y = nodes[Node1, "y"],
+          xend = nodes[Node2, "x"],
+          yend = nodes[Node2, "y"]
+        ),
+        color = "grey",
+        linewidth = edge_size,
+        curvature = radius
+      )
+  }
   network <- network +
-    # Add the round area behind the edges
-    geom_curve(
-      data = pathway_edges,
+    # Add labels at the position of the nodes
+    geom_label(
+      data = nodes,
       aes(
-        x = x_start,
-        y = y_start,
-        xend = x_end,
-        yend = y_end,
+        x = x,
+        y = y,
+        label = Label,
+        fill = FC_thresh
+      ),
+      size = label_size,
+      color = "white"
+    ) +
+    # Add annotations
+    geom_text(
+      data = pathways,
+      aes(
+        x = x,
+        y = y,
+        label = Label,
         color = Color
       ),
-      # color = "lightblue",
-      linewidth = area_size,
-      # alpha = 0.3,
-      curvature = radius,
+      size = annotation_size,
       show.legend = FALSE
     ) +
-    # Or add the edges as curved lines
-    geom_curve(
-      data = rad_edges,
-      aes(
-        x = nodes[Node1, "x"],
-        y = nodes[Node1, "y"],
-        xend = nodes[Node2, "x"],
-        yend = nodes[Node2, "y"]
-      ),
-      color = "grey",
-      linewidth = edge_size,
-      curvature = radius
-    )
-}
-network <- network +
-  # Add labels at the position of the nodes
-  geom_label(
-    data = nodes,
-    aes(
-      x = x,
-      y = y,
-      label = Label,
-      fill = FC_thresh
-    ),
-    size = label_size,
-    color = "white"
-  ) +
-  # Add annotations
-  geom_text(
-    data = pathways,
-    aes(
-      x = x,
-      y = y,
-      label = Label,
-      color = Color
-    ),
-    size = annotation_size,
-    show.legend = FALSE
-  ) +
-  # # Set the x and y axis limits
-  # xlim(0, 10) +
-  # ylim(0, 10) +
-  theme_void() +
-  # Add a title and remove the x and y axis labels
-  ggtitle("Example Network Plot with Colored Area Behind Curved Edges") +
-  theme(plot.title = element_text(hjust = 0.5))
-network
+    # # Set the x and y axis limits
+    # xlim(0, 10) +
+    # ylim(0, 10) +
+    theme_void() +
+    # Add a title and remove the x and y axis labels
+    ggtitle("Example Network Plot with Colored Area Behind Curved Edges") +
+    theme(plot.title = element_text(hjust = 0.5))
+  network
 
-ggsave("network.pdf", network, width = 15, height = 10, bg = "white")
+  ggsave("network.pdf", network, width = 15, height = 10, bg = "white")
+}
+
+

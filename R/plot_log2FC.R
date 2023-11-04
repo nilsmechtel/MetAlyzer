@@ -69,7 +69,7 @@ plot_log2FC <- function(log2FC_df,
 
   ## Background: Set class colors
   if (class_colors == "MetAlyzer") {
-    class_colors <- readRDS(system.file("extdata", "metalyzer_colors.RDS", package = "MetAlyzer"))
+    class_colors <- readRDS(system.file("extdata", "updated_metalyzer_colors.RDS", package = "MetAlyzer"))
   }
   names(class_colors) <- levels(polarity_df$Class)
 
