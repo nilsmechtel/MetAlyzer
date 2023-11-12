@@ -14,10 +14,8 @@
 ^R/do_anova_2w\.R$
 ^R/filter_groupwise\.R$
 ^R/perform_ANOVA\.R$
-
-^R/draw_FC_network\.R$
+^R/two_way_anova\.R$
 ^R/plot_2w_anvova\.R$
-^R/plot_network\.R$
 
 ^tests$
 

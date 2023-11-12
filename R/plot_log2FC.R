@@ -18,9 +18,11 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' print(1)
-#' }
+#' metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
+#' metalyzer_se <- renameMetaData(metalyzer_se, Method = 'Sample Description')
+#' 
+#' log2FC_df <- calculate_log2FC(metalyzer_se, Method, perc_of_min = 0.2, impute_NA = TRUE)
+#' network <- plot_network(log2FC_df, q_value = 0.05)
 
 # classes <- c('Acylcarnitines', 'Alkaloids', 'Amine Oxides', 'Aminoacids',
 #              'Aminoacids Related', 'Bile Acids', 'Biogenic Amines', 'Carboxylic Acids',
