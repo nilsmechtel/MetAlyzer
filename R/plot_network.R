@@ -1,8 +1,20 @@
-# Load the required packages
-library(dplyr)
-library(ggplot2)
-library(ggrepel)
-
+#' @title Plot Pathway Network
+#'
+#' @description This function plots the log2 fold change for each metabolite and visualizes it, in a pathway network.
+#'
+#' @param log2FC_df A data frame with the log2 fold change for each metabolite
+#' @param q_value The q-value threshold for significance
+#' @return ggplot object
+#' @export
+#' 
+#' @examples
+#' metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
+#' metalyzer_se <- renameMetaData(metalyzer_se, Method = 'Sample Description')
+#' 
+#' log2FC_df <- calculate_log2FC(metalyzer_se, Method, perc_of_min = 0.2, impute_NA = TRUE)
+#' 
+#' p_vulcano <- plot_log2FC(log2FC_df, hide_labels_for = rownames(rowData(MetAlyzer_proj)), vulcano=TRUE)
+#' p_fc <- plot_log2FC(log2FC_df, hide_labels_for = rownames(rowData(MetAlyzer_proj)), vulcano=FALSE)
 
 read_named_region <- function(file_path, named_region) {
   full_sheet <- openxlsx::read.xlsx(
@@ -237,7 +249,7 @@ plot_network <- function(log2FC_df, q_value=0.05) {
     theme(plot.title = element_text(hjust = 0.5))
   network
 
-  ggsave("network.pdf", network, width = 15, height = 10, bg = "white")
+  #ggsave("network.pdf", network, width = 15, height = 10, bg = "white")
 }
 
 

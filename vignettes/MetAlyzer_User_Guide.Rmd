@@ -22,9 +22,14 @@ The package provides methods to read output files from the MetIDQ™ software in
 ## Install
 
 There is a version available on CRAN.
-
 ``` {r}
 install.packages("MetAlyzer")
+```
+
+But for the latest Version you can also install directly from the github repository.
+``` {r}
+library(devtools)
+install_github("nilsmechtel/MetAlyzer")
 ```
 
 ## Overview
@@ -44,6 +49,7 @@ Set data paths to the example data and a meta data file:
 
 ```{r set_data_path}
 fpath <- system.file("extdata", "extraction_data.xlsx", package = "MetAlyzer") 
+test_big <- "/Users/luisherfurth/Downloads/Test_xl_data_pmol_per_mio.xlsx"
 
 mpath <- system.file("extdata", "example_meta_data.rds", package = "MetAlyzer") 
 ```
@@ -155,32 +161,6 @@ cat("Number of zero values after imputation:",
     sum(metadata(MetAlyzer_proj)$aggregated_data$imputed_Conc == 0, na.rm = TRUE), "\n")
 ```
 
-**<--! #THIS WILL ONLY WORK IF WE INCLUDE METHOD AND TISSUE INTO THE AGGREGATED DATA -->**
-For example, we can filter for glutamic acid (Glu) and plot the concentration.
-
-```{r, glu_plot, fig.width=7, fig.height=4.5} 
-glu_df <- filter(metadata(MetAlyzer_proj)$aggregated_data, Metabolite == "Glu")
-
-ggplot(glu_df, aes(Method, Concentration, color = Status)) +
-    geom_point() +
-    scale_color_manual(values = c("Valid" = "#00CD66",
-                                 "LOQ" = "#87CEEB", 
-                                 "LOD" = "#6A5ACD")) +
-    ylab("Concentration [pmol/mg Tissue]") +
-    facet_grid(~ Tissue)
-```
-
-To plot imputed and transformed data, we choose the column "log2_Conc":
-
-```{r, glu_plot_transformed, fig.width=7, fig.height=4.5}
-ggplot(glu_df, aes(Method, log2_Conc, color = Status)) +
-    geom_point() +
-    scale_color_manual(values = c("Valid" = "#00CD66",
-                                 "LOQ" = "#87CEEB",
-                                 "LOD" = "#6A5ACD")) +
-    facet_grid(~ Tissue)
-```
-
 This is just for visualisation, the imputation and transformation is also included into the function *calculate_log2FC*.
 
 Next we can calculate the log2 Fold Change between the extraction methods for each metabolite. As the are 6 extraction methods, the function only calculates for the first 2 Methods. We can use the perviously mentioned function *filterMetaData* to specify the groups.
@@ -190,7 +170,7 @@ MetAlyzer_proj <- filterMetaData(MetAlyzer_proj, Method %in% 3:6)
 log2FC_df <- calculate_log2FC(MetAlyzer_proj, Method, perc_of_min = 0.2, impute_NA = TRUE)
 ```
 
-Here we can see the functions calculates between the third and fourth method and drops the method 5 & 6.
+Here we can see the functions calculates between the third and fourth method after filtering out the first and second method and dropping the methods 5 & 6.
 
 This can be visualized with a volcano plot:
 
@@ -213,26 +193,27 @@ network <- plot_network(log2FC_df)
 network
 ```
 
-<!-- ### ANOVA -->
+Incase you want to analyze a dataset from the MxP®Quant 500 XL kit, nothing changes regarding the use of the package. The only difference is the visualized output as there are more metabolites included with this kit.
 
-<!-- As described in ([Gegner <i>et al</i>.](https://doi.org/10.1101/2021.12.16.472947)), an ANOVA can be used to identify metabolites which are significantly higher in one or more methods compared to all other for each metabolite. -->
+```{r}
+Metalyzer_big_data <- MetAlyzer_dataset(file_path = test_big)
+Metalyzer_big_data <- renameMetaData(Metalyzer_big_data, Method = 'Sample Description')
 
-<!-- For this analysis only those metabolites are considered for which at least one method (\>0) could get valid replicates. -->
+log2FC_df_big <- calculate_log2FC(Metalyzer_big_data, Method, perc_of_min = 0.2, impute_NA = TRUE)
+```
+These visualisations will look like this:
+```{r plot_log2FCt, fig.width=7, fig.height=4.5}
+p_vulcano_big <- plot_log2FC(log2FC_df_big, hide_labels_for = rownames(rowData(MetAlyzer_proj)), vulcano=TRUE)
+p_vulcano_big
+```
+```{r plot_log2FC, fig.width=7, fig.height=4.5}
+p_fc_big <- plot_log2FC(log2FC_df_big, hide_labels_for = rownames(rowData(MetAlyzer_proj)), vulcano=FALSE)
+p_fc_big
+```
 
-<!-- ```{r, ANOVA} -->
-<!-- aggregated_data <- filter_groupwise(aggregated_data, Metabolite, -->
-<!--                                     filter_col = Valid_Replicates, -->
-<!--                                     lower_bound = 0) -->
+## THIS WILL BE PATCHED IN SOON
+```{r plot_network, fig.width=7, fig.height=4.5}
+network_big <- plot_network(log2FC_df_big)
+network_big
+```
 
-<!-- aggregated_data <- perform_ANOVA(aggregated_data, categorical = Method) -->
-<!-- head(data.frame(aggregated_data[, c(1:5, 14, 15)])) -->
-<!-- ``` -->
-
-<!-- Any method labeled with an "A" can now be considered optimal among all tested methods. -->
-
-<!-- ```{r, ANOVA_optimal} -->
-<!-- aggregated_data$optimal <- sapply(aggregated_data$ANOVA_Group, function(group) { -->
-<!--   grepl("A", group) -->
-<!-- }) -->
-<!-- head(data.frame(aggregated_data[, c(1:5, 15, 16)])) -->
-<!-- ``` -->
