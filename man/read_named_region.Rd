@@ -2,27 +2,11 @@
 % Please edit documentation in R/plot_network.R
 \name{read_named_region}
 \alias{read_named_region}
-\title{Plot Pathway Network}
+\title{read_named_region}
 \usage{
 read_named_region(file_path, named_region)
 }
-\arguments{
-\item{log2FC_df}{A data frame with the log2 fold change for each metabolite}
-
-\item{q_value}{The q-value threshold for significance}
-}
-\value{
-ggplot object
-}
 \description{
-This function plots the log2 fold change for each metabolite and visualizes it, in a pathway network.
+read_named_region
 }
-\examples{
-metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
-metalyzer_se <- renameMetaData(metalyzer_se, Method = 'Sample Description')
-
-log2FC_df <- calculate_log2FC(metalyzer_se, Method, perc_of_min = 0.2, impute_NA = TRUE)
-
-p_vulcano <- plot_log2FC(log2FC_df, hide_labels_for = rownames(rowData(MetAlyzer_proj)), vulcano=TRUE)
-p_fc <- plot_log2FC(log2FC_df, hide_labels_for = rownames(rowData(MetAlyzer_proj)), vulcano=FALSE)
-}
+\keyword{internal}

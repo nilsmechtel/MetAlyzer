@@ -1,21 +1,6 @@
-#' Plot Pathway Network
+#' read_named_region
 #'
-#' @description This function plots the log2 fold change for each metabolite and visualizes it, in a pathway network.
-#'
-#' @param log2FC_df A data frame with the log2 fold change for each metabolite
-#' @param q_value The q-value threshold for significance
-#' @return ggplot object
-#' @export
-#' 
-#' @examples
-#' metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
-#' metalyzer_se <- renameMetaData(metalyzer_se, Method = 'Sample Description')
-#' 
-#' log2FC_df <- calculate_log2FC(metalyzer_se, Method, perc_of_min = 0.2, impute_NA = TRUE)
-#' 
-#' p_vulcano <- plot_log2FC(log2FC_df, hide_labels_for = rownames(rowData(MetAlyzer_proj)), vulcano=TRUE)
-#' p_fc <- plot_log2FC(log2FC_df, hide_labels_for = rownames(rowData(MetAlyzer_proj)), vulcano=FALSE)
-
+#' @keywords internal
 read_named_region <- function(file_path, named_region) {
   full_sheet <- openxlsx::read.xlsx(
     file_path,
@@ -63,9 +48,26 @@ read_named_region <- function(file_path, named_region) {
   return(df)
 }
 
+#' Plot Pathway Network
+#'
+#' @description This function plots the log2 fold change for each metabolite and visualizes it, in a pathway network.
+#'
+#' @param log2FC_df A data frame with the log2 fold change for each metabolite
+#' @param q_value The q-value threshold for significance
+#' @return ggplot object
+#' @export
+#' 
+#' @examples
+#' metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
+#' metalyzer_se <- renameMetaData(metalyzer_se, Method = 'Sample Description')
+#' 
+#' log2FC_df <- calculate_log2FC(metalyzer_se, Method, perc_of_min = 0.2, impute_NA = TRUE)
+#' 
+#' p_vulcano <- plot_log2FC(log2FC_df, hide_labels_for = rownames(rowData(MetAlyzer_proj)), vulcano=TRUE)
+#' p_fc <- plot_log2FC(log2FC_df, hide_labels_for = rownames(rowData(MetAlyzer_proj)), vulcano=FALSE)
+
 plot_network <- function(log2FC_df, q_value=0.05) {
-  pathway_file <- "/Users/luisherfurth/Codenmachtspass/MetAlyzer-1/inst/extdata/pathway.xlsx"
-  # MetAlyzer::pathway()
+  pathway_file <- MetAlyzer::pathway()
 
   ## Read network nodes, edges and annotations
   pathways <- read_named_region(pathway_file, "Pathways_Header")
@@ -251,5 +253,3 @@ plot_network <- function(log2FC_df, q_value=0.05) {
 
   #ggsave("network.pdf", network, width = 15, height = 10, bg = "white")
 }
-
-
