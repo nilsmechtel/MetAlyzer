@@ -18,7 +18,7 @@ aggregated data frame}
 }
 \description{
 This function reshapes conc_values, quant_status,
-metatabolitesand sample IDs and combines them into a tibble data frame
+metatabolites and sample IDs and combines them into a tibble data frame
 for filtering with dplyr and plotting with 'ggplot2'. "aggregated_data"
 is grouped by metabolites.
 }

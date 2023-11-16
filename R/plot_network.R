@@ -1,4 +1,4 @@
-#' @title Plot Pathway Network
+#' Plot Pathway Network
 #'
 #' @description This function plots the log2 fold change for each metabolite and visualizes it, in a pathway network.
 #'

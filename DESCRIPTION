@@ -1,7 +1,7 @@
 Package: MetAlyzer
 Type: Package
 Title: Read and Analyze 'MetIDQ&trade;' Software Output Files
-Version: 0.2.0
+Version: 1.0.0
 Authors@R: 
     c(person("Nils", "Mechtel",
             email = "nils.mech@gmail.com",
@@ -28,6 +28,8 @@ Imports:
     stringr,
     utils,
     rlang,
+    ggplot2,
+    ggrepel,
     SummarizedExperiment,
     S4Vectors,
     BiocManager,

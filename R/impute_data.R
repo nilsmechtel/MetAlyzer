@@ -36,7 +36,7 @@ impute_data <- function(
     perc_of_min,
     impute_NA
   ) {
-  aggregated_data <- metadata(metalyzer_se)$aggregated_data
+  aggregated_data <- metalyzer_se@metadata$aggregated_data
   cat("Impute concentrations (groupwise: Metabolite) with",
       paste0(round(perc_of_min * 100), "%"),
       "of the minimal positive value...  ")
@@ -48,7 +48,7 @@ impute_data <- function(
       Concentration, perc_of_min, impute_NA),
            .after = Concentration) %>%
     group_by_at(grouping_vars)
-  metadata(metalyzer_se)$aggregated_data <- aggregated_data
+  metalyzer_se@metadata$aggregated_data <- aggregated_data
   cat("finished!\n")
   return(metalyzer_se)
 }

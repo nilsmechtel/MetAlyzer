@@ -12,6 +12,7 @@
 #' @return A data frame containing the log2 fold change for each metabolite
 #'
 #' @import dplyr
+#' @import SummarizedExperiment
 #' @importFrom utils install.packages
 #' @importFrom utils installed.packages
 #' @importFrom rlang .data
@@ -27,7 +28,7 @@ calculate_log2FC <- function(metalyzer_se, categorical, perc_of_min = 0.2, imput
                              installation_type = "binary") {
   metalyzer_se <- impute_data(metalyzer_se, perc_of_min, impute_NA)
   metalyzer_se <- transform_data(metalyzer_se)
-  aggregated_data <- metadata(metalyzer_se)$aggregated_data
+  aggregated_data <- metalyzer_se@metadata$aggregated_data
   meta_data <- colData(metalyzer_se)
   cat_str <- deparse(substitute(categorical))
 
@@ -39,7 +40,7 @@ calculate_log2FC <- function(metalyzer_se, categorical, perc_of_min = 0.2, imput
                                }),
   levels = unique(mapping_vec)), .after = ID)
 
-  metadata(metalyzer_se)$aggregated_data <- aggregated_data
+  metalyzer_se@metadata$aggregated_data <- aggregated_data
   ## Check for qvalue and BiocManager installation
   installed_packages <- utils::installed.packages()[, "Package"]
   if (! "qvalue" %in% installed_packages) {

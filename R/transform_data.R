@@ -24,10 +24,10 @@ transform <- function(vec, func) {
 #' @return An updated aggregated_data tibble data frame
 #' @export
 transform_data <- function(metalyzer_se) {
-  aggregated_data <- metadata(metalyzer_se)$aggregated_data
+  aggregated_data <- metalyzer_se@metadata$aggregated_data
   aggregated_data <- mutate(aggregated_data,
                             log2_Conc = transform(imputed_Conc, base::log2),
                             .after = imputed_Conc)
-  metadata(metalyzer_se)$aggregated_data <- aggregated_data
+  metalyzer_se@metadata$aggregated_data <- aggregated_data
   return(metalyzer_se)
 }
