@@ -4,3 +4,4 @@
 *.Rproj.user/
 .vscode/tasks.json
 *.code-workspace
+.Rproj.user
