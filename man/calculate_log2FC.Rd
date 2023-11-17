@@ -13,6 +13,8 @@ calculate_log2FC(
 )
 }
 \arguments{
+\item{metalyzer_se}{A Metalyzer object}
+
 \item{categorical}{A column specifying the two groups}
 
 \item{perc_of_min}{A numeric value below 1}
@@ -21,8 +23,6 @@ calculate_log2FC(
 download and install. Options: ["binary", "source", "both"]}
 
 \item{installation_type}{A character, indicating the type of package to}
-
-\item{metalyzer}{A Metalyzer object}
 }
 \value{
 A data frame containing the log2 fold change for each metabolite

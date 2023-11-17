@@ -49,7 +49,7 @@ Set data paths to the example data and a meta data file:
 
 ```{r set_data_path}
 fpath <- system.file("extdata", "extraction_data.xlsx", package = "MetAlyzer") 
-test_big <- "/Users/luisherfurth/Downloads/Test_xl_data_pmol_per_mio.xlsx"
+test_xl <- system.file("extdata", "MetIDQ_XL.xlsx", package = "MetAlyzer") 
 
 mpath <- system.file("extdata", "example_meta_data.rds", package = "MetAlyzer") 
 ```
@@ -196,7 +196,7 @@ network
 Incase you want to analyze a dataset from the MxP®Quant 500 XL kit, nothing changes regarding the use of the package. The only difference is the visualized output as there are more metabolites included with this kit.
 
 ```{r}
-Metalyzer_big_data <- MetAlyzer_dataset(file_path = test_big)
+Metalyzer_big_data <- MetAlyzer_dataset(file_path = test_xl)
 Metalyzer_big_data <- renameMetaData(Metalyzer_big_data, Method = 'Sample Description')
 
 log2FC_df_big <- calculate_log2FC(Metalyzer_big_data, Method, perc_of_min = 0.2, impute_NA = TRUE)

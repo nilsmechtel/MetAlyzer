@@ -25,7 +25,7 @@ zero_imputation <- function(vec, perc_of_min, impute_NA) {
 #' are zero or NA, they are set to NA. The imputed values are added
 #' to plotting_data in an extra column imputed_Conc.
 #'
-#' @param metalyzer A MetAlyzer object
+#' @param metalyzer_se A MetAlyzer object
 #' @param perc_of_min A numeric value between 0 and 1. Percentage
 #' of the minimal positive value, that is taken for imputation
 #' @param impute_NA Logical value whether to impute NA values

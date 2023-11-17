@@ -7,7 +7,7 @@
 transform_data(metalyzer_se)
 }
 \arguments{
-\item{aggregated_data}{aggregated_data tibble data frame}
+\item{metalyzer_se}{a MetAlyzer object}
 }
 \value{
 An updated aggregated_data tibble data frame

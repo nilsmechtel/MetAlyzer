@@ -20,7 +20,7 @@ transform <- function(vec, func) {
 #' transformed values are added to aggregated_data in an extra column
 #' transf_Conc.
 #'
-#' @param aggregated_data aggregated_data tibble data frame
+#' @param metalyzer_se a MetAlyzer object
 #' @return An updated aggregated_data tibble data frame
 #' @export
 transform_data <- function(metalyzer_se) {

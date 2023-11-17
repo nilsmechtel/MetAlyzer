@@ -7,12 +7,12 @@
 impute_data(metalyzer_se, perc_of_min, impute_NA)
 }
 \arguments{
+\item{metalyzer_se}{A MetAlyzer object}
+
 \item{perc_of_min}{A numeric value between 0 and 1. Percentage
 of the minimal positive value, that is taken for imputation}
 
 \item{impute_NA}{Logical value whether to impute NA values}
-
-\item{metalyzer}{A MetAlyzer object}
 }
 \value{
 An updated aggregated_data tibble data frame

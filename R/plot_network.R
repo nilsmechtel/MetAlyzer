@@ -1,6 +1,9 @@
-#' read_named_region
+#' @title Read Named Regions
 #'
-#' @keywords internal
+#' @description This function reads in the named regions of an excel file.
+#'
+#' @param file_path The file path of the file
+#' @param named_region The region name u want to read in
 read_named_region <- function(file_path, named_region) {
   full_sheet <- openxlsx::read.xlsx(
     file_path,
@@ -55,6 +58,11 @@ read_named_region <- function(file_path, named_region) {
 #' @param log2FC_df A data frame with the log2 fold change for each metabolite
 #' @param q_value The q-value threshold for significance
 #' @return ggplot object
+#' 
+#' @import dplyr
+#' @import ggplot2
+#' @import ggrepel
+#' @import SummarizedExperiment
 #' @export
 #' 
 #' @examples
@@ -63,8 +71,7 @@ read_named_region <- function(file_path, named_region) {
 #' 
 #' log2FC_df <- calculate_log2FC(metalyzer_se, Method, perc_of_min = 0.2, impute_NA = TRUE)
 #' 
-#' p_vulcano <- plot_log2FC(log2FC_df, hide_labels_for = rownames(rowData(MetAlyzer_proj)), vulcano=TRUE)
-#' p_fc <- plot_log2FC(log2FC_df, hide_labels_for = rownames(rowData(MetAlyzer_proj)), vulcano=FALSE)
+#' network <- plot_network(log2FC_df, q_value = 0.05)
 
 plot_network <- function(log2FC_df, q_value=0.05) {
   pathway_file <- MetAlyzer::pathway()
