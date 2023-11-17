@@ -8,12 +8,14 @@
 #' are printed
 #' @param class_colors class_colors
 #' @param polarity_file polarity_file
+#' @param vulcano boolean value to plot a vulcano plot
 #'
 #' @return ggplot object
 #'
 #' @import dplyr
 #' @import ggplot2
 #' @import ggrepel
+#' @import SummarizedExperiment
 #' @importFrom rlang .data
 #' @export
 #'
@@ -22,7 +24,11 @@
 #' metalyzer_se <- renameMetaData(metalyzer_se, Method = 'Sample Description')
 #' 
 #' log2FC_df <- calculate_log2FC(metalyzer_se, Method, perc_of_min = 0.2, impute_NA = TRUE)
-#' network <- plot_network(log2FC_df, q_value = 0.05)
+#' 
+#' rownames_se <- rownames(SummarizedExperiment::rowData(metalyzer_se))
+#' p_vulcano <- plot_log2FC(log2FC_df, hide_labels_for = rownames_se, vulcano=TRUE)
+#' p_fc <- plot_log2FC(log2FC_df, hide_labels_for = rownames_se, vulcano=FALSE)
+
 
 # classes <- c('Acylcarnitines', 'Alkaloids', 'Amine Oxides', 'Aminoacids',
 #              'Aminoacids Related', 'Bile Acids', 'Biogenic Amines', 'Carboxylic Acids',
@@ -71,7 +77,7 @@ plot_log2FC <- function(log2FC_df,
 
   ## Background: Set class colors
   if (class_colors == "MetAlyzer") {
-    class_colors <- readRDS(system.file("extdata", "updated_metalyzer_colors.RDS", package = "MetAlyzer"))
+    class_colors <- readRDS(system.file("extdata", "metalyzer_colors.RDS", package = "MetAlyzer"))
   }
   names(class_colors) <- levels(polarity_df$Class)
 

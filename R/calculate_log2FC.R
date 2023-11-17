@@ -2,7 +2,7 @@
 #'
 #' This function calculates the log2 fold change of two groups from
 #' plotting_data.
-#' @param metalyzer A Metalyzer object
+#' @param metalyzer_se A Metalyzer object
 #' @param categorical A column specifying the two groups
 #' @param installation_type A character, indicating the type of package to
 #' @param perc_of_min A numeric value below 1

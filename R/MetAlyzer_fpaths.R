@@ -52,3 +52,16 @@ polarity <- function() {
 pathway <- function() {
   system.file("extdata", "pathway.xlsx", package = "MetAlyzer")
 }
+
+#' @title Get example data xl file path
+#'
+#' @description This function returns the MetIDQ_XL.xlsx file path.
+#'
+#' @return MetIDQ_XL.xlsx file path
+#' @export
+#'
+#' @examples
+#' fpath <- xl_data()
+xl_data <- function() {
+  system.file("extdata", "MetIDQ_XL.xlsx", package = "MetAlyzer")
+}

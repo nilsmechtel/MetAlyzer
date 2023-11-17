@@ -252,7 +252,7 @@ renameMetaData <- function(metalyzer_se, ..., inplace = FALSE) {
 #' @param drop_quant_status A character, vector of characters or list of
 #' characters specifying which quantification status to remove. Metabolites with
 #' at least one quantification status of this vector will be removed.
-#' @param min_percent_valid A numeric lower threshold between 0 and 1 (t ≤ x) to
+#' @param min_percent_valid A numeric lower threshold between 0 and 1 (t less than or equal to x) to
 #' remove invalid metabolites that do not meet a given percentage of valid
 #' measurements per group (default per Metabolite).
 #' @param valid_status A character vector that defines which quantification

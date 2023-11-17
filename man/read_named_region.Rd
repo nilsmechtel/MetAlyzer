@@ -2,11 +2,15 @@
 % Please edit documentation in R/plot_network.R
 \name{read_named_region}
 \alias{read_named_region}
-\title{read_named_region}
+\title{Read Named Regions}
 \usage{
 read_named_region(file_path, named_region)
 }
-\description{
-read_named_region
+\arguments{
+\item{file_path}{The file path of the file}
+
+\item{named_region}{The region name u want to read in}
 }
-\keyword{internal}
+\description{
+This function reads in the named regions of an excel file.
+}

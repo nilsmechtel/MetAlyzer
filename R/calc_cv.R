@@ -32,7 +32,7 @@ set_threshold <- function(x, cv_threshs) {
 #' aggregated_data.
 #'
 #' @param aggregated_data aggregated_data tibble data frame
-#' @param cv_threshs A numeric vector of upper thresholds (CV <= t) between 0
+#' @param cv_thresholds A numeric vector of upper thresholds (CV <= t) between 0
 #' and 1 for CV categorization.
 #' @return An updated aggregated_data tibble data frame
 #' @import dplyr

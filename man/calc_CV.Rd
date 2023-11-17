@@ -9,7 +9,7 @@ calc_CV(aggregated_data, cv_thresholds = c(0.1, 0.2, 0.3))
 \arguments{
 \item{aggregated_data}{aggregated_data tibble data frame}
 
-\item{cv_threshs}{A numeric vector of upper thresholds (CV <= t) between 0
+\item{cv_thresholds}{A numeric vector of upper thresholds (CV <= t) between 0
 and 1 for CV categorization.}
 }
 \value{
