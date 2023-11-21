@@ -7,7 +7,7 @@
 open_file(starter_list)
 }
 \arguments{
-\item{object}{MetAlyzer object}
+\item{starter_list}{contains the file path and the sheet index}
 }
 \description{
 This function opens the given MetIDQ output Excel file and reads the full

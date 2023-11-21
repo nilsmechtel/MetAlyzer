@@ -65,7 +65,7 @@ calculate_log2FC <- function(metalyzer_se, categorical, perc_of_min = 0.2, imput
 
   ## Check if already factor
   group_vec <- df$Group
-  if (class(group_vec) != "factor") {
+  if (!is(group_vec, "factor")) {
     group_vec <- factor(group_vec)
     df$Group <- group_vec
     cat("Warning: No order was given for categorical!\n")
