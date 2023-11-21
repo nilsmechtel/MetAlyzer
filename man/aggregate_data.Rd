@@ -9,12 +9,13 @@ aggregate_data(metabolites, meta_data, conc_values, quant_status, status_vec)
 \arguments{
 \item{metabolites}{metabolites MetAlyzer object}
 
+\item{meta_data}{Meta_data of the MetAlyzer object}
+
 \item{conc_values}{conc_values of a MetAlyzer object}
 
 \item{quant_status}{quant_status of a MetAlyzer object}
 
-\item{meta_columns}{A selection of columns from meta_data to add to
-aggregated data frame}
+\item{status_vec}{A vector of quantification status}
 }
 \description{
 This function reshapes conc_values, quant_status,
