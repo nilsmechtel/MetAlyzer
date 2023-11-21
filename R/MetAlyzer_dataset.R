@@ -149,7 +149,7 @@ metalyzer_ascii_logo <- function() {
 #' This function opens the given MetIDQ output Excel file and reads the full
 #' given sheet.
 #'
-#' @param object MetAlyzer object
+#' @param starter_list contains the file path and the sheet index
 #'
 #' @keywords internal
 open_file <- function(starter_list) {
@@ -386,10 +386,10 @@ read_quant_status <- function(
 #' is grouped by metabolites.
 #'
 #' @param metabolites metabolites MetAlyzer object
-#' @param meta_columns A selection of columns from meta_data to add to
-#' aggregated data frame
+#' @param meta_data Meta_data of the MetAlyzer object
 #' @param conc_values conc_values of a MetAlyzer object
 #' @param quant_status quant_status of a MetAlyzer object
+#' @param status_vec A vector of quantification status
 #' @import dplyr
 #'
 #' @keywords internal
