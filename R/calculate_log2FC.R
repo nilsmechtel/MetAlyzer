@@ -16,6 +16,8 @@
 #' @importFrom utils install.packages
 #' @importFrom utils installed.packages
 #' @importFrom rlang .data
+#' @importFrom methods is
+#' @importFrom data.table :=
 #' @export
 #'
 #' @examples
@@ -35,10 +37,10 @@ calculate_log2FC <- function(metalyzer_se, categorical, perc_of_min = 0.2, imput
   mapping_vec <- unlist(meta_data[cat_str])
   names(mapping_vec) <- rownames(meta_data[cat_str])
   aggregated_data <- dplyr::mutate(aggregated_data, 
-  !!cat_str := factor(sapply(ID, function(id) {
+  !!cat_str := factor(sapply(.data$ID, function(id) {
                                    mapping_vec[id]
                                }),
-  levels = unique(mapping_vec)), .after = ID)
+  levels = unique(mapping_vec)), .after = .data$ID)
 
   metalyzer_se@metadata$aggregated_data <- aggregated_data
   ## Check for qvalue and BiocManager installation
@@ -56,12 +58,12 @@ calculate_log2FC <- function(metalyzer_se, categorical, perc_of_min = 0.2, imput
 
   df <- aggregated_data %>%
     ungroup(all_of(cat_str)) %>%
-    mutate(Value = log2_Conc,
+    mutate(Value = .data$log2_Conc,
         Group = !!sym(cat_str)) %>%
-    select(Metabolite,
-           Class,
-           Group,
-           Value)
+    select(.data$Metabolite,
+           .data$Class,
+           .data$Group,
+           .data$Value)
 
   ## Check if already factor
   group_vec <- df$Group
@@ -95,8 +97,8 @@ calculate_log2FC <- function(metalyzer_se, categorical, perc_of_min = 0.2, imput
   options(warn = -1)
   change_test_df <- df %>%
     group_modify(~ apply_linear_model(df = .x)) %>%
-    ungroup(Metabolite) %>%
-    mutate(qval = qvalue::qvalue(pval, pi0 = 1)$qvalues)
+    ungroup(.data$Metabolite) %>%
+    mutate(qval = qvalue::qvalue(.data$pval, pi0 = 1)$qvalues)
   options(warn = 0)
   return(change_test_df)
 }
@@ -118,7 +120,7 @@ calculate_log2FC <- function(metalyzer_se, categorical, perc_of_min = 0.2, imput
 apply_linear_model <- function(df, ...) {
   class <- df$Class[1]
   df <- df %>%
-    filter(!is.na(Value)) %>%
+    filter(!is.na(.data$Value)) %>%
     droplevels()
   if (length(levels(df$Group)) != 2) {
     l2fc <- NA

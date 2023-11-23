@@ -81,6 +81,7 @@ summarizeQuantData <- function(metalyzer_se) {
 #' return None.
 #' @return An updated SummarizedExperiment
 #' @import dplyr
+#' @importFrom rlang .data
 #' @export
 #'
 #' @examples
@@ -109,12 +110,12 @@ filterMetaData <- function(metalyzer_se, ..., inplace = FALSE) {
   true_samples <- meta_data %>%
     dplyr::mutate(Index = rownames(meta_data)) %>%
     dplyr::filter(!!!rlang::exprs(!!!conditions)) %>%
-    dplyr::select(Index) %>%
+    dplyr::select(.data$Index) %>%
     unlist()
 
   # Filter aggregated_data
   aggregated_data <- aggregated_data %>%
-    dplyr::filter(ID %in% true_samples) %>%
+    dplyr::filter(.data$ID %in% true_samples) %>%
     droplevels()
 
   # Update SummarizedExperiment
@@ -265,6 +266,7 @@ renameMetaData <- function(metalyzer_se, ..., inplace = FALSE) {
 #' and return None.
 #' @return An updated SummarizedExperiment
 #' @import dplyr
+#' @importFrom data.table :=
 #' @export
 #'
 #' @examples
@@ -357,12 +359,12 @@ filterMetabolites <- function(metalyzer_se,
         aggregated_data <- dplyr::mutate(
           aggregated_data,
           !!group := factor(
-            sapply(ID, function(id) {
+            sapply(.data$ID, function(id) {
               mapping_vec[id]
             }),
             levels = unique(mapping_vec)
           ),
-          .after = ID
+          .after = .data$ID
         )
       }
       cat(
@@ -387,16 +389,16 @@ filterMetabolites <- function(metalyzer_se,
       dplyr::group_by_at(grouping_vars) %>%
       dplyr::arrange_at(c(grouping_vars, "ID")) %>%
       dplyr::mutate(
-        valid_status = Status %in% valid_status,
+        valid_status = .data$Status %in% valid_status,
         Valid_Group = min_percent_valid <= sum(valid_status) / n(),
-        .after = Status
+        .after = .data$Status
       ) %>%
       dplyr::select(-valid_status)
 
     invalid_metabolites <- aggregated_data %>%
-      dplyr::group_by(Metabolite) %>%
-      dplyr::filter(sum(Valid_Group) == 0) %>%
-      dplyr::select(Metabolite) %>%
+      dplyr::group_by(.data$Metabolite) %>%
+      dplyr::filter(sum(.data$Valid_Group) == 0) %>%
+      dplyr::select(.data$Metabolite) %>%
       unlist()
     rm_metabolites <- c(
       rm_metabolites,
@@ -423,7 +425,7 @@ filterMetabolites <- function(metalyzer_se,
   if (length(rm_metabolites) > 0) {
     aggregated_data <- dplyr::filter(
       aggregated_data,
-      !(Metabolite %in% rm_metabolites)
+      !(.data$Metabolite %in% rm_metabolites)
     ) %>%
       droplevels()
 

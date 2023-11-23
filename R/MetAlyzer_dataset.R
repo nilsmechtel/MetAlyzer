@@ -391,6 +391,7 @@ read_quant_status <- function(
 #' @param quant_status quant_status of a MetAlyzer object
 #' @param status_vec A vector of quantification status
 #' @import dplyr
+#' @importFrom rlang .data
 #'
 #' @keywords internal
 aggregate_data <- function(
@@ -407,22 +408,22 @@ aggregate_data <- function(
     .before = 1
   )
   gathered_data <- tidyr::gather(comb_data,
-    key = Metabolite,
-    value = Concentration,
-    -ID
+    key = "Metabolite",
+    value = "Concentration",
+    -"ID"
   )
   gathered_status <- tidyr::gather(quant_status,
-    key = Metabolite,
-    value = Status
+    key = "Metabolite",
+    value = "Status"
   )
 
   aggregated_data <- gathered_data %>%
-    dplyr::group_by(Metabolite) %>%
+    dplyr::group_by(.data$Metabolite) %>%
     dplyr::mutate(
-      Class = sapply(Metabolite, function(x) {
+      Class = sapply(.data$Metabolite, function(x) {
         classes[metabolites == x]
       }),
-      .after = Metabolite
+      .after = .data$Metabolite
     )
 
   aggregated_data$ID <- factor(aggregated_data$ID,
@@ -437,7 +438,7 @@ aggregate_data <- function(
   aggregated_data$Status <- factor(gathered_status$Status,
     levels = status_vec
   )
-  aggregated_data <- arrange(aggregated_data, Metabolite)
+  aggregated_data <- arrange(aggregated_data, .data$Metabolite)
 
   return(droplevels(aggregated_data))
 }

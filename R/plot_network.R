@@ -63,6 +63,7 @@ read_named_region <- function(file_path, named_region) {
 #' @import ggplot2
 #' @import ggrepel
 #' @import SummarizedExperiment
+#' @importFrom rlang .data
 #' @export
 #' 
 #' @examples
@@ -190,19 +191,19 @@ plot_network <- function(log2FC_df, q_value=0.05) {
 
   network <- ggplot()
   for (radius in unique(edges$Radius)) {
-    rad_edges <- filter(edges, Radius == radius)
-    pathway_edges <- filter(rad_edges, !is.na(Color))
+    rad_edges <- filter(edges, .data$Radius == radius)
+    pathway_edges <- filter(rad_edges, !is.na(.data$Color))
 
     network <- network +
       # Add the round area behind the edges
       geom_curve(
         data = pathway_edges,
         aes(
-          x = x_start,
-          y = y_start,
-          xend = x_end,
-          yend = y_end,
-          color = Color
+          x = .data$x_start,
+          y = .data$y_start,
+          xend = .data$x_end,
+          yend = .data$y_end,
+          color = .data$Color
         ),
         # color = "lightblue",
         linewidth = area_size,
@@ -214,10 +215,10 @@ plot_network <- function(log2FC_df, q_value=0.05) {
       geom_curve(
         data = rad_edges,
         aes(
-          x = nodes[Node1, "x"],
-          y = nodes[Node1, "y"],
-          xend = nodes[Node2, "x"],
-          yend = nodes[Node2, "y"]
+          x = nodes[.data$Node1, "x"],
+          y = nodes[.data$Node1, "y"],
+          xend = nodes[.data$Node2, "x"],
+          yend = nodes[.data$Node2, "y"]
         ),
         color = "grey",
         linewidth = edge_size,
@@ -229,10 +230,10 @@ plot_network <- function(log2FC_df, q_value=0.05) {
     geom_label(
       data = nodes,
       aes(
-        x = x,
-        y = y,
-        label = Label,
-        fill = FC_thresh
+        x = .data$x,
+        y = .data$y,
+        label = .data$Label,
+        fill = .data$FC_thresh
       ),
       size = label_size,
       color = "white"
@@ -241,10 +242,10 @@ plot_network <- function(log2FC_df, q_value=0.05) {
     geom_text(
       data = pathways,
       aes(
-        x = x,
-        y = y,
-        label = Label,
-        color = Color
+        x = .data$x,
+        y = .data$y,
+        label = .data$Label,
+        color = .data$Color
       ),
       size = annotation_size,
       show.legend = FALSE
