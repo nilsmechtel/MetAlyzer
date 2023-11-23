@@ -36,19 +36,20 @@ set_threshold <- function(x, cv_threshs) {
 #' and 1 for CV categorization.
 #' @return An updated aggregated_data tibble data frame
 #' @import dplyr
+#' @importFrom rlang .data
 #' @export
 calc_CV <- function(aggregated_data, cv_thresholds = c(0.1, 0.2, 0.3)) {
   grouping_vars <- groups(aggregated_data)
   cat(paste0("Calculate mean and coefficient of variation (groupwise: ",
              paste(grouping_vars, collapse = " * "), ")...  "))
   aggregated_data <- aggregated_data %>%
-    dplyr::mutate(Mean = mean(Concentration, na.rm = TRUE),
-           SD = stats::sd(Concentration, na.rm = TRUE),
-           CV = SD / Mean,
-           CV_thresh = sapply(CV, function(x) {
+    dplyr::mutate(Mean = mean(.data$Concentration, na.rm = TRUE),
+           SD = stats::sd(.data$Concentration, na.rm = TRUE),
+           CV = .data$SD / .data$Mean,
+           CV_thresh = sapply(.data$CV, function(x) {
              set_threshold(x, cv_threshs = cv_thresholds)
            }),
-           .after = Concentration)
+           .after = .data$Concentration)
   cat("finished!\n")
   return(aggregated_data)
 }

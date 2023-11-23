@@ -30,6 +30,8 @@ zero_imputation <- function(vec, perc_of_min, impute_NA) {
 #' of the minimal positive value, that is taken for imputation
 #' @param impute_NA Logical value whether to impute NA values
 #' @return An updated aggregated_data tibble data frame
+#' @import dplyr
+#' @importFrom rlang .data
 #' @export
 impute_data <- function(
     metalyzer_se,
@@ -43,10 +45,10 @@ impute_data <- function(
 
   grouping_vars <- as.character(groups(aggregated_data))
   aggregated_data <- aggregated_data %>%
-    group_by(Metabolite) %>%
+    group_by(.data$Metabolite) %>%
     mutate(imputed_Conc = zero_imputation(
-      Concentration, perc_of_min, impute_NA),
-           .after = Concentration) %>%
+      .data$Concentration, perc_of_min, impute_NA),
+           .after = .data$Concentration) %>%
     group_by_at(grouping_vars)
   metalyzer_se@metadata$aggregated_data <- aggregated_data
   cat("finished!\n")

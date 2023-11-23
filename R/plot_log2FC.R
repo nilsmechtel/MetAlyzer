@@ -69,11 +69,11 @@ plot_log2FC <- function(log2FC_df,
     polarity_file <- system.file("extdata", "polarity.csv", package = "MetAlyzer")
   }
   polarity_df <- utils::read.csv(polarity_file) %>%
-    select(Class,
-           Polarity) %>%
-    mutate(Class = factor(Class),
-           Polarity = factor(Polarity, levels = c('LC', 'FIA'))) %>%
-    arrange(Polarity)
+    select(.data$Class,
+           .data$Polarity) %>%
+    mutate(Class = factor(.data$Class),
+           Polarity = factor(.data$Polarity, levels = c('LC', 'FIA'))) %>%
+    arrange(.data$Polarity)
 
   ## Background: Set class colors
   if (class_colors == "MetAlyzer") {
@@ -83,12 +83,12 @@ plot_log2FC <- function(log2FC_df,
 
   ## Background: Define LC and FIA classes with color
   lc_polarity_df <- filter(polarity_df,
-                           Polarity == 'LC',
-                           Class %in% log2FC_df$Class)
+                           .data$Polarity == 'LC',
+                           .data$Class %in% log2FC_df$Class)
   lc_colors <- class_colors[which(names(class_colors) %in% lc_polarity_df$Class)]
   fia_polarity_df <- filter(polarity_df,
-                            Polarity == 'FIA',
-                            Class %in% log2FC_df$Class)
+                            .data$Polarity == 'FIA',
+                            .data$Class %in% log2FC_df$Class)
   fia_colors <- class_colors[which(names(class_colors) %in% fia_polarity_df$Class)]
 
   ## Data: Replace NAs
@@ -110,16 +110,16 @@ plot_log2FC <- function(log2FC_df,
     ordered_classes <- c(names(lc_colors), names(fia_colors))
     p_data <- lapply(ordered_classes, function(class) {
       log2FC_df %>%
-        filter(Class == class) %>%
+        filter(.data$Class == class) %>%
         bind_rows(data.frame(Class = rep(NA, 5)))
     }) %>%
       bind_rows()
     p_data <- bind_rows(data.frame(Class = rep(NA, 5)), p_data)
     p_data$x <- seq(nrow(p_data))
-    p_data <- filter(p_data, !is.na(Class))
+    p_data <- filter(p_data, !is.na(.data$Class))
 
     ## Data: Determine labels
-    signif_p_data <- filter(p_data, signif_color != names(signif_colors)[1])
+    signif_p_data <- filter(p_data, .data$signif_color != names(signif_colors)[1])
     if (length(hide_labels_for) > 0) {
       signif_p_data$Metabolite[which(signif_p_data$Metabolite %in% hide_labels_for)] <- NA
       signif_p_data$Metabolite[which(signif_p_data$Class %in% hide_labels_for)] <- NA
@@ -191,29 +191,29 @@ plot_log2FC <- function(log2FC_df,
   if (isFALSE(vulcano)) {
     ## Background: Create data for background rects
     rects_df <- p_data %>%
-      group_by(Class) %>%
-      summarise(Start = min(x)-1,
-                End = max(x)+1,
-                Color = class_colors[unique(Class)])
+      group_by(.data$Class) %>%
+      summarise(Start = min(.data$x)-1,
+                End = max(.data$x)+1,
+                Color = class_colors[unique(.data$Class)])
     rects_df$Class <- factor(rects_df$Class, levels = breaks)
 
     ## Background: Determine border line between last LC and first FIA class
     lc_fia_border <- p_data %>%
-      filter(Class %in% names(lc_colors)) %>%
-      select(x) %>%
+      filter(.data$Class %in% names(lc_colors)) %>%
+      select(.data$x) %>%
       max()
 
     ## Plot graph
     p_fc <- ggplot(p_data,
-                   aes(x = x,
-                       y = log2FC,
-                       color = signif_color,
+                   aes(x = .data$x,
+                       y = .data$log2FC,
+                       color = .data$signif_color,
                        label = labels)) +
       geom_rect(data = rects_df,
                 inherit.aes = FALSE,
-                aes(xmin = Start, xmax = End,
+                aes(xmin = .data$Start, xmax = .data$End,
                     ymin = -Inf, ymax = Inf,
-                    fill = Class),
+                    fill = .data$Class),
                 show.legend = TRUE,
                 alpha = 0.4) +
       geom_vline(xintercept = 0, linewidth = 0.5, color = 'black') +
@@ -248,9 +248,9 @@ plot_log2FC <- function(log2FC_df,
                        force = 10)
   } else {
     p_fc <- ggplot(log2FC_df,
-                   aes(x = log2FC,
-                       y = -log10(qval),
-                       color = Class,
+                   aes(x = .data$log2FC,
+                       y = -log10(.data$qval),
+                       color = .data$Class,
                        label = labels)) +
       geom_vline(xintercept=c(-log2(1.5), log2(1.5)), col="black", linetype="dashed") +
       geom_hline(yintercept=-log10(0.05), col="black", linetype="dashed") +

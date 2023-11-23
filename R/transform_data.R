@@ -22,12 +22,14 @@ transform <- function(vec, func) {
 #'
 #' @param metalyzer_se a MetAlyzer object
 #' @return An updated aggregated_data tibble data frame
+#' @import dplyr
+#' @importFrom rlang .data
 #' @export
 transform_data <- function(metalyzer_se) {
   aggregated_data <- metalyzer_se@metadata$aggregated_data
   aggregated_data <- mutate(aggregated_data,
-                            log2_Conc = transform(imputed_Conc, base::log2),
-                            .after = imputed_Conc)
+                            log2_Conc = transform(.data$imputed_Conc, base::log2),
+                            .after = .data$imputed_Conc)
   metalyzer_se@metadata$aggregated_data <- aggregated_data
   return(metalyzer_se)
 }
