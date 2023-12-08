@@ -1,14 +1,14 @@
 # === Display MetAlyzer class ===
 
-#' Summarize concentration values
+#' @title Summarize concentration values
 #'
-#' This function prints quantiles and NAs of raw data.
+#' @description This function prints quantiles and NAs of raw data.
 #'
 #' @param metalyzer_se SummarizedExperiment
 #' @export
 #'
 #' @examples
-#' metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
+#' metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
 #'
 #' summarizeConcValues(metalyzer_se)
 summarizeConcValues <- function(metalyzer_se) {
@@ -37,7 +37,7 @@ summarizeConcValues <- function(metalyzer_se) {
 #' @export
 #'
 #' @examples
-#' metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
+#' metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
 #'
 #' summarizeQuantData(metalyzer_se)
 summarizeQuantData <- function(metalyzer_se) {
@@ -68,6 +68,7 @@ summarizeQuantData <- function(metalyzer_se) {
   cat("\n")
 }
 
+
 # === Handle Meta Data ===
 
 #' @title Filter meta data
@@ -85,7 +86,7 @@ summarizeQuantData <- function(metalyzer_se) {
 #' @export
 #'
 #' @examples
-#' metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
+#' metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
 #'
 #' metalyzer_se <- filterMetaData(metalyzer_se, !is.na(Tissue))
 #' metalyzer_se <- filterMetaData(metalyzer_se, `Sample Description` %in% 1:6)
@@ -126,11 +127,11 @@ filterMetaData <- function(metalyzer_se, ..., inplace = FALSE) {
   # Print how many samples were removed
   diff <- nrow(meta_data) - length(true_samples)
   if (diff == 1) {
-    cat("1 sample was excluded!\n")
+    cat("1 sample was removed!\n")
   } else if (diff > 1) {
-    cat(paste(diff, "samples were excluded!\n"))
+    cat(paste(diff, "samples were removed!\n"))
   } else {
-    cat("No samples were excluded!\n")
+    cat("No samples were removed!\n")
   }
 
   if (inplace) {
@@ -153,7 +154,7 @@ filterMetaData <- function(metalyzer_se, ..., inplace = FALSE) {
 #' @export
 #'
 #' @examples
-#' metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
+#' metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
 #'
 #' metalyzer_se <- updateMetaData(
 #'   metalyzer_se,
@@ -206,7 +207,7 @@ updateMetaData <- function(metalyzer_se, ..., inplace = FALSE) {
 #' @export
 #'
 #' @examples
-#' metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
+#' metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
 #'
 #' metalyzer_se <- renameMetaData(
 #'   metalyzer_se,
@@ -270,7 +271,7 @@ renameMetaData <- function(metalyzer_se, ..., inplace = FALSE) {
 #' @export
 #'
 #' @examples
-#' metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
+#' metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
 #'
 #' drop_metabolites <- c("C0", "C2", "C3", "Metabolism Indicators",
 #'   inplace = TRUE
@@ -452,6 +453,21 @@ filterMetabolites <- function(metalyzer_se,
   }
 }
 
+# === Handle Aggregated Data ===
+#' @title Get Aggregated Data
+#'
+#' @description This function returns the tibble data frame "aggregated_data".
+#'
+#' @param metalyzer_se SummarizedExperiment
+#' @export
+#'
+#' @examples
+#' metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
+#'
+#' aggregatedData(metalyzer_se)
+aggregatedData <- function(metalyzer_se) {
+  return(metalyzer_se@metadata$aggregated_data)
+}
 
 # === Export data ===
 
@@ -466,7 +482,7 @@ filterMetabolites <- function(metalyzer_se,
 #' @export
 #'
 #' @examples
-#' metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
+#' metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
 #'
 #' exportConcValues(metalyzer_se, `Sample Description`, Tissue)
 exportConcValues <- function(metalyzer_se,

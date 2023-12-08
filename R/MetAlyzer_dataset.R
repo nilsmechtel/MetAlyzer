@@ -14,7 +14,7 @@
 #' @export
 #'
 #' @examples
-#' metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
+#' metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
 MetAlyzer_dataset <- function(
     file_path,
     sheet = 1,

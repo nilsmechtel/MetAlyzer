@@ -34,10 +34,10 @@ ggplot object
 This method plots the log2 fold change for each metabolite.
 }
 \examples{
-metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
+metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
 metalyzer_se <- renameMetaData(metalyzer_se, Method = 'Sample Description')
 
-log2FC_df <- calculate_log2FC(metalyzer_se, Method, perc_of_min = 0.2, impute_NA = TRUE)
+log2FC_df <- calculate_log2FC(metalyzer_se, Method, impute_perc_of_min = 0.2, impute_NA = TRUE)
 
 rownames_se <- rownames(SummarizedExperiment::rowData(metalyzer_se))
 p_vulcano <- plot_log2FC(log2FC_df, hide_labels_for = rownames_se, vulcano=TRUE)

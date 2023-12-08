@@ -21,7 +21,7 @@ An updated SummarizedExperiment
 This function adds another column to filtered meta_data.
 }
 \examples{
-metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
+metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
 
 metalyzer_se <- updateMetaData(
   metalyzer_se,

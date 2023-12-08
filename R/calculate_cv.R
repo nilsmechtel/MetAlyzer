@@ -34,17 +34,23 @@ set_threshold <- function(x, cv_threshs) {
 #' @param aggregated_data aggregated_data tibble data frame
 #' @param cv_thresholds A numeric vector of upper thresholds (CV <= t) between 0
 #' and 1 for CV categorization.
+#' @param na.rm #!
 #' @return An updated aggregated_data tibble data frame
+#' 
 #' @import dplyr
 #' @importFrom rlang .data
 #' @export
-calc_CV <- function(aggregated_data, cv_thresholds = c(0.1, 0.2, 0.3)) {
+#' 
+#' @examples
+#' metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
+#! examples
+calculate_cv <- function(aggregated_data, cv_thresholds = c(0.1, 0.2, 0.3), na.rm = TRUE) {
   grouping_vars <- groups(aggregated_data)
   cat(paste0("Calculate mean and coefficient of variation (groupwise: ",
              paste(grouping_vars, collapse = " * "), ")...  "))
   aggregated_data <- aggregated_data %>%
-    dplyr::mutate(Mean = mean(.data$Concentration, na.rm = TRUE),
-           SD = stats::sd(.data$Concentration, na.rm = TRUE),
+    dplyr::mutate(Mean = mean(.data$Concentration, na.rm = na.rm),
+           SD = stats::sd(.data$Concentration, na.rm = na.rm),
            CV = .data$SD / .data$Mean,
            CV_thresh = sapply(.data$CV, function(x) {
              set_threshold(x, cv_threshs = cv_thresholds)

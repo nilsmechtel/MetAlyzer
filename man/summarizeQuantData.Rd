@@ -14,7 +14,7 @@ This function lists the number of each quantification status and
 its percentage.
 }
 \examples{
-metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
+metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
 
 summarizeQuantData(metalyzer_se)
 }

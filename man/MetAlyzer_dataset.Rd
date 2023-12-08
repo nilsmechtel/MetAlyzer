@@ -33,5 +33,5 @@ The column "Sample Type" and the row "Class" are used as anchor cells in the
 Excel sheet and are therefore a requirement.
 }
 \examples{
-metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
+metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
 }

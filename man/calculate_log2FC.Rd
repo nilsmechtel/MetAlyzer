@@ -7,9 +7,8 @@
 calculate_log2FC(
   metalyzer_se,
   categorical,
-  perc_of_min = 0.2,
-  impute_NA = FALSE,
-  installation_type = "binary"
+  impute_perc_of_min = 0.2,
+  impute_NA = FALSE
 )
 }
 \arguments{
@@ -17,12 +16,10 @@ calculate_log2FC(
 
 \item{categorical}{A column specifying the two groups}
 
-\item{perc_of_min}{A numeric value below 1}
+\item{impute_perc_of_min}{A numeric value below 1}
 
 \item{impute_NA}{Logical value whether to impute NA values
 download and install. Options: ["binary", "source", "both"]}
-
-\item{installation_type}{A character, indicating the type of package to}
 }
 \value{
 A data frame containing the log2 fold change for each metabolite
@@ -32,8 +29,8 @@ This function calculates the log2 fold change of two groups from
 plotting_data.
 }
 \examples{
-metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
+metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
 metalyzer_se <- renameMetaData(metalyzer_se, Method = `Sample Description`)
 
-log2FC <- calculate_log2FC(metalyzer_se, Method, perc_of_min = 0.2, impute_NA = TRUE)
+log2FC <- calculate_log2FC(metalyzer_se, Method, impute_perc_of_min = 0.2, impute_NA = TRUE)
 }

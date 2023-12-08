@@ -21,7 +21,7 @@ An updated SummarizedExperiment
 This function renames a column of meta_data.
 }
 \examples{
-metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
+metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
 
 metalyzer_se <- renameMetaData(
   metalyzer_se,

@@ -1,30 +1,70 @@
-#' @title Get example data file path
+#' @title Get example extraction data
 #'
-#' @description This function returns the extraction_data.xlsx file path.
+#' @description This function returns the extraction_data_MxP_Quant_500.xlsx file path.
 #'
-#' @return extraction_data.xlsx file path
+#' @return extraction_data_MxP_Quant_500.xlsx file path
 #' @export
 #'
 #' @examples
-#' fpath <- extraction_data()
-extraction_data <- function() {
-  system.file("extdata", "extraction_data.xlsx", package = "MetAlyzer")
+#' fpath <- example_extraction_data()
+example_extraction_data <- function() {
+  system.file("extdata", "extraction_data_MxP_Quant_500.xlsx", package = "MetAlyzer")
 }
 
 
-#' @title Get example data file path
+#' @title Get example treatment data
 #'
-#' @description This function returns the treatment_data.xlsx file path.
+#' @description This function returns the treatment_data_MxP_Quant_500.xlsx file path.
 #'
-#' @return treatment_data.xlsx file path
+#' @return treatment_data_MxP_Quant_500.xlsx file path
 #' @export
 #'
 #' @examples
-#' fpath <- treatment_data()
-treatment_data <- function() {
-  system.file("extdata", "treatment_data.xlsx", package = "MetAlyzer")
+#' fpath <- example_treatment_data()
+example_treatment_data <- function() {
+  system.file("extdata", "treatment_data_MxP_Quant_500.xlsx", package = "MetAlyzer")
 }
 
+
+#' @title Get example mutation data
+#'
+#' @description This function returns the mutation_data_MxP_Quant_500_XL.xlsx file path.
+#'
+#' @return mutation_data_MxP_Quant_500_XL.xlsx file path
+#' @export
+#'
+#' @examples
+#' fpath <- example_mutation_data_xl()
+example_mutation_data_xl <- function() {
+  system.file("extdata", "mutation_data_MxP_Quant_500_XL.xlsx", package = "MetAlyzer")
+}
+
+
+#' @title Get example meta data
+#'
+#' @description This function returns the data frame loaded from example_meta_data.RDS.
+#'
+#' @return data frame loaded from example_meta_data.RDS
+#' @export
+#'
+#' @examples
+#' fpath <- example_meta_data()
+example_meta_data <- function() {
+  readRDS(system.file("extdata", "example_meta_data.RDS", package = "MetAlyzer"))
+}
+
+#' @title Get MetAlyzer colors
+#'
+#' @description This function returns the vector loaded from metalyzer_colors.RDS.
+#'
+#' @return data frame loaded from metalyzer_colors.RDS
+#' @export
+#'
+#' @examples
+#' fpath <- metalyzer_colors()
+metalyzer_colors <- function() {
+  readRDS(system.file("extdata", "metalyzer_colors.RDS", package = "MetAlyzer"))
+}
 
 #' @title Get polarity file path
 #'
@@ -51,17 +91,4 @@ polarity <- function() {
 #' fpath <- pathway()
 pathway <- function() {
   system.file("extdata", "pathway.xlsx", package = "MetAlyzer")
-}
-
-#' @title Get example data xl file path
-#'
-#' @description This function returns the MetIDQ_XL.xlsx file path.
-#'
-#' @return MetIDQ_XL.xlsx file path
-#' @export
-#'
-#' @examples
-#' fpath <- xl_data()
-xl_data <- function() {
-  system.file("extdata", "MetIDQ_XL.xlsx", package = "MetAlyzer")
 }

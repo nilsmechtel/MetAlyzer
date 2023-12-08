@@ -1,11 +1,10 @@
-#' Calculate log2 fold change
+#' @title Calculate log2 fold change
 #'
-#' This function calculates the log2 fold change of two groups from
+#' @description This function calculates the log2 fold change of two groups from
 #' plotting_data.
 #' @param metalyzer_se A Metalyzer object
 #' @param categorical A column specifying the two groups
-#' @param installation_type A character, indicating the type of package to
-#' @param perc_of_min A numeric value below 1
+#' @param impute_perc_of_min A numeric value below 1
 #' @param impute_NA Logical value whether to impute NA values
 #' download and install. Options: ["binary", "source", "both"]
 #'
@@ -21,15 +20,14 @@
 #' @export
 #'
 #' @examples
-#' metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
+#' metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
 #' metalyzer_se <- renameMetaData(metalyzer_se, Method = `Sample Description`)
 #' 
-#' log2FC <- calculate_log2FC(metalyzer_se, Method, perc_of_min = 0.2, impute_NA = TRUE)
+#' log2FC <- calculate_log2FC(metalyzer_se, Method, impute_perc_of_min = 0.2, impute_NA = TRUE)
 
-calculate_log2FC <- function(metalyzer_se, categorical, perc_of_min = 0.2, impute_NA = FALSE,
-                             installation_type = "binary") {
-  metalyzer_se <- impute_data(metalyzer_se, perc_of_min, impute_NA)
-  metalyzer_se <- transform_data(metalyzer_se)
+calculate_log2FC <- function(metalyzer_se, categorical, impute_perc_of_min = 0.2, impute_NA = FALSE) {
+  metalyzer_se <- data_imputation(metalyzer_se, impute_perc_of_min, impute_NA)
+  metalyzer_se <- data_transformation(metalyzer_se)
   aggregated_data <- metalyzer_se@metadata$aggregated_data
   meta_data <- colData(metalyzer_se)
   cat_str <- deparse(substitute(categorical))
@@ -52,7 +50,7 @@ calculate_log2FC <- function(metalyzer_se, categorical, perc_of_min = 0.2, imput
       cat("\n")
     }
     cat("Installing package 'qvalue':\n")
-    BiocManager::install("qvalue", ask = FALSE, type = installation_type)
+    BiocManager::install("qvalue", ask = FALSE, type = "binary")
     cat("\n")
   }
 
@@ -103,10 +101,9 @@ calculate_log2FC <- function(metalyzer_se, categorical, perc_of_min = 0.2, imput
   return(change_test_df)
 }
 
-
-#' Calculate log2 fold change
+#' @title Calculate log2 fold change
 #'
-#' This function applies a linear model to calculate the log2 fold change and
+#' @description This function applies a linear model to calculate the log2 fold change and
 #' its significance
 #' @param df A subset data frame
 #' @param ...
@@ -116,7 +113,6 @@ calculate_log2FC <- function(metalyzer_se, categorical, perc_of_min = 0.2, imput
 #' @importFrom rlang .data
 #'
 #' @keywords internal
-
 apply_linear_model <- function(df, ...) {
   class <- df$Class[1]
   df <- df %>%

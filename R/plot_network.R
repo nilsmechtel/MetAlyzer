@@ -67,10 +67,10 @@ read_named_region <- function(file_path, named_region) {
 #' @export
 #' 
 #' @examples
-#' metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
+#' metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
 #' metalyzer_se <- renameMetaData(metalyzer_se, Method = 'Sample Description')
 #' 
-#' log2FC_df <- calculate_log2FC(metalyzer_se, Method, perc_of_min = 0.2, impute_NA = TRUE)
+#' log2FC_df <- calculate_log2FC(metalyzer_se, Method, impute_perc_of_min = 0.2, impute_NA = TRUE)
 #' 
 #' network <- plot_network(log2FC_df, q_value = 0.05)
 

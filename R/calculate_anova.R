@@ -20,13 +20,11 @@
 #' @importFrom utils installed.packages
 #' @importFrom rlang .data
 #' @export
-#'
+#' 
 #' @examples
-#' \dontrun{
-#' print(1)
-#' }
-
-perform_ANOVA <- function(aggregated_data, categorical) {
+#' metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
+#! examples
+calculate_anova <- function(aggregated_data, categorical, impute_perc_of_min = 0.2, impute_NA = FALSE) {
   cat_str <- deparse(substitute(categorical))
 
   ## Check for agricolae installation
@@ -36,6 +34,9 @@ perform_ANOVA <- function(aggregated_data, categorical) {
     utils::install.packages("agricolae")
     cat("\n")
   }
+
+  # metalyzer_se <- data_imputation(metalyzer_se, impute_perc_of_min, impute_NA)
+  # metalyzer_se <- data_transformation(metalyzer_se)
 
   anova_data <- aggregated_data %>%
     rename(Categorical = all_of(cat_str)) %>%

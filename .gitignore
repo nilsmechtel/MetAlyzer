@@ -2,5 +2,7 @@
 *.Rhistory
 *.RData
 *.Rproj*
-.vscode/tasks.json
+.vscode
 *.code-workspace
+.Rproj.user
+..Rcheck

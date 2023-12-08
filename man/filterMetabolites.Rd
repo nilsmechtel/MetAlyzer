@@ -52,7 +52,7 @@ of the metabolites vector. If aggregated_data is not empty,
 metabolites and class will also be filtered here.
 }
 \examples{
-metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
+metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
 
 drop_metabolites <- c("C0", "C2", "C3", "Metabolism Indicators",
   inplace = TRUE

@@ -1,13 +1,12 @@
-#' Transformation
+#' @title Transformation
 #'
-#' This function performs transformation of imputed concentration values
+#' @description This function performs transformation of imputed concentration values
 #' (imputed_Conc).
 #'
 #' @param vec MetAlyzer metalyzer
 #' @param func A function for transformation
 #'
 #' @keywords internal
-
 transform <- function(vec, func) {
   vec[vec > 0 & !is.na(vec)] <- func(vec[vec > 0 & !is.na(vec)])
   return(vec)
@@ -24,8 +23,9 @@ transform <- function(vec, func) {
 #' @return An updated aggregated_data tibble data frame
 #' @import dplyr
 #' @importFrom rlang .data
-#' @export
-transform_data <- function(metalyzer_se) {
+#' 
+#' @keywords internal
+data_transformation <- function(metalyzer_se) {
   aggregated_data <- metalyzer_se@metadata$aggregated_data
   aggregated_data <- mutate(aggregated_data,
                             log2_Conc = transform(.data$imputed_Conc, base::log2),

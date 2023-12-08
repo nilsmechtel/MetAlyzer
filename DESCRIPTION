@@ -2,11 +2,17 @@ Package: MetAlyzer
 Type: Package
 Title: Read and Analyze 'MetIDQ&trade;' Software Output Files
 Version: 1.0.0
-Authors@R: 
+Author: Nils Mechtel <nils.mech@gmail.com>
+Maintainer: Nils Mechtel <nils.mech@gmail.com>
+Authors@R:
     c(person("Nils", "Mechtel",
             email = "nils.mech@gmail.com",
             role = c("aut", "cre"),
             comment = c(ORCID = "0000-0002-1278-7125")),
+     person("Luis", "Herfurth",
+            email = "luis.herfurth@stud.uni-heidelberg.de",
+            role = c("aut"),
+            comment = c(ORCID = "0009-0000-9933-3056")),
      person("Carolin", "Andresen",
             email = "carolinandresen@googlemail.com",
             role = c("aut"),
@@ -14,11 +20,7 @@ Authors@R:
      person("Daniel", "Huebschmann",
             email = "d.huebschmann@dkfz-heidelberg.de",
             role = c("aut"),
-            comment = c(ORCID = "0000-0002-6041-7049")),
-     person("Luis", "Herfurth",
-            email = "luis.herfurth@stud.uni-heidelberg.de",
-            role = c("aut"),
-            comment = c(ORCID = "0009-0000-9933-3056")))
+            comment = c(ORCID = "0000-0002-6041-7049")))
 Depends:
     R (>= 4.0.0)
 Imports:

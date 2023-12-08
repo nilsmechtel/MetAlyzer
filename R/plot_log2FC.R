@@ -20,10 +20,10 @@
 #' @export
 #'
 #' @examples
-#' metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
+#' metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
 #' metalyzer_se <- renameMetaData(metalyzer_se, Method = 'Sample Description')
 #' 
-#' log2FC_df <- calculate_log2FC(metalyzer_se, Method, perc_of_min = 0.2, impute_NA = TRUE)
+#' log2FC_df <- calculate_log2FC(metalyzer_se, Method, impute_perc_of_min = 0.2, impute_NA = TRUE)
 #' 
 #' rownames_se <- rownames(SummarizedExperiment::rowData(metalyzer_se))
 #' p_vulcano <- plot_log2FC(log2FC_df, hide_labels_for = rownames_se, vulcano=TRUE)
@@ -48,7 +48,7 @@
 #                           Polarity = factor(polarity, levels = c('LC', 'FIA'))) %>%
 #   arrange(Polarity)
 #
-# polarity_file <- "inst/extdata/polarity.csv"
+# polarity_file <- polarity()
 
 # signif_colors=c("#5F5F5F"=1, "#FEBF6E"=0.1, "#EE5C42"=0.05, "#8B1A1A"=0.01)
 # class_colors="MetAlyzer"
@@ -77,7 +77,7 @@ plot_log2FC <- function(log2FC_df,
 
   ## Background: Set class colors
   if (class_colors == "MetAlyzer") {
-    class_colors <- readRDS(system.file("extdata", "metalyzer_colors.RDS", package = "MetAlyzer"))
+    class_colors <- metalyzer_colors()
   }
   names(class_colors) <- levels(polarity_df$Class)
 

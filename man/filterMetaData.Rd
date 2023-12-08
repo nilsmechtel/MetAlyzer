@@ -22,7 +22,7 @@ This function updates the "Filter" column in meta_data to
 filter out samples.
 }
 \examples{
-metalyzer_se <- MetAlyzer_dataset(file_path = extraction_data())
+metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
 
 metalyzer_se <- filterMetaData(metalyzer_se, !is.na(Tissue))
 metalyzer_se <- filterMetaData(metalyzer_se, `Sample Description` \%in\% 1:6)
