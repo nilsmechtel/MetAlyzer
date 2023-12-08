@@ -76,7 +76,7 @@ NAs: 0 (0%)
 For further filtering, statistical analysis and plotting, the data is reformatted and aggregated into a tibble data frame.
 
 ```{r}
-> metadata(metalyzer_se)$aggregated_data
+> aggregatedData(metalyzer_se)
 # A tibble: 63,788 × 5
 # Groups:   Metabolite [862]
    ID    Metabolite Class          Concentration Status
