@@ -1,6 +1,6 @@
 ---
 title: "MetAlyzer User Guide"
-author: "Nils Mechtel & Carolin Andresen"
+author: "Nils Mechtel, Carolin Andresen & Luis Herfurth"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
 Vignette: >
@@ -10,210 +10,289 @@ Vignette: >
   %\VignettePackage{MetAlyzer}
 ---
 
-```{r, echo=FALSE, message=FALSE}
-knitr::opts_chunk$set(echo=TRUE, collapse=T, comment='#>')
+```{r setup, echo=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo=TRUE, cache=TRUE, collapse=T, comment='#>')
 library(MetAlyzer)
+library(SummarizedExperiment)
 library(ggplot2)
 library(dplyr)
 ```
 
+::: {style="text-align: justify"}
 The package provides methods to read output files from the MetIDQ™ software into R. Metabolomics data is read and reformatted into an S4 object for convenient data handling, statistics and downstream analysis.
+:::
 
 ## Install
 
 There is a version available on CRAN.
-``` {r}
+
+```{r install_cran, eval=FALSE}
 install.packages("MetAlyzer")
 ```
 
-But for the latest Version you can also install directly from the github repository.
-``` {r}
+The latest version can directly be installed from the github.
+
+```{r install_github, eval=FALSE}
 library(devtools)
 install_github("nilsmechtel/MetAlyzer")
 ```
 
 ## Overview
 
-![](%60r%20rprojroot::is_r_package$find_file('vignettes/MetAlyzer_workflow.png')%60){width="100%"}
+![](https://raw.githubusercontent.com/nilsmechtel/MetAlyzer/main/vignettes/MetAlyzer_workflow.png){width="100%"}
 
+::: {style="text-align: justify"}
 The package takes metabolomic measurements as ".xlsx" files generated from the MetIDQ™ software. Additionally, meta data for each sample can be provided for further analysis.
+:::
 
-Effective quantification of metabolites requires a reliable signal. The limit of detection (LOD) is defined as 3 times signal-to-noise of the baseline, calculated by the software MetIDQ for each metabolite. Values are classified as "Valid", "LOQ" (below limit of quantification) or "LOD" (below limit of detection). This information is encoded in the color in the ".xlsx" table. Further color codes can include "ISTD Out of Range", "Invalid" and "Incomplete". The MetAlyzer packages allow to read both information, the value and the quantification status, gives statistics about the quantification efficacy and allows filtering based on the LOD.
+::: {style="text-align: justify"}
+Effective quantification of metabolites requires a reliable signal. The limit of detection (LOD) is defined as 3 times signal-to-noise of the baseline, calculated by the software MetIDQ™ for each metabolite. Values are classified as "Valid", "LOQ" (below limit of quantification) or "LOD" (below limit of detection). This information is encoded in the color in the ".xlsx" table. Further color codes can include "ISTD Out of Range", "Invalid" and "Incomplete". The MetAlyzer packages allow to read both information, the value and the quantification status, gives statistics about the quantification efficacy and allows filtering based on the LOD.
+:::
 
-![Example of excel sheet.](%60r%20rprojroot::is_r_package$find_file('vignettes/screenshot_xlsx.png')%60){width="100%"}
+![Example of excel sheet.](https://raw.githubusercontent.com/nilsmechtel/MetAlyzer/main/vignettes/screenshot_xlsx.png){width="100%"}
 
 ## Get started
 
-To present the functionalities of the package, we use a data set published by [Gegner <i>et al</i>. 2022](https://doi.org/10.1101/2021.12.16.472947). This data set used 6 (1 to 6) different extraction methods to quantify 630 metabolites in triplicates for 4 tissue types (Drosophila, Mouse Liver, Mouse Kidney, Zebrafish Liver). It is also included in the MetAlyzer Package and can be accessed via:
-Set data paths to the example data and a meta data file:
+::: {style="text-align: justify"}
+To present the base functionalities of MetAlyzer, we use a data set published by [Gegner <i>et al</i>. 2022](https://www.frontiersin.org/articles/10.3389/fchem.2022.869732/full). This data set was analyzed using the MxP®Quant 500 kit and inlcudes 6 different extraction methods (1 to 6) to quantify 630 metabolites in triplicates for 4 tissue types (Drosophila, Mouse Liver, Mouse Kidney, Zebrafish Liver). It is included in the MetAlyzer package and can be accessed via `example_extraction_data()`. `MetAlyzer_dataset` reads the data from Excel into R and stores it as a SummarizedExperiment (SE).
+:::
 
-```{r set_data_path}
-fpath <- system.file("extdata", "extraction_data.xlsx", package = "MetAlyzer") 
-test_xl <- system.file("extdata", "MetIDQ_XL.xlsx", package = "MetAlyzer") 
-
-mpath <- system.file("extdata", "example_meta_data.rds", package = "MetAlyzer") 
+```{r initialize_extraction}
+fpath <- example_extraction_data()
+metalyzer_se <- MetAlyzer_dataset(file_path = fpath)
 ```
 
-Now we load the data into R using the function *MetAlyzer_dataset* and store it in an MetAlyzer object:
-
-```{r initialize}
-MetAlyzer_proj <- MetAlyzer_dataset(file_path = fpath)
+```{r show_extraction}
+metalyzer_se
 ```
 
-This generates a SummarizedExperiment (SE) using data extracted from the Excel sheet. The SE includes assay information with concentration values and quantification status, while the row Data section contains metabolites and their respective classes. It is important to note that there are 630 metabolites, and 232 metabolite indicators calculated using the MetIDQ™ software. The column Data contains the provided metadata. Furthermore, the SE's metadata section stores the file path, sheet number, status list, and aggregated data for downstream visualizations.
+::: {style="text-align: justify"}
+The SE includes assay information with concentration values and quantification status, while storing metabolites and their respective classes in the row data. It is important to note that there are 630 metabolites, and 232 metabolite indicators calculated using the MetIDQ™ software. Sample-wise metadata is stored in the column data. Additional data such as the file path (*'file_path'*), the Excel sheet number (*'sheet_index'*), a list of colors for each quantification status (*status_list*), as well as a tibble of aggregated concentration data and quantification status for downstream analysis and visualizations (*'aggregated_data'*) are stored in the SE's metadata.
+:::
+
+::: {style="text-align: justify"}
+Summaries of concentration values and quantification status are automatically called during data loading, but can also manually be called using `summarizeConcValues(metalyzer_se)` and `summarizeQuantData(metalyzer_se)`. The function `summarizeConcValues` prints the quantiles and the amount / percentage of NAs in the concentration data. The function `summarizeQuantData` gives an overview of the quantification status of the metabolites. E.g 34.16% of metabolites where below the Limit of Detection.
 
 The various elements within the SummarizedExperiment (SE) can be accessed in a manner consistent with a typical SE.
+:::
 
-**For example:**
-
-```{r getter}
-meta_data <- SummarizedExperiment::colData(MetAlyzer_proj)
+```{r get_meta_data}
+meta_data <- colData(metalyzer_se)
 head(meta_data)
 ```
 
-```{r getter}
-metabolites <- SummarizedExperiment::rowData(MetAlyzer_proj)
+```{r get_metabolites}
+metabolites <- rowData(metalyzer_se)
 head(metabolites)
 ```
 
-```{r getter}
-quantification_status <- SummarizedExperiment::assays(MetAlyzer_proj)$quant_status
-head(quantification_status, c(5, 5))
-```
-
-```{r getter}
-concentration_values <- SummarizedExperiment::assays(MetAlyzer_proj)$conc_values
+```{r get_concentration_values}
+concentration_values <- assays(metalyzer_se)$conc_values
 head(concentration_values, c(5, 5))
 ```
 
-### Show statistics
-
-The function *summarizeQuantData* gives an overview of the quantification status of the metabolites. E.g 34.16% of metabolites where below the Limit of Detection.
-
-```{r summarizeQuantData}
-summarizeQuantData(MetAlyzer_proj)
+```{r get_quantification_status}
+quantification_status <- assays(metalyzer_se)$quant_status
+head(quantification_status, c(5, 5))
 ```
 
- The function *summarizeConcValues* prints the quantiles and the amount / percentage of NAs in the concentration data.
+::: {style="text-align: justify"}
+In addition to accessing the aggregated data through `metadata(metalyzer_se)$aggregated_data`, it can be directly accessed using *aggregatedData*.
+:::
 
-```{r summarizeConcValues}
-summarizeConcValues(MetAlyzer_proj)
+```{r get_aggregated_data}
+aggregated_data <- aggregatedData(metalyzer_se)
+head(aggregated_data)
 ```
 
-### Manage metabolites and meta data
+### Manage metabolites and sample-wise meta data
 
-To subset the data set, the functions *filterMetabolites* and *filterMetaData* can be used to filter for certain metabolites / classes or meta data. The original data is not kept, so to reset the filtering the Summarized Experiment has to be reinitialized.
+::: {style="text-align: justify"}
+The functions `filterMetabolites` and `filterMetaData` can be used to subset the data set based on certain metabolites or meta variables. Both functions subset *conc_values*, *quant_status* and *aggregated_data*.
+:::
 
-**For example, we want to exclude the metabolite indicators:**
+::: {style="text-align: justify"}
+Individual metabolites as well as metabolic classes can be passed to `filterMetabolites`. Here, we want to exclude the metabolism indicators.
+:::
 
-```{r filter_metabolites}
-MetAlyzer_proj <- filterMetabolites(MetAlyzer_proj, "Metabolism Indicators")
+```{r filter_metabolites_extraction}
+metalyzer_se <- filterMetabolites(metalyzer_se, drop_metabolites = "Metabolism Indicators")
+metalyzer_se
 ```
 
-**There are also 2 blank samples in the data that we want to remove:** The extraction methods are encoded in the column "Sample Description" of the meta data. We only keep those samples that are named c(1:6).
+::: {style="text-align: justify"}
+The extraction methods are encoded in the column "Sample Description" of the meta data. There are 2 blank samples in the data that we want to remove and only keep extraction method 1 to 6.
+:::
 
 ```{r filter_meta_data}
-MetAlyzer_proj <- filterMetaData(MetAlyzer_proj, `Sample Description` %in% 1:6)
+metalyzer_se <- filterMetaData(metalyzer_se, `Sample Description` %in% 1:6)
 ```
 
+::: {style="text-align: justify"}
+To be more specific and for easier handling, we change the column "Sample Description" of the meta data to "Extraction_Method".
+:::
 
-**The meta data column names can be changed after creating the Summarized Experiment:** For example, we want to rename the column "Sample Description" to "Method".
+```{r renameMetaData}
+metalyzer_se <- renameMetaData(metalyzer_se, "Extraction_Method" = "Sample Description")
 
-```{r updateMetaData}
-MetAlyzer_proj <- renameMetaData(MetAlyzer_proj, Method = 'Sample Description')
-```
-
-**Additional meta data can be added after creating the Summarized Experiment:** For example, we want to add the column "Date" with the current date to the meta data.
-
-```{r updateMetaData}
-MetAlyzer_proj <- updateMetaData(MetAlyzer_proj, Date = Sys.Date(), Analyzed = TRUE)
-```
-**<--! #THIS DOES ONLY WORK WITH EXAMPLE DATA INCLUDED -->**
-We can also add meta data from a excel file. For example, we want to add the colum **$dont know$** from the excel file **$mpath$** to the meta data.
-
-```{r updateMetaData}
-additional_meta_data <- read.xlsx(mpath)
-head(additional_meta_data)
-MetAlyzer_proj <- updateMetaData(MetAlyzer_proj, name = Replicate,
-                                 new_colum = additional_meta_data$Replicate)
-```
-
-```{r getter}
-meta_data <- SummarizedExperiment::colData(MetAlyzer_proj)
+meta_data <- colData(metalyzer_se)
 head(meta_data)
 ```
 
-### Analysis and Visuals
+::: {style="text-align: justify"}
+Additional meta data can be easily added to the Summarized Experiment. Here, we want to add the column "Date" with the current date to the meta data as well as the column "Replicate" with extraction method replicates.
+:::
 
-The Summarized Experiment generated, also contains a tibble data frame with the aggregated data. This data frame is used for further analysis and visualizations.
+```{r load_replicates}
+replicate_meta_data <- example_meta_data()
+head(replicate_meta_data)
+```
 
-In case NAs or zeros are produced, we provide zero imputation as described in ([Gegner <i>et al</i>.](https://doi.org/10.1101/2021.12.16.472947)). To impute the NAs we can set the argument *impute_NA* to TRUE. The argument *perc_of_min* specifies the percentage of the minimum concentration value that is used for imputation. The default is 0.2. 
-Imputed concentrations are log2 transformed with the function *transform_data* and can be found in the column "log2_Conc".
+```{r updateMetaData}
+metalyzer_se <- updateMetaData(
+  metalyzer_se,
+  Date = Sys.Date(),
+  Replicate = replicate_meta_data$Replicate
+)
 
-```{r imputation}
-MetAlyzer_proj <- impute_data(MetAlyzer_proj, perc_of_min = 0.2, impute_NA = TRUE)
-MetAlyzer_proj <- transform_data(MetAlyzer_proj)
+meta_data <- colData(metalyzer_se)
+head(meta_data)
+```
 
+### Analysis of extraction methods
+
+::: {style="text-align: justify"}
+MetAlyzer includes functions to perform data analysis as it was performed for [MetaboExtract](https://www.metaboextract.shiny.dkfz.de/MetaboExtract/) ([Andresen <i>et al</i>. 2022](https://www.frontiersin.org/articles/10.3389/fmolb.2022.932261/full)). All analysing functions in MetAlyzer use the aggregated concentration data and quantification status (*'aggregated_data'*). The `calculate_cv` calculates the mean, standard deviation (SD) and the coefficient of variation (CV) within each group and saves it to *'aggregated_data'*. Each group is additionally categorized into given thresholds of variation based on the calculated CV.
+:::
+
+```{r calculateCV}
+metalyzer_se <- calculate_cv(
+  metalyzer_se,
+  groups = c("Tissue", "Extraction_Method", "Metabolite"),
+  cv_thresholds = c(0.1, 0.2, 0.3),
+  na.rm = TRUE
+)
+
+aggregated_data <- aggregatedData(metalyzer_se) %>%
+  select(c(Extraction_Method, Metabolite, Mean, SD, CV, CV_thresh))
+head(aggregated_data)
+```
+
+::: {style="text-align: justify"}
+As described in [Gegner <i>et al</i>.](https://www.frontiersin.org/articles/10.3389/fchem.2022.869732/full), an ANOVA is calculated to identify extraction methods with superior and inferior extraction performance. NAs or zero values are first imputed, to avoid NAs during log2 transformation. To impute NAs, the *impute_NA* argument can be set to TRUE. The argument *impute_perc_of_min* specifies the percentage of the minimum concentration value that is used for imputation.
+:::
+
+```{r calculateANOVA}
+
+metalyzer_se <- calculate_anova(
+  metalyzer_se,
+  categorical = "Extraction_Method",
+  groups = c("Tissue", "Metabolite"),
+  impute_perc_of_min = 0.2,
+  impute_NA = FALSE
+)
+
+aggregated_data <- aggregatedData(metalyzer_se) %>%
+  select(c(Extraction_Method, Metabolite, imputed_Conc, log2_Conc, ANOVA_n, ANOVA_Group))
+head(aggregated_data)
+```
+
+::: {style="text-align: justify"}
+The result of the imputation is stored in an extra column "imputed_Conc". In total 12,212 zero values were imputed in this example.
+:::
+
+```{r imputation_results}
 cat("Number of zero values before imputation:",
-    sum(metadata(MetAlyzer_proj)$aggregated_data$Concentration == 0, na.rm = TRUE), "\n")
+    sum(aggregatedData(metalyzer_se)$Concentration == 0, na.rm = TRUE), "\n")
 
 cat("Number of zero values after imputation:",
-    sum(metadata(MetAlyzer_proj)$aggregated_data$imputed_Conc == 0, na.rm = TRUE), "\n")
+    sum(aggregatedData(metalyzer_se)$imputed_Conc == 0, na.rm = TRUE), "\n")
 ```
 
-This is just for visualisation, the imputation and transformation is also included into the function *calculate_log2FC*.
+### Analysis and visualization of treatment data
 
-Next we can calculate the log2 Fold Change between the extraction methods for each metabolite. As the are 6 extraction methods, the function only calculates for the first 2 Methods. We can use the perviously mentioned function *filterMetaData* to specify the groups.
+::: {style="text-align: justify"}
+MetAlyzer also includes functions to calculate and visualize the log2 fold change of data with paired effects. For this, we load a dataset with control and mutated samples analyzed using the MxP®Quant 500 XL kit. The XL kit covers 332 additional metabolites and 6 additional metabolic classes compared to the MxP®Quant 500 kit.
+:::
+
+```{r initialize_treatment}
+fpath <- example_mutation_data_xl()
+metalyzer_se <- MetAlyzer_dataset(file_path = fpath)
+```
+
+```{r show_treatment}
+metalyzer_se
+```
+
+::: {style="text-align: justify"}
+Again, we want to remove the metabolism indicators and rename the column "Sample Description".
+:::
+
+```{r prepare_metabolites_treatment}
+metalyzer_se <- filterMetabolites(metalyzer_se, drop_metabolites = "Metabolism Indicators")
+metalyzer_se <- renameMetaData(metalyzer_se, Mutant_Control = "Sample Description")
+metalyzer_se
+```
+
+::: {style="text-align: justify"}
+In order to avoid NAs during log2 transformation the same imputation of NAs or zero values is applied as for `calculate_anova`. To impute NAs, the *impute_NA* argument can be set to TRUE. The argument *impute_perc_of_min* specifies the percentage of the minimum concentration value that is used for imputation.
+:::
 
 ```{r calculate_log2FC}
-MetAlyzer_proj <- filterMetaData(MetAlyzer_proj, Method %in% 3:6)
-log2FC_df <- calculate_log2FC(MetAlyzer_proj, Method, perc_of_min = 0.2, impute_NA = TRUE)
+metalyzer_se <- calculate_log2FC(
+  metalyzer_se,
+  categorical = "Mutant_Control",
+  impute_perc_of_min = 0.2,
+  impute_NA = TRUE
+)
 ```
 
-Here we can see the functions calculates between the third and fourth method after filtering out the first and second method and dropping the methods 5 & 6.
+::: {style="text-align: justify"}
+In addition to accessing the log2 fold change data through `metadata(metalyzer_se)$log2FC`, it can be directly accessed using `log2FC`.
+:::
 
+```{r get_log2FC}
+log2FC(metalyzer_se)
+```
+
+::: {style="text-align: justify"}
 This can be visualized with a volcano plot:
+:::
 
-```{r plot_log2FCt, fig.width=7, fig.height=4.5}
-p_vulcano <- plot_log2FC(log2FC_df, hide_labels_for = rownames(rowData(MetAlyzer_proj)), vulcano=TRUE)
-p_vulcano
+```{r plot_log2FC_vulcano, fig.width=7, fig.height=4.5}
+
+log2fc_vulcano <- plot_log2FC(
+  metalyzer_se,
+  hide_labels_for = rownames(rowData(metalyzer_se)),
+  vulcano=TRUE
+)
+
+log2fc_vulcano
+
 ```
 
+::: {style="text-align: justify"}
 Or in a scatter plot:
-  
-```{r plot_log2FC, fig.width=7, fig.height=4.5}
-p_fc <- plot_log2FC(log2FC_df, hide_labels_for = rownames(rowData(MetAlyzer_proj)), vulcano=FALSE)
-p_fc
+:::
+
+```{r plot_log2FC_scatter, fig.width=9, fig.height=9}
+
+log2fc_by_class <- plot_log2FC(
+  metalyzer_se,
+  hide_labels_for = rownames(rowData(metalyzer_se)),
+  vulcano=FALSE
+)
+
+log2fc_by_class
 ```
 
-We also provide the log fold change in the different pathways, to better visualize what group of metabolites shows an increase or decrease in concentration between the 2 extraction Methods.
+::: {style="text-align: justify"}
+MetAlyzer also provides the log fold change in the different pathways, to better visualize what group of metabolites shows an increase or decrease in concentration between the 2 extraction Methods.
+:::
 
-```{r plot_network, fig.width=7, fig.height=4.5}
-network <- plot_network(log2FC_df)
-network
+```{r plot_network, fig.width=9, fig.height=9}
+
+log2fc_network <- plot_network(metalyzer_se)
+
+log2fc_network
 ```
-
-Incase you want to analyze a dataset from the MxP®Quant 500 XL kit, nothing changes regarding the use of the package. The only difference is the visualized output as there are more metabolites included with this kit.
-
-```{r}
-Metalyzer_big_data <- MetAlyzer_dataset(file_path = test_xl)
-Metalyzer_big_data <- renameMetaData(Metalyzer_big_data, Method = 'Sample Description')
-
-log2FC_df_big <- calculate_log2FC(Metalyzer_big_data, Method, perc_of_min = 0.2, impute_NA = TRUE)
-```
-These visualisations will look like this:
-```{r plot_log2FCt, fig.width=7, fig.height=4.5}
-p_vulcano_big <- plot_log2FC(log2FC_df_big, hide_labels_for = rownames(rowData(MetAlyzer_proj)), vulcano=TRUE)
-p_vulcano_big
-```
-```{r plot_log2FC, fig.width=7, fig.height=4.5}
-p_fc_big <- plot_log2FC(log2FC_df_big, hide_labels_for = rownames(rowData(MetAlyzer_proj)), vulcano=FALSE)
-p_fc_big
-```
-
-## THIS WILL BE PATCHED IN SOON
-```{r plot_network, fig.width=7, fig.height=4.5}
-network_big <- plot_network(log2FC_df_big)
-network_big
-```
-
