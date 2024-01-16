@@ -6,58 +6,63 @@
 #' @param categorical A column specifying the two groups
 #' @param impute_perc_of_min A numeric value below 1
 #' @param impute_NA Logical value whether to impute NA values
-#' download and install. Options: ["binary", "source", "both"]
 #'
 #' @return A data frame containing the log2 fold change for each metabolite
 #'
 #' @import dplyr
 #' @import SummarizedExperiment
-#' @importFrom utils install.packages
-#' @importFrom utils installed.packages
 #' @importFrom rlang .data
-#' @importFrom methods is
 #' @importFrom data.table :=
 #' @export
 #'
 #' @examples
-#' metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
-#' metalyzer_se <- renameMetaData(metalyzer_se, Method = `Sample Description`)
+#' metalyzer_se <- MetAlyzer_dataset(file_path = example_mutation_data_xl())
+#' metalyzer_se <- filterMetabolites(
+#'   metalyzer_se,
+#'   drop_metabolites = "Metabolism Indicators"
+#' )
+#' metalyzer_se <- renameMetaData(
+#'   metalyzer_se,
+#'   Mutant_Control = "Sample Description"
+#' )
 #' 
-#' log2FC <- calculate_log2FC(metalyzer_se, Method, impute_perc_of_min = 0.2, impute_NA = TRUE)
-
-calculate_log2FC <- function(metalyzer_se, categorical, impute_perc_of_min = 0.2, impute_NA = FALSE) {
+#' metalyzer_se <- calculate_log2FC(
+#'   metalyzer_se,
+#'   categorical = "Mutant_Control",
+#'   impute_perc_of_min = 0.2,
+#'   impute_NA = FALSE
+#' )
+calculate_log2FC <- function(metalyzer_se,
+                             categorical,
+                             impute_perc_of_min = 0.2,
+                             impute_NA = FALSE) {
+  ## Check for qvalue and BiocManager installation
+  # installed_packages <- utils::installed.packages()[, "Package"]
+  # if (! "qvalue" %in% installed_packages) {
+  #   if (! "BiocManager" %in% installed_packages) {
+  #     cat("Info: Installing package 'BiocManager':\n")
+  #     utils::install.packages("BiocManager")
+  #     cat("\n")
+  #   }
+  #   cat("Info: Installing package 'qvalue':\n")
+  #   BiocManager::install("qvalue", ask = FALSE, type = "binary")
+  #   cat("\n")
+  # }
+  
+  
+  ## Create a new dataframe to calculate the log2FC
+  if (!categorical %in% colnames(metalyzer_se@metadata$aggregated_data)) {
+    metalyzer_se <- expand_aggregated_data(metalyzer_se,
+                                           meta_data_column = categorical)
+  }
+  
   metalyzer_se <- data_imputation(metalyzer_se, impute_perc_of_min, impute_NA)
   metalyzer_se <- data_transformation(metalyzer_se)
-  aggregated_data <- metalyzer_se@metadata$aggregated_data
-  meta_data <- colData(metalyzer_se)
-  cat_str <- deparse(substitute(categorical))
 
-  mapping_vec <- unlist(meta_data[cat_str])
-  names(mapping_vec) <- rownames(meta_data[cat_str])
-  aggregated_data <- dplyr::mutate(aggregated_data, 
-  !!cat_str := factor(sapply(.data$ID, function(id) {
-                                   mapping_vec[id]
-                               }),
-  levels = unique(mapping_vec)), .after = .data$ID)
-
-  metalyzer_se@metadata$aggregated_data <- aggregated_data
-  ## Check for qvalue and BiocManager installation
-  installed_packages <- utils::installed.packages()[, "Package"]
-  if (! "qvalue" %in% installed_packages) {
-    if (! "BiocManager" %in% installed_packages) {
-      cat("Installing package 'BiocManager':\n")
-      utils::install.packages("BiocManager")
-      cat("\n")
-    }
-    cat("Installing package 'qvalue':\n")
-    BiocManager::install("qvalue", ask = FALSE, type = "binary")
-    cat("\n")
-  }
-
-  df <- aggregated_data %>%
-    ungroup(all_of(cat_str)) %>%
+  df <- metalyzer_se@metadata$aggregated_data %>%
+    ungroup(all_of(categorical)) %>%
     mutate(Value = .data$log2_Conc,
-        Group = !!sym(cat_str)) %>%
+        Group = !!sym(categorical)) %>%
     select(.data$Metabolite,
            .data$Class,
            .data$Group,
@@ -65,7 +70,7 @@ calculate_log2FC <- function(metalyzer_se, categorical, impute_perc_of_min = 0.2
 
   ## Check if already factor
   group_vec <- df$Group
-  if (!is(group_vec, "factor")) {
+  if (!methods::is(group_vec, "factor")) {
     group_vec <- factor(group_vec)
     df$Group <- group_vec
     cat("Warning: No order was given for categorical!\n")
@@ -77,8 +82,8 @@ calculate_log2FC <- function(metalyzer_se, categorical, impute_perc_of_min = 0.2
     cat("Warning: More than two levels were given! Dropping",
         paste(group_levels[3:length(group_levels)], collapse = ", "), "\n")
   }
-  cat("Calculating log2 fold change from ", group_levels[1], " to ",
-      group_levels[2], " (column: ", cat_str, ").\n", sep = "")
+  cat("Info: Calculating log2 fold change from ", group_levels[1], " to ",
+      group_levels[2], " (column: ", categorical, ").\n", sep = "")
   df <- filter(df, .data$Group %in% group_levels[1:2])
   df$Group <- droplevels(df$Group)
 
@@ -88,17 +93,21 @@ calculate_log2FC <- function(metalyzer_se, categorical, impute_perc_of_min = 0.2
   if (!"Metabolite" %in% grouping_vars) {
     grouping_vars[length(grouping_vars)+1] <- "Metabolite"
   }
-  cat("Calculating log2 fold change groupwise (",
-      paste(grouping_vars, collapse = " * "), ").\n", sep = "")
-
+  
   ## Calculate log2FC and p-val
+  cat("Info: Calculating log2 fold change groupwise (",
+      paste(grouping_vars, collapse = " * "),
+      ") using a linear model...  ", sep = "")
   options(warn = -1)
-  change_test_df <- df %>%
+  change_df <- df %>%
     group_modify(~ apply_linear_model(df = .x)) %>%
     ungroup(.data$Metabolite) %>%
     mutate(qval = qvalue::qvalue(.data$pval, pi0 = 1)$qvalues)
   options(warn = 0)
-  return(change_test_df)
+  cat("finished!\n")
+  
+  metalyzer_se@metadata$log2FC <- change_df
+  return(metalyzer_se)
 }
 
 #' @title Calculate log2 fold change

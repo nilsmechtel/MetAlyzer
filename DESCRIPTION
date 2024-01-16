@@ -23,21 +23,23 @@ Authors@R:
             comment = c(ORCID = "0000-0002-6041-7049")))
 Depends:
     R (>= 4.0.0)
+biocViews:
 Imports:
+    SummarizedExperiment,
     openxlsx,
+    stringr,
     dplyr,
     tidyr,
-    stringr,
-    utils,
-    rlang,
+    tibble,
+    agricolae,
     ggplot2,
     ggrepel,
-    SummarizedExperiment,
-    S4Vectors,
-    BiocManager,
-    qvalue,
+    utils,
+    rlang,
     methods,
-    data.table
+    data.table,
+    S4Vectors,
+    qvalue
 Description: The 'MetAlyzer' S4 object provides methods to read and reformat metabolomics data for convenient data handling, statistics and downstream analysis. The resulting format corresponds to input data of the Shiny app 'MetaboExtract' (<https://www.metaboextract.shiny.dkfz.de/MetaboExtract/>).
 License: GPL-3
 Encoding: UTF-8

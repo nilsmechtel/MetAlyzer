@@ -14,6 +14,7 @@ slice_conc_values(full_sheet, data_ranges, metabolites)
 \item{metabolites}{metabolites}
 }
 \description{
-This function slices measurements from .full_sheet into conc_values.
+This function slices measurements from .full_sheet into
+conc_values.
 }
 \keyword{internal}

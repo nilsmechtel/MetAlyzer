@@ -2,7 +2,7 @@
 % Please edit documentation in R/data_imputation.R
 \name{zero_imputation}
 \alias{zero_imputation}
-\title{Zero imputation}
+\title{Imputation of zero values}
 \usage{
 zero_imputation(vec, impute_perc_of_min, impute_NA)
 }

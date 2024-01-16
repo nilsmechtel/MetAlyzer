@@ -1,4 +1,4 @@
-#' @title Zero imputation
+#' @title Imputation of zero values
 #'
 #' @description This function performs zero imputation with the minimal positive value times
 #' impute_perc_of_min.
@@ -37,7 +37,7 @@ data_imputation <- function(
     impute_NA
   ) {
   aggregated_data <- metalyzer_se@metadata$aggregated_data
-  cat("Impute concentrations (groupwise: Metabolite) with",
+  cat("Info: Imputing concentrations (groupwise: Metabolite) with",
       paste0(round(impute_perc_of_min * 100), "%"),
       "of the minimal positive value...  ")
 

@@ -127,11 +127,11 @@ filterMetaData <- function(metalyzer_se, ..., inplace = FALSE) {
   # Print how many samples were removed
   diff <- nrow(meta_data) - length(true_samples)
   if (diff == 1) {
-    cat("1 sample was removed!\n")
+    cat("Info: 1 sample was removed!\n")
   } else if (diff > 1) {
-    cat(paste(diff, "samples were removed!\n"))
+    cat("Info:", paste(diff, "samples were removed!\n"))
   } else {
-    cat("No samples were removed!\n")
+    cat("Info: No samples were removed!\n")
   }
 
   if (inplace) {
@@ -369,7 +369,7 @@ filterMetabolites <- function(metalyzer_se,
         )
       }
       cat(
-        "A group counts as valid, if at least ",
+        "Info: A group counts as valid, if at least ",
         round(min_percent_valid * 100, 2),
         "% of samples are considered as valid.\n",
         "Group-wise calculation: (",
@@ -379,7 +379,7 @@ filterMetabolites <- function(metalyzer_se,
       )
     } else {
       cat(
-        "A metabolite counts as valid, if at least ",
+        "Info: A metabolite counts as valid, if at least ",
         round(min_percent_valid * 100, 2),
         "% of samples are considered as valid.\n",
         sep = ""
@@ -438,11 +438,11 @@ filterMetabolites <- function(metalyzer_se,
 
   diff <- length(rm_metabolites)
   if (diff == 1) {
-    cat("1 metabolite was removed!\n")
+    cat("Info: 1 metabolite was removed!\n")
   } else if (diff > 1) {
-    cat(paste(diff, "metabolites were removed!\n"))
+    cat("Info:", paste(diff, "metabolites were removed!\n"))
   } else {
-    cat("No metabolites were removed!\n")
+    cat("Info: No metabolites were removed!\n")
   }
 
   if (inplace) {
@@ -456,7 +456,7 @@ filterMetabolites <- function(metalyzer_se,
 # === Handle Aggregated Data ===
 #' @title Get Aggregated Data
 #'
-#' @description This function returns the tibble data frame "aggregated_data".
+#' @description This function returns the tibble "aggregated_data".
 #'
 #' @param metalyzer_se SummarizedExperiment
 #' @export
@@ -467,6 +467,37 @@ filterMetabolites <- function(metalyzer_se,
 #' aggregatedData(metalyzer_se)
 aggregatedData <- function(metalyzer_se) {
   return(metalyzer_se@metadata$aggregated_data)
+}
+
+# === Handle log2FC Data ===
+#' @title Get log2FC Data
+#'
+#' @description This function returns the tibble "log2FC".
+#'
+#' @param metalyzer_se SummarizedExperiment
+#' @export
+#'
+#' @examples
+#' metalyzer_se <- MetAlyzer_dataset(file_path = example_mutation_data_xl())
+#' metalyzer_se <- filterMetabolites(
+#'   metalyzer_se,
+#'   drop_metabolites = "Metabolism Indicators"
+#' )
+#' metalyzer_se <- renameMetaData(
+#'   metalyzer_se,
+#'   Mutant_Control = "Sample Description"
+#' )
+#' 
+#' metalyzer_se <- calculate_log2FC(
+#'   metalyzer_se,
+#'   categorical = "Mutant_Control",
+#'   impute_perc_of_min = 0.2,
+#'   impute_NA = TRUE
+#' )
+#'
+#' log2FC(metalyzer_se)
+log2FC <- function(metalyzer_se) {
+  return(metalyzer_se@metadata$log2FC)
 }
 
 # === Export data ===
@@ -497,8 +528,8 @@ exportConcValues <- function(metalyzer_se,
     dplyr::select(meta_data, ...),
     t(conc_values)
   )
-  cat("Number of samples:", nrow(meta_data), "\n")
-  cat("Number of Metabolites:", nrow(conc_values), "\n")
+  cat("Info: Number of samples:", nrow(meta_data), "\n")
+  cat("Info: Number of Metabolites:", nrow(conc_values), "\n")
   utils::write.csv(
     x = df,
     file = file_path,

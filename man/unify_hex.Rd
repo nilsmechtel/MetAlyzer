@@ -10,7 +10,7 @@ unify_hex(hex)
 \item{hex}{A 3, 4, 6 or 8 digit hex code}
 }
 \description{
-This function gets hex codes of different length and returns them in a
-unified format.
+This function gets hex codes of different length and returns
+them in a unified format.
 }
 \keyword{internal}
