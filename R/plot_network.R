@@ -185,8 +185,8 @@ plot_network <- function(log2FC_df, q_value=0.05) {
 
   # Create a plot of the network using ggplot2 and ggrepel
   label_size <- 3
-  area_size <- 5
-  edge_size <- 1
+  area_size <- 4
+  edge_size <- 0.75
   annotation_size <- 6
 
   network <- ggplot()
@@ -238,6 +238,8 @@ plot_network <- function(log2FC_df, q_value=0.05) {
       size = label_size,
       color = "white"
     ) +
+    scale_fill_gradient2(low = "green", high = "magenta", mid = "black") +
+
     # Add annotations
     geom_text(
       data = pathways,
@@ -259,5 +261,5 @@ plot_network <- function(log2FC_df, q_value=0.05) {
     theme(plot.title = element_text(hjust = 0.5))
   network
 
-  #ggsave("network.pdf", network, width = 15, height = 10, bg = "white")
+  #ggsave("network_cyanred_reduced.pdf", network, width = 15, height = 10, bg = "white")
 }
