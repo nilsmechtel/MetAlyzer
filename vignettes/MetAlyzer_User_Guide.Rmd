@@ -167,7 +167,7 @@ Next we can calculate the log2 Fold Change between the extraction methods for ea
 
 ```{r calculate_log2FC}
 MetAlyzer_proj <- filterMetaData(MetAlyzer_proj, Method %in% 3:6)
-log2FC_df <- calculate_log2FC(MetAlyzer_proj, Method, perc_of_min = 0.2, impute_NA = TRUE)
+log2FC_df <- calculate_log2FC(MetAlyzer_proj, Method, impute_perc_of_min = 0.2, impute_NA = TRUE)
 ```
 
 Here we can see the functions calculates between the third and fourth method after filtering out the first and second method and dropping the methods 5 & 6.
