@@ -10,7 +10,7 @@ aggregatedData(metalyzer_se)
 \item{metalyzer_se}{SummarizedExperiment}
 }
 \description{
-This function returns the tibble data frame "aggregated_data".
+This function returns the tibble "aggregated_data".
 }
 \examples{
 metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())

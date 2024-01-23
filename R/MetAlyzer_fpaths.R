@@ -12,20 +12,6 @@ example_extraction_data <- function() {
 }
 
 
-#' @title Get example treatment data
-#'
-#' @description This function returns the treatment_data_MxP_Quant_500.xlsx file path.
-#'
-#' @return treatment_data_MxP_Quant_500.xlsx file path
-#' @export
-#'
-#' @examples
-#' fpath <- example_treatment_data()
-example_treatment_data <- function() {
-  system.file("extdata", "treatment_data_MxP_Quant_500.xlsx", package = "MetAlyzer")
-}
-
-
 #' @title Get example mutation data
 #'
 #' @description This function returns the mutation_data_MxP_Quant_500_XL.xlsx file path.

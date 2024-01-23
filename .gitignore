@@ -6,3 +6,4 @@
 *.code-workspace
 .Rproj.user
 ..Rcheck
+*_cache

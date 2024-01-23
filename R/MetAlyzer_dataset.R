@@ -101,9 +101,9 @@ MetAlyzer_dataset <- function(
   return(se)
 }
 
-#' MetAlyzer logo
+#' @title MetAlyzer logo
 #'
-#' This function prints "MetAlyzer" as an ASCII logo
+#' @description This function prints "MetAlyzer" as an ASCII logo
 #'
 #' @keywords internal
 metalyzer_ascii_logo <- function() {
@@ -144,9 +144,9 @@ metalyzer_ascii_logo <- function() {
 }
 
 
-#' Open Excel file
+#' @title Open Excel file
 #'
-#' This function opens the given MetIDQ output Excel file and reads the full
+#' @description This function opens the given MetIDQ output Excel file and reads the full
 #' given sheet.
 #'
 #' @param starter_list contains the file path and the sheet index
@@ -165,9 +165,9 @@ open_file <- function(starter_list) {
 }
 
 
-#' Get data range
+#' @title Get data range
 #'
-#' This function extracts rows and column indices to slice the .full_sheet into
+#' @description This function extracts rows and column indices to slice the .full_sheet into
 #' metabolites, conc_values and meta_data.
 #'
 #' @param full_sheet full_sheet
@@ -208,10 +208,10 @@ get_data_range <- function(full_sheet) {
 }
 
 
-#' Slice metabolites
+#' @title Slice metabolites
 #'
-#' This function extracts metabolites with their corresponding metabolite class
-#' from .full_sheet into metabolites.
+#' @description This function extracts metabolites with their corresponding
+#' metabolite class from .full_sheet into metabolites.
 #'
 #' @param full_sheet full_sheet
 #' @param data_ranges data_ranges
@@ -232,9 +232,10 @@ slice_metabolites <- function(full_sheet, data_ranges) {
 }
 
 
-#' Slice concentration values
+#' @title Slice concentration values
 #'
-#' This function slices measurements from .full_sheet into conc_values.
+#' @description This function slices measurements from .full_sheet into
+#' conc_values.
 #'
 #' @param full_sheet full_sheet
 #' @param data_ranges data_ranges
@@ -253,9 +254,9 @@ slice_conc_values <- function(full_sheet, data_ranges, metabolites) {
 }
 
 
-#' Slice meta data
+#' @title Slice meta data
 #'
-#' This function slices meta data from .full_sheet into meta_data.
+#' @description This function slices meta data from .full_sheet into meta_data.
 #'
 #' @param full_sheet full_sheet
 #' @param data_ranges data_ranges
@@ -282,10 +283,10 @@ slice_meta_data <- function(full_sheet, data_ranges) {
 }
 
 
-#' Unify hex codes
+#' @title Unify hex codes
 #'
-#' This function gets hex codes of different length and returns them in a
-#' unified format.
+#' @description This function gets hex codes of different length and returns
+#' them in a unified format.
 #'
 #' @param hex A 3, 4, 6 or 8 digit hex code
 #'
@@ -317,10 +318,10 @@ unify_hex <- function(hex) {
 }
 
 
-#' Read quantification status
+#' @title Read quantification status
 #'
-#' This function gets the background color of each cell in .full_sheet and
-#' assigns it to the corresponding quantification status.
+#' @description This function gets the background color of each cell in 
+#' full_sheet and assigns it to the corresponding quantification status.
 #'
 #' @param starter_list starter_list
 #' @param sheet_dim sheet_dim
@@ -378,9 +379,9 @@ read_quant_status <- function(
   return(quant_status)
 }
 
-#' Aggregate data
+#' @title Aggregate data
 #'
-#' This function reshapes conc_values, quant_status,
+#' @description This function reshapes conc_values, quant_status,
 #' metatabolites and sample IDs and combines them into a tibble data frame
 #' for filtering with dplyr and plotting with 'ggplot2'. "aggregated_data"
 #' is grouped by metabolites.

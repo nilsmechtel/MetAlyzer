@@ -5,7 +5,7 @@
 \title{Plot log2 fold change}
 \usage{
 plot_log2FC(
-  log2FC_df,
+  metalyzer_se,
   signif_colors = c(`#5F5F5F` = 1, `#FEBF6E` = 0.1, `#EE5C42` = 0.05, `#8B1A1A` = 0.01),
   hide_labels_for = c(),
   class_colors = "MetAlyzer",
@@ -14,7 +14,7 @@ plot_log2FC(
 )
 }
 \arguments{
-\item{log2FC_df}{fold change data frame}
+\item{metalyzer_se}{A Metalyzer object}
 
 \item{signif_colors}{signif_colors}
 
@@ -34,12 +34,22 @@ ggplot object
 This method plots the log2 fold change for each metabolite.
 }
 \examples{
-metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
-metalyzer_se <- renameMetaData(metalyzer_se, Method = 'Sample Description')
+metalyzer_se <- MetAlyzer_dataset(file_path = example_mutation_data_xl())
+metalyzer_se <- filterMetabolites(
+  metalyzer_se,
+  drop_metabolites = "Metabolism Indicators"
+)
+metalyzer_se <- renameMetaData(
+  metalyzer_se,
+  Mutant_Control = "Sample Description"
+)
+metalyzer_se <- calculate_log2FC(
+  metalyzer_se,
+  categorical = "Mutant_Control",
+  impute_perc_of_min = 0.2,
+  impute_NA = TRUE
+)
 
-log2FC_df <- calculate_log2FC(metalyzer_se, Method, impute_perc_of_min = 0.2, impute_NA = TRUE)
-
-rownames_se <- rownames(SummarizedExperiment::rowData(metalyzer_se))
-p_vulcano <- plot_log2FC(log2FC_df, hide_labels_for = rownames_se, vulcano=TRUE)
-p_fc <- plot_log2FC(log2FC_df, hide_labels_for = rownames_se, vulcano=FALSE)
+# p_vulcano <- plot_log2FC(metalyzer_se, vulcano=TRUE)
+# p_fc <- plot_log2FC(metalyzer_se, vulcano=FALSE)
 }

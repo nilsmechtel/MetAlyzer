@@ -2,7 +2,7 @@
 #'
 #' This method plots the log2 fold change for each metabolite.
 #'
-#' @param log2FC_df fold change data frame
+#' @param metalyzer_se A Metalyzer object
 #' @param signif_colors signif_colors
 #' @param hide_labels_for vector of Metabolites or Classes for which no labels
 #' are printed
@@ -20,41 +20,25 @@
 #' @export
 #'
 #' @examples
-#' metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
-#' metalyzer_se <- renameMetaData(metalyzer_se, Method = 'Sample Description')
+#' metalyzer_se <- MetAlyzer_dataset(file_path = example_mutation_data_xl())
+#' metalyzer_se <- filterMetabolites(
+#'   metalyzer_se,
+#'   drop_metabolites = "Metabolism Indicators"
+#' )
+#' metalyzer_se <- renameMetaData(
+#'   metalyzer_se,
+#'   Mutant_Control = "Sample Description"
+#' )
+#' metalyzer_se <- calculate_log2FC(
+#'   metalyzer_se,
+#'   categorical = "Mutant_Control",
+#'   impute_perc_of_min = 0.2,
+#'   impute_NA = TRUE
+#' )
 #' 
-#' log2FC_df <- calculate_log2FC(metalyzer_se, Method, impute_perc_of_min = 0.2, impute_NA = TRUE)
-#' 
-#' rownames_se <- rownames(SummarizedExperiment::rowData(metalyzer_se))
-#' p_vulcano <- plot_log2FC(log2FC_df, hide_labels_for = rownames_se, vulcano=TRUE)
-#' p_fc <- plot_log2FC(log2FC_df, hide_labels_for = rownames_se, vulcano=FALSE)
-
-
-# classes <- c('Acylcarnitines', 'Alkaloids', 'Amine Oxides', 'Aminoacids',
-#              'Aminoacids Related', 'Bile Acids', 'Biogenic Amines', 'Carboxylic Acids',
-#              'Ceramides', 'Cholesterol Esters', 'Cresols', 'Diacylglycerols',
-#              'Dihydroceramides', 'Fatty Acids', 'Glycerophospholipids',
-#              'Glycosylceramides', 'Hormones', 'Indoles Derivatives',
-#              'Nucleobases Related', 'Sphingolipids', 'Sugars', 'Triacylglycerols',
-#              'Vitamins & Cofactors')
-# class_colors <- c("#a6cee3", "#1f78b4", "#ffff99", "#b2df8a", "#33a02c", "#fb9a99",
-#                   "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6", "#6a3d9a", "#8dd3c7",
-#                   "#ffffb3", "#bebada", "#fb8072", "#80b1d3", "#fdb462", "#b3de69",
-#                   "#fccde5", "#d9d9d9", "#bc80bd", "#ccebc5", "#ffed6f")
-# polarity <- c('FIA', 'LC', 'LC', 'LC', 'LC', 'LC', 'LC', 'LC', 'FIA', 'FIA',
-#               'LC', 'FIA','FIA', 'LC', 'FIA',  'FIA', 'LC', 'LC', 'LC', 'FIA',
-#               'FIA', 'FIA', 'LC')
-# polarity_df <- data.frame(Class = classes,
-#                           Polarity = factor(polarity, levels = c('LC', 'FIA'))) %>%
-#   arrange(Polarity)
-#
-# polarity_file <- polarity()
-
-# signif_colors=c("#5F5F5F"=1, "#FEBF6E"=0.1, "#EE5C42"=0.05, "#8B1A1A"=0.01)
-# class_colors="MetAlyzer"
-# polarity_file="MxPQuant500"
-
-plot_log2FC <- function(log2FC_df,
+#' # p_vulcano <- plot_log2FC(metalyzer_se, vulcano=TRUE)
+#' # p_fc <- plot_log2FC(metalyzer_se, vulcano=FALSE)
+plot_log2FC <- function(metalyzer_se,
                         signif_colors=c("#5F5F5F"=1,
                                         "#FEBF6E"=0.1,
                                         "#EE5C42"=0.05,
@@ -63,10 +47,11 @@ plot_log2FC <- function(log2FC_df,
                         class_colors="MetAlyzer",
                         polarity_file="MxPQuant500",
                         vulcano=FALSE) {
+  log2FC_df <- metalyzer_se@metadata$log2FC
 
   ## Background: Load polarity data
   if (polarity_file == "MxPQuant500") {
-    polarity_file <- system.file("extdata", "polarity.csv", package = "MetAlyzer")
+    polarity_file <- polarity()
   }
   polarity_df <- utils::read.csv(polarity_file) %>%
     select(.data$Class,
@@ -217,7 +202,8 @@ plot_log2FC <- function(log2FC_df,
                 show.legend = TRUE,
                 alpha = 0.4) +
       geom_vline(xintercept = 0, linewidth = 0.5, color = 'black') +
-      geom_vline(xintercept = lc_fia_border+3, linewidth = 0.5, color = 'black', linetype="dotted") +
+      geom_vline(xintercept = lc_fia_border+3, linewidth = 0.5, color = 'black',
+                 linetype="dotted") +
       geom_hline(yintercept = 0, linewidth = 0.5, color = 'black') +
       geom_point(size = 0.5) +
       scale_color_manual(paste0('Significance\n(linear model fit with FDR correction)'),
@@ -252,7 +238,8 @@ plot_log2FC <- function(log2FC_df,
                        y = -log10(.data$qval),
                        color = .data$Class,
                        label = labels)) +
-      geom_vline(xintercept=c(-log2(1.5), log2(1.5)), col="black", linetype="dashed") +
+      geom_vline(xintercept=c(-log2(1.5), log2(1.5)), col="black",
+                 linetype="dashed") +
       geom_hline(yintercept=-log10(0.05), col="black", linetype="dashed") +
       geom_point(size = 1) +
       scale_color_manual('Classes',

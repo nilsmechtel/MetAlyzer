@@ -18,8 +18,7 @@ calculate_log2FC(
 
 \item{impute_perc_of_min}{A numeric value below 1}
 
-\item{impute_NA}{Logical value whether to impute NA values
-download and install. Options: ["binary", "source", "both"]}
+\item{impute_NA}{Logical value whether to impute NA values}
 }
 \value{
 A data frame containing the log2 fold change for each metabolite
@@ -29,8 +28,20 @@ This function calculates the log2 fold change of two groups from
 plotting_data.
 }
 \examples{
-metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
-metalyzer_se <- renameMetaData(metalyzer_se, Method = `Sample Description`)
+metalyzer_se <- MetAlyzer_dataset(file_path = example_mutation_data_xl())
+metalyzer_se <- filterMetabolites(
+  metalyzer_se,
+  drop_metabolites = "Metabolism Indicators"
+)
+metalyzer_se <- renameMetaData(
+  metalyzer_se,
+  Mutant_Control = "Sample Description"
+)
 
-log2FC <- calculate_log2FC(metalyzer_se, Method, impute_perc_of_min = 0.2, impute_NA = TRUE)
+metalyzer_se <- calculate_log2FC(
+  metalyzer_se,
+  categorical = "Mutant_Control",
+  impute_perc_of_min = 0.2,
+  impute_NA = FALSE
+)
 }

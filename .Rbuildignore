@@ -7,17 +7,10 @@
 ^\.\.Rcheck.*
 ^LICENSE$
 ^cran-comments\.md$
+.*_cache$
 
 ^tests/.*
 
-^vignettes/.*
-
-^R/calculate_anova\.R$
-^R/calculate_cv\.R$
-
-^R/add_filter\.R$
 ^R/do_anova_2w\.R$
-^R/filter_groupwise\.R$
-^R/perform_anova\.R$
 ^R/plot_2w_anvova\.R$
 ^R/two_way_anova\.R$

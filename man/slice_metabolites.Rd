@@ -12,7 +12,7 @@ slice_metabolites(full_sheet, data_ranges)
 \item{data_ranges}{data_ranges}
 }
 \description{
-This function extracts metabolites with their corresponding metabolite class
-from .full_sheet into metabolites.
+This function extracts metabolites with their corresponding
+metabolite class from .full_sheet into metabolites.
 }
 \keyword{internal}

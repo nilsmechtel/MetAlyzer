@@ -1,61 +1,8 @@
-#' @title Read Named Regions
-#'
-#' @description This function reads in the named regions of an excel file.
-#'
-#' @param file_path The file path of the file
-#' @param named_region The region name u want to read in
-read_named_region <- function(file_path, named_region) {
-  full_sheet <- openxlsx::read.xlsx(
-    file_path,
-    sheet = 1,
-    colNames = FALSE,
-    skipEmptyRows = FALSE,
-    skipEmptyCols = FALSE,
-  )
-  full_sheet[nrow(full_sheet) + 1, ] <- NA
-  header <- colnames(openxlsx::read.xlsx(
-    file_path,
-    namedRegion = named_region
-  ))
-  coordinates <- lapply(header, function(col_name) {
-    data.frame(which(full_sheet == col_name, arr.ind = TRUE))
-  }) %>%
-    dplyr::bind_rows() %>%
-    dplyr::arrange(row, col) %>%
-    dplyr::group_by(row) %>%
-    dplyr::mutate(n = n()) %>%
-    dplyr::filter(n == length(header))
-
-  header_row <- unique(coordinates$row)
-  first_row <- header_row + 1
-  cols <- coordinates$col
-  df <- full_sheet[
-    first_row:nrow(full_sheet),
-    cols
-  ]
-  colnames(df) <- header
-  last_row <- min(which(rowSums(is.na(df)) == length(header))) - 1
-  df <- df[1:last_row, ]
-
-  for (numeric_col in c("x", "y", "Radius")) {
-    if (numeric_col %in% header) {
-      df[, numeric_col] <- as.numeric(df[, numeric_col])
-    }
-  }
-  for (trim_col in c("Label", "Pathway", "Color", "Node1", "Node2")) {
-    if (trim_col %in% header) {
-      df[, trim_col] <- stringr::str_trim(df[, trim_col])
-    }
-  }
-  rownames(df) <- NULL
-  return(df)
-}
-
 #' Plot Pathway Network
 #'
 #' @description This function plots the log2 fold change for each metabolite and visualizes it, in a pathway network.
 #'
-#' @param log2FC_df A data frame with the log2 fold change for each metabolite
+#' @param metalyzer_se A Metalyzer object
 #' @param q_value The q-value threshold for significance
 #' @return ggplot object
 #' 
@@ -67,14 +14,28 @@ read_named_region <- function(file_path, named_region) {
 #' @export
 #' 
 #' @examples
-#' metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
-#' metalyzer_se <- renameMetaData(metalyzer_se, Method = 'Sample Description')
+#' metalyzer_se <- MetAlyzer_dataset(file_path = example_mutation_data_xl())
+#' metalyzer_se <- filterMetabolites(
+#'   metalyzer_se,
+#'   drop_metabolites = "Metabolism Indicators"
+#' )
+#' metalyzer_se <- renameMetaData(
+#'   metalyzer_se,
+#'   Mutant_Control = "Sample Description"
+#' )
 #' 
-#' log2FC_df <- calculate_log2FC(metalyzer_se, Method, impute_perc_of_min = 0.2, impute_NA = TRUE)
+#' metalyzer_se <- calculate_log2FC(
+#'   metalyzer_se,
+#'   categorical = "Mutant_Control",
+#'   impute_perc_of_min = 0.2,
+#'   impute_NA = FALSE
+#' )
 #' 
-#' network <- plot_network(log2FC_df, q_value = 0.05)
+#' network <- plot_network(metalyzer_se, q_value = 0.05)
 
-plot_network <- function(log2FC_df, q_value=0.05) {
+plot_network <- function(metalyzer_se, q_value=0.05) {
+  log2FC_df <- metalyzer_se@metadata$log2FC
+  
   pathway_file <- MetAlyzer::pathway()
 
   ## Read network nodes, edges and annotations
@@ -261,5 +222,58 @@ plot_network <- function(log2FC_df, q_value=0.05) {
     theme(plot.title = element_text(hjust = 0.5))
   network
 
-  #ggsave("network_cyanred_reduced.pdf", network, width = 15, height = 10, bg = "white")
+  #ggsave("network.pdf", network, width = 15, height = 10, bg = "white")
+}
+
+#' @title Read Named Regions
+#'
+#' @description This function reads in the named regions of an excel file.
+#'
+#' @param file_path The file path of the file
+#' @param named_region The region name u want to read in
+read_named_region <- function(file_path, named_region) {
+  full_sheet <- openxlsx::read.xlsx(
+    file_path,
+    sheet = 1,
+    colNames = FALSE,
+    skipEmptyRows = FALSE,
+    skipEmptyCols = FALSE,
+  )
+  full_sheet[nrow(full_sheet) + 1, ] <- NA
+  header <- colnames(openxlsx::read.xlsx(
+    file_path,
+    namedRegion = named_region
+  ))
+  coordinates <- lapply(header, function(col_name) {
+    data.frame(which(full_sheet == col_name, arr.ind = TRUE))
+  }) %>%
+    dplyr::bind_rows() %>%
+    dplyr::arrange(row, col) %>%
+    dplyr::group_by(row) %>%
+    dplyr::mutate(n = n()) %>%
+    dplyr::filter(n == length(header))
+  
+  header_row <- unique(coordinates$row)
+  first_row <- header_row + 1
+  cols <- coordinates$col
+  df <- full_sheet[
+    first_row:nrow(full_sheet),
+    cols
+  ]
+  colnames(df) <- header
+  last_row <- min(which(rowSums(is.na(df)) == length(header))) - 1
+  df <- df[1:last_row, ]
+  
+  for (numeric_col in c("x", "y", "Radius")) {
+    if (numeric_col %in% header) {
+      df[, numeric_col] <- as.numeric(df[, numeric_col])
+    }
+  }
+  for (trim_col in c("Label", "Pathway", "Color", "Node1", "Node2")) {
+    if (trim_col %in% header) {
+      df[, trim_col] <- stringr::str_trim(df[, trim_col])
+    }
+  }
+  rownames(df) <- NULL
+  return(df)
 }
