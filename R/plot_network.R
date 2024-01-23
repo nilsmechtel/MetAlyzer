@@ -218,7 +218,7 @@ plot_network <- function(metalyzer_se, q_value=0.05) {
     # ylim(0, 10) +
     theme_void() +
     # Add a title and remove the x and y axis labels
-    ggtitle("Example Network Plot with Colored Area Behind Curved Edges") +
+    ggtitle("") +
     theme(plot.title = element_text(hjust = 0.5))
   network
 
