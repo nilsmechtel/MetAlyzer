@@ -408,7 +408,7 @@ filterMetabolites <- function(metalyzer_se,
   }
 
   # Get all metabolites with at least one concentration being NA
-  if (!is.null(drop_NA_concentration)) {
+  if (drop_NA_concentration) {
     conc_values <- SummarizedExperiment::assay(
       metalyzer_se, "conc_values"
     )
