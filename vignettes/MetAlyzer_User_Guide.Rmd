@@ -60,9 +60,7 @@ To present the base functionalities of MetAlyzer, we use a data set published by
 ```{r initialize_extraction}
 fpath <- example_extraction_data()
 metalyzer_se <- MetAlyzer_dataset(file_path = fpath)
-```
 
-```{r show_extraction}
 metalyzer_se
 ```
 
@@ -218,20 +216,38 @@ MetAlyzer also includes functions to calculate and visualize the log2 fold chang
 ```{r initialize_treatment}
 fpath <- example_mutation_data_xl()
 metalyzer_se <- MetAlyzer_dataset(file_path = fpath)
-```
 
-```{r show_treatment}
 metalyzer_se
 ```
 
 ::: {style="text-align: justify"}
-Again, we want to remove the metabolism indicators and rename the column "Sample Description".
+Again, we want to remove the metabolism indicators.
 :::
 
 ```{r prepare_metabolites_treatment}
 metalyzer_se <- filterMetabolites(metalyzer_se, drop_metabolites = "Metabolism Indicators")
-metalyzer_se <- renameMetaData(metalyzer_se, Mutant_Control = "Sample Description")
 metalyzer_se
+```
+
+::: {style="text-align: justify"}
+In this data set, the column "Sample Description" holds information about the wether a sample is a wild type or a mutant.
+:::
+
+```{r show_sample_description}
+meta_data <- colData(metalyzer_se)
+meta_data$`Sample Description`
+```
+
+::: {style="text-align: justify"}
+To determine the direction of the effect during log2 fold change calculation, the information is converted into a factor and saved as a new column "Control_Mutant". The log2 fold change will now be calculated from "Control" to "Mutant".
+:::
+
+```{r prepare_control_mutant}
+control_mutant <- factor(colData(metalyzer_se)$`Sample Description`, levels = c("Control", "Mutant"))
+metalyzer_se <- updateMetaData(metalyzer_se, Control_Mutant = control_mutant)
+
+meta_data <- colData(metalyzer_se)
+meta_data$Control_Mutant
 ```
 
 ::: {style="text-align: justify"}
@@ -241,7 +257,7 @@ In order to avoid NAs during log2 transformation the same imputation of NAs or z
 ```{r calculate_log2FC}
 metalyzer_se <- calculate_log2FC(
   metalyzer_se,
-  categorical = "Mutant_Control",
+  categorical = "Control_Mutant",
   impute_perc_of_min = 0.2,
   impute_NA = TRUE
 )
@@ -256,7 +272,7 @@ log2FC(metalyzer_se)
 ```
 
 ::: {style="text-align: justify"}
-This can be visualized with a volcano plot:
+The log2 fold change between the wild type and the mutant can be visualized with a volcano plot:
 :::
 
 ```{r plot_log2FC_vulcano, fig.width=7, fig.height=4.5}
@@ -272,7 +288,7 @@ log2fc_vulcano
 ```
 
 ::: {style="text-align: justify"}
-Or in a scatter plot:
+as well as in a scatter plot categorized by metabolic classes:
 :::
 
 ```{r plot_log2FC_scatter, fig.width=9, fig.height=9}
@@ -287,7 +303,7 @@ log2fc_by_class
 ```
 
 ::: {style="text-align: justify"}
-MetAlyzer also provides the log fold change in the different pathways, to better visualize what group of metabolites shows an increase or decrease in concentration between the 2 extraction Methods.
+MetAlyzer also provides a visualization of the log2 fold change across different pathways, in order to identify groups of metabolites impacted by the effect.
 :::
 
 ```{r plot_network, fig.width=9, fig.height=9}
