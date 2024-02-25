@@ -42,7 +42,7 @@
 #' metalyzer_se <- calculate_anova(
 #'   metalyzer_se,
 #'   categorical = "Extraction_Method",
-#'   groups = c("Tissue", "Metabolite"),
+#'   groups = c("Metabolite"),
 #'   impute_perc_of_min = 0.2,
 #'   impute_NA = FALSE
 #' )
@@ -130,7 +130,7 @@ calc_anova <- function(c_vec, d_vec) {
 
   if (sum(!is.na(d_vec)) == 0 | length(unique(c_vec[mask])) < 2) {
     ## less than two levels
-    group_vec <- NA
+    group_vec <- rep(NA, length(c_vec))
   } else {
     tmp_df <- data.frame(Categorical = as.character(c_vec),
                          Dependent = as.numeric(d_vec))
