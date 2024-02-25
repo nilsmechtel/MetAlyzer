@@ -187,7 +187,7 @@ metalyzer_se <- calculate_anova(
   categorical = "Extraction_Method",
   groups = c("Tissue", "Metabolite"),
   impute_perc_of_min = 0.2,
-  impute_NA = FALSE
+  impute_NA = TRUE
 )
 
 aggregated_data <- aggregatedData(metalyzer_se) %>%

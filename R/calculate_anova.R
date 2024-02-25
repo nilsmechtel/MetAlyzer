@@ -82,7 +82,7 @@ calculate_anova <- function(metalyzer_se, categorical, groups = NULL, impute_per
     mutate(ANOVA_n = sum(!is.na(.data$log2_Conc)))
   
   anova_data <- aggregated_data %>%
-    rename(Categorical = all_of(categorical)) %>%
+    dplyr::rename(Categorical = all_of(categorical)) %>%
     ungroup(.data$Categorical)
   cat(paste0("Info: Calculating ANOVA (groupwise: ",
              paste(groups(anova_data), collapse = " * "), ")...  "))

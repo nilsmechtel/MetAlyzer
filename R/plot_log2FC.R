@@ -188,6 +188,9 @@ plot_log2FC <- function(metalyzer_se,
       select(.data$x) %>%
       max()
 
+    # Create y-axis limits for the rectangles
+    ylims <- c(min(log2FC_df$log2FC) - 0.75, max(log2FC_df$log2FC) + 0,75)
+
     ## Plot graph
     p_fc <- ggplot(p_data,
                    aes(x = .data$x,
@@ -197,7 +200,7 @@ plot_log2FC <- function(metalyzer_se,
       geom_rect(data = rects_df,
                 inherit.aes = FALSE,
                 aes(xmin = .data$Start, xmax = .data$End,
-                    ymin = -Inf, ymax = Inf,
+                    ymin = ylims[1], ymax = ylims[2],
                     fill = .data$Class),
                 show.legend = TRUE,
                 alpha = 0.4) +
