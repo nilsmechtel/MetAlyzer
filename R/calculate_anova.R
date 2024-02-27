@@ -37,16 +37,17 @@
 #' )
 #' metalyzer_se <- filterMetaData(
 #'   metalyzer_se,
-#'   Tissue == "Drosophila"
+#'   Tissue == "Drosophila",
+#'   Extraction_Method %in% c(1,2,3)
 #' )
 #' metalyzer_se <- calculate_anova(
 #'   metalyzer_se,
 #'   categorical = "Extraction_Method",
 #'   groups = c("Metabolite"),
 #'   impute_perc_of_min = 0.2,
-#'   impute_NA = FALSE
+#'   impute_NA = TRUE
 #' )
-calculate_anova <- function(metalyzer_se, categorical, groups = NULL, impute_perc_of_min = 0.2, impute_NA = FALSE) {
+calculate_anova <- function(metalyzer_se, categorical, groups = NULL, impute_perc_of_min = 0.2, impute_NA = TRUE) {
   ## Check for agricolae installation
   # installed_packages <- utils::installed.packages()[, "Package"]
   # if (! "agricolae" %in% installed_packages) {
@@ -88,8 +89,8 @@ calculate_anova <- function(metalyzer_se, categorical, groups = NULL, impute_per
              paste(groups(anova_data), collapse = " * "), ")...  "))
   anova_data <- mutate(anova_data, ANOVA_Group = calc_anova(.data$Categorical,
                                   .data$log2_Conc))
-  # c_vec <- filter(anova_data, Tissue == "Drosophila", Metabolite == "Nitro-Tyr")$Categorical
-  # d_vec <- filter(anova_data, Tissue == "Drosophila", Metabolite == "Nitro-Tyr")$log2_Conc
+  # c_vec <- filter(anova_data, Tissue == "Drosophila", Metabolite == "Cer(d18:1/23:0)")$Categorical
+  # d_vec <- filter(anova_data, Tissue == "Drosophila", Metabolite == "Cer(d18:1/23:0)")$log2_Conc
   cat("finished!\n")
 
   if (any(aggregated_data$Concentration != anova_data$Concentration, na.rm = TRUE)) {
@@ -122,14 +123,10 @@ calc_anova <- function(c_vec, d_vec) {
   ## -> no imputation
   ## -> log2 transformation = NA
   ## -> no ANOVA is calculated (output: NA)
-
-  ## filter out NA
-  mask <- !is.na(d_vec)
-  # c_vec <- c_vec[mask]
-  # d_vec <- d_vec[mask]
-
-  if (sum(!is.na(d_vec)) == 0 | length(unique(c_vec[mask])) < 2) {
-    ## less than two levels
+  
+  # Check if all values in d_vec are NA or c_vec has less than two levels
+  if (any(is.na(d_vec)) | length(unique(c_vec)) < 2) {
+    # Return a placeholder value indicating ANOVA couldn't be performed
     group_vec <- rep(NA, length(c_vec))
   } else {
     tmp_df <- data.frame(Categorical = as.character(c_vec),

@@ -9,7 +9,7 @@ calculate_anova(
   categorical,
   groups = NULL,
   impute_perc_of_min = 0.2,
-  impute_NA = FALSE
+  impute_NA = TRUE
 )
 }
 \arguments{
@@ -52,13 +52,14 @@ metalyzer_se <- filterMetabolites(
 )
 metalyzer_se <- filterMetaData(
   metalyzer_se,
-  Tissue == "Drosophila"
+  Tissue == "Drosophila",
+  Extraction_Method \%in\% c(1,2,3)
 )
 metalyzer_se <- calculate_anova(
   metalyzer_se,
   categorical = "Extraction_Method",
   groups = c("Metabolite"),
   impute_perc_of_min = 0.2,
-  impute_NA = FALSE
+  impute_NA = TRUE
 )
 }
