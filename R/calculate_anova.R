@@ -87,8 +87,11 @@ calculate_anova <- function(metalyzer_se, categorical, groups = NULL, impute_per
     ungroup(.data$Categorical)
   cat(paste0("Info: Calculating ANOVA (groupwise: ",
              paste(groups(anova_data), collapse = " * "), ")...  "))
-  anova_data <- mutate(anova_data, ANOVA_Group = calc_anova(.data$Categorical,
-                                  .data$log2_Conc))
+  anova_data <- mutate(
+    anova_data,
+    ANOVA_Group = calc_anova(.data$Categorical, .data$log2_Conc)
+  )
+  
   # c_vec <- filter(anova_data, Tissue == "Drosophila", Metabolite == "Cer(d18:1/23:0)")$Categorical
   # d_vec <- filter(anova_data, Tissue == "Drosophila", Metabolite == "Cer(d18:1/23:0)")$log2_Conc
   cat("finished!\n")
@@ -124,10 +127,18 @@ calc_anova <- function(c_vec, d_vec) {
   ## -> log2 transformation = NA
   ## -> no ANOVA is calculated (output: NA)
   
-  # Check if all values in d_vec are NA or c_vec has less than two levels
-  if (any(is.na(d_vec)) | length(unique(c_vec)) < 2) {
+  # Check if all values in d_vec
+  if (any(is.na(d_vec))) {
     # Return a placeholder value indicating ANOVA couldn't be performed
-    group_vec <- rep(NA, length(c_vec))
+    return(NA)
+  } else if (stats::var(d_vec) == 0) {
+    # Check if all values are equal
+    # Return a placeholder value indicating ANOVA couldn't be performed
+    return(NA)
+  } else if (length(unique(c_vec)) < 2) {
+    # Check if c_vec has less than two levels
+    # Return a placeholder value indicating ANOVA couldn't be performed
+    return(NA)
   } else {
     tmp_df <- data.frame(Categorical = as.character(c_vec),
                          Dependent = as.numeric(d_vec))
@@ -142,6 +153,6 @@ calc_anova <- function(c_vec, d_vec) {
       tibble::deframe() %>%
       toupper()
     group_vec <- sapply(c_vec, function(m) anova_groups[m])
+    return(group_vec)
   }
-  return(group_vec)
 }
