@@ -101,43 +101,23 @@ plot_network <- function(metalyzer_se, q_value=0.05) {
     return(color)
   })
 
-
-
   ## Add log2FC to nodes_df
   signif_df <- filter(log2FC_df,
                       !is.na(.data$log2FC),
                       !is.na(.data$qval),
                       .data$qval <= q_value)
 
-  nodes$FC_thresh <- sapply(strsplit(nodes$Metabolites, ";"), function(m_vec) {
-    if (length(m_vec) > 1) {
-      # Nodes with more than 1 metabolite assigned
-      tmp_df <- filter(signif_df, .data$Metabolite %in% m_vec)
-      if (nrow(tmp_df) > 0) {
-        # At least one of the metabolites is significantly change
-        # -> take the mean log2 fold change
-        l2fc <- sum(tmp_df$log2FC) / length(m_vec)
-      } else {
-        if (any(tmp_df$Metabolite %in% levels(log2FC_df$Metabolite))) {
-          # At least one metabolite was measured but none are significantly changed
-          l2fc <- 0
-        } else {
-          # None of the metabolites were measured
-          l2fc <- NA
-        }
-      }
-    } else {
-      # Nodes with 0 or 1 metabolite assigned
-      if (m_vec %in% signif_df$Metabolite) {
-        # Metabolite is significantly changed
-        l2fc <- signif_df$log2FC[which(signif_df$Metabolite == m_vec)]
-      } else if (m_vec %in% levels(log2FC_df$Metabolite)) {
-        # Metabolite was measured but is not significantly changed
+    nodes$FC_thresh <- sapply(strsplit(nodes$Metabolites, ";"), function(m_vec) {
+    tmp_df <- filter(signif_df, .data$Metabolite %in% m_vec)
+    if (nrow(tmp_df) > 0) {
+      # Alteast 1 significantly changed
+      l2fc <- sum(tmp_df$log2FC) / nrow(tmp_df)
+    } else if (any(m_vec %in% log2FC_df$Metabolite)) {
+        # Not significantly changed but measured
         l2fc <- 0
-      } else {
-        # Metabolite was not measured
+    } else {
+        # Not measured
         l2fc <- NA
-      }
     }
     return(l2fc)
   })
