@@ -4,6 +4,12 @@
 #'
 #' @param metalyzer_se A Metalyzer object
 #' @param q_value The q-value threshold for significance
+#' @param metabolite_text_size The text size of metabolite labels
+#' @param connection_width The line width of connections between metabolites
+#' @param pathway_text_size The text size of pathway annotations
+#' @param pathway_width The line width of pathway-specific connection coloring
+#' @param scale_colors A vector of length 3 with colors for low, mid and high 
+#' of the gradient.
 #' @return ggplot object
 #' 
 #' @import dplyr
@@ -33,7 +39,15 @@
 #' 
 #' network <- plot_network(metalyzer_se, q_value = 0.05)
 
-plot_network <- function(metalyzer_se, q_value=0.05) {
+plot_network <- function(
+    metalyzer_se,
+    q_value=0.05,
+    metabolite_text_size=3,
+    connection_width=0.75,
+    pathway_text_size=6,
+    pathway_width=4,
+    scale_colors = c("green", "black", "magenta") 
+  ) {
   log2FC_df <- metalyzer_se@metadata$log2FC
   
   pathway_file <- MetAlyzer::pathway()
@@ -84,7 +98,6 @@ plot_network <- function(metalyzer_se, q_value=0.05) {
     edges <- edges[-invalid_edges, ]
   }
 
-
   edges$x_start <- nodes[edges$Node1, "x"]
   edges$y_start <- nodes[edges$Node1, "y"]
   edges$x_end <- nodes[edges$Node2, "x"]
@@ -125,11 +138,6 @@ plot_network <- function(metalyzer_se, q_value=0.05) {
   ## Draw network
 
   # Create a plot of the network using ggplot2 and ggrepel
-  label_size <- 3
-  area_size <- 4
-  edge_size <- 0.75
-  annotation_size <- 6
-
   network <- ggplot()
   for (radius in unique(edges$Radius)) {
     rad_edges <- filter(edges, .data$Radius == radius)
@@ -147,7 +155,7 @@ plot_network <- function(metalyzer_se, q_value=0.05) {
           color = .data$Color
         ),
         # color = "lightblue",
-        linewidth = area_size,
+        linewidth = pathway_width,
         # alpha = 0.3,
         curvature = radius,
         show.legend = FALSE
@@ -162,7 +170,7 @@ plot_network <- function(metalyzer_se, q_value=0.05) {
           yend = nodes[.data$Node2, "y"]
         ),
         color = "grey",
-        linewidth = edge_size,
+        linewidth = connection_width,
         curvature = radius
       )
   }
@@ -176,10 +184,14 @@ plot_network <- function(metalyzer_se, q_value=0.05) {
         label = .data$Label,
         fill = .data$FC_thresh
       ),
-      size = label_size,
+      size = metabolite_text_size,
       color = "white"
     ) +
-    scale_fill_gradient2(low = "green", high = "magenta", mid = "black") +
+    scale_fill_gradient2(
+      low = scale_colors[1],
+      mid = scale_colors[2],
+      high = scale_colors[3]
+    ) +
 
     # Add annotations
     geom_text(
@@ -190,7 +202,7 @@ plot_network <- function(metalyzer_se, q_value=0.05) {
         label = .data$Label,
         color = .data$Color
       ),
-      size = annotation_size,
+      size = pathway_text_size,
       show.legend = FALSE
     ) +
     # # Set the x and y axis limits

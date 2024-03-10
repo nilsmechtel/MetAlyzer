@@ -4,12 +4,31 @@
 \alias{plot_network}
 \title{Plot Pathway Network}
 \usage{
-plot_network(metalyzer_se, q_value = 0.05)
+plot_network(
+  metalyzer_se,
+  q_value = 0.05,
+  metabolite_text_size = 3,
+  connection_width = 0.75,
+  pathway_text_size = 6,
+  pathway_width = 4,
+  scale_colors = c("green", "black", "magenta")
+)
 }
 \arguments{
 \item{metalyzer_se}{A Metalyzer object}
 
 \item{q_value}{The q-value threshold for significance}
+
+\item{metabolite_text_size}{The text size of metabolite labels}
+
+\item{connection_width}{The line width of connections between metabolites}
+
+\item{pathway_text_size}{The text size of pathway annotations}
+
+\item{pathway_width}{The line width of pathway-specific connection coloring}
+
+\item{scale_colors}{A vector of length 3 with colors for low, mid and high 
+of the gradient.}
 }
 \value{
 ggplot object

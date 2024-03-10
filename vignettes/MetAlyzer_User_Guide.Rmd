@@ -308,7 +308,15 @@ MetAlyzer also provides a visualization of the log2 fold change across different
 
 ```{r plot_network, fig.width=9, fig.height=9}
 
-log2fc_network <- plot_network(metalyzer_se)
+log2fc_network <- plot_network(
+  metalyzer_se,
+  q_value=0.05,
+  metabolite_text_size=2,
+  connection_width=0.75,
+  pathway_text_size=4,
+  pathway_width=4,
+  scale_colors = c("green", "black", "magenta")
+)
 
 log2fc_network
 ```
