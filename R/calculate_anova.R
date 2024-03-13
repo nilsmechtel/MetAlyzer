@@ -31,14 +31,15 @@
 #'   metalyzer_se,
 #'   Extraction_Method = "Sample Description"
 #' )
+#' # reduced to only 'Acylcarnitines' (first metabolic class) for simplicity
+#' drop_vec = unique(metalyzer_se@elementMetadata$metabolic_classes)[2:24]
 #' metalyzer_se <- filterMetabolites(
 #'   metalyzer_se,
-#'   drop_metabolites = "Metabolism Indicators"
+#'   drop_metabolites = drop_vec
 #' )
 #' metalyzer_se <- filterMetaData(
 #'   metalyzer_se,
-#'   Tissue == "Drosophila",
-#'   Extraction_Method %in% c(1,2,3)
+#'   Tissue == "Drosophila"
 #' )
 #' metalyzer_se <- calculate_anova(
 #'   metalyzer_se,

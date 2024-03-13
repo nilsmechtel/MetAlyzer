@@ -2,11 +2,28 @@ Package: MetAlyzer
 Type: Package
 Title: Read and Analyze 'MetIDQ&trade;' Software Output Files
 Version: 1.0.0
+Authors@R: c(
+    person(given = "Nils",
+           family = "Mechtel",
+           role = c("aut", "cre"),
+           email = "nils.mech@gmail.com",
+           comment = c(ORCID = "0000-0002-1278-7125")),
+    person(given = "Luis",
+           family = "Herfurth",
+           role = c("aut"),
+           email = "luis.herfurth@stud.uni-heidelberg.de",
+           comment = c(ORCID = "0009-0000-9933-3056")),
+    person(given = "Carolin",
+           family = "Andresen",
+           role = c("aut"),
+           email = "carolinandresen@googlemail.com",
+           comment = c(ORCID = "0000-0002-8960-7719")),
+    person(given = "Daniel",
+           family = "Huebschmann",
+           role = c("aut"),
+           email = "d.huebschmann@dkfz-heidelberg.de",
+           comment = c(ORCID = "0000-0002-6041-7049")))
 Maintainer: Nils Mechtel <nils.mech@gmail.com>
-Author: Nils Mechtel [aut, cre] (<nils.mech@gmail.com>, ORCID: 0000-0002-1278-7125),
-        Luis Herfurth [aut] (<luis.herfurth@stud.uni-heidelberg.de>, ORCID: 0009-0000-9933-3056),
-        Carolin Andresen [aut] (<carolinandresen@googlemail.com>, ORCID: 0000-0002-8960-7719),
-        Daniel Huebschmann [aut] (<d.huebschmann@dkfz-heidelberg.de>, ORCID: 0000-0002-6041-7049)
 Depends:
     R (>= 4.0.0)
 biocViews:

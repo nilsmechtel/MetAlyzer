@@ -8,11 +8,10 @@
 ^LICENSE$
 ^cran-comments\.md$
 .*_cache$
+^\.DS_Store$
 
 ^tests/.*
 
 ^R/do_anova_2w\.R$
 ^R/plot_2w_anvova\.R$
 ^R/two_way_anova\.R$
-^.*\.Rproj$
-^\.Rproj\.user$

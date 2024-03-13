@@ -21,12 +21,20 @@
 #' 
 #' @examples
 #' metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
-#' metalyzer_se <- renameMetaData(metalyzer_se,
-#'                                Extraction_Method = "Sample Description")
-#' metalyzer_se <- calculate_cv(metalyzer_se,
-#'                              groups = c("Tissue", "Extraction_Method", "Metabolite"),
-#'                              cv_thresholds = c(0.1, 0.2, 0.3),
-#'                              na.rm = TRUE)
+#' metalyzer_se <- renameMetaData(
+#'   metalyzer_se,
+#'   Extraction_Method = "Sample Description"
+#' )
+#' metalyzer_se <- filterMetaData(
+#'   metalyzer_se,
+#'   Tissue == "Drosophila"
+#' )
+#' metalyzer_se <- calculate_cv(
+#'   metalyzer_se,
+#'   groups = c("Tissue", "Extraction_Method", "Metabolite"),
+#'   cv_thresholds = c(0.1, 0.2, 0.3),
+#'   na.rm = TRUE
+#' )
 calculate_cv <- function(metalyzer_se,
                          groups = NULL,
                          cv_thresholds = c(0.1, 0.2, 0.3),

@@ -8,4 +8,6 @@ The MetAlyzer package has undergone significant updates in version 1.0.0. The ma
 
 ## R CMD check results
 
-0 errors | 0 warnings | 2 note
+0 errors | 0 warnings | 1 note
+
+* This is a new release.

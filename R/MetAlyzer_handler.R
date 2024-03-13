@@ -514,8 +514,15 @@ log2FC <- function(metalyzer_se) {
 #'
 #' @examples
 #' metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
-#'
-#' exportConcValues(metalyzer_se, `Sample Description`, Tissue)
+#' 
+#' output_file <- file.path(tempdir(), "metabolomics_data.csv")
+#' exportConcValues(
+#'   metalyzer_se,
+#'   `Sample Description`,
+#'   Tissue,
+#'   file_path = output_file
+#' )
+#' unlink(output_file)
 exportConcValues <- function(metalyzer_se,
                              ...,
                              file_path = "metabolomics_data.csv") {
