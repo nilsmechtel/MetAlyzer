@@ -15,3 +15,5 @@
 ^R/do_anova_2w\.R$
 ^R/plot_2w_anvova\.R$
 ^R/two_way_anova\.R$
+^.*\.Rproj$
+^\.Rproj\.user$

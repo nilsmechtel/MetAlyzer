@@ -24,8 +24,8 @@ calculate_log2FC(
 A data frame containing the log2 fold change for each metabolite
 }
 \description{
-This function calculates the log2 fold change of two groups from
-plotting_data.
+This function calculates log2(FC), p-values, and adjusted p-values
+of the data using limma.
 }
 \examples{
 metalyzer_se <- MetAlyzer_dataset(file_path = example_mutation_data_xl())
