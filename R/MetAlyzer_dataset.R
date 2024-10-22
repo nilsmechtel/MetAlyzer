@@ -174,7 +174,7 @@ open_file <- function(starter_list) {
 #'
 #' @keywords internal
 get_data_range <- function(full_sheet) {
-  if (!"Sample Type" %in% full_sheet) {
+  if (!"Class" %in% full_sheet) {
     stop('The cell "Class" is missing. Metabolites could not be detected...')
   }
   # row of header "Class"
@@ -182,15 +182,20 @@ get_data_range <- function(full_sheet) {
   # column of header "Class"
   col_class <- ceiling(which(full_sheet == "Class") / nrow(full_sheet))
 
-  if (!"Sample Type" %in% full_sheet) {
-    stop('The column "Sample Type" is missing. Data could not be detected...')
+  if (!any(grepl("^\\s*Sample\\s*Type\\s*$", full_sheet, ignore.case = TRUE))) {
+    stop('The cell "Sample Type" is missing. Data could not be detected...')
   }
+
   # row of "Sample Type"
-  row_sample_type <- which(full_sheet == "Sample Type") %% nrow(full_sheet)
+  row_sample_type <- arrayInd(
+    which(grepl("^\\s*Sample\\s*Type\\s*$", full_sheet, ignore.case = TRUE)),
+    dim(full_sheet)
+  )[, 1]
   # column of "Sample Type"
-  col_sample_type <- ceiling(
-    which(full_sheet == "Sample Type") / nrow(full_sheet)
-  )
+  col_sample_type <- arrayInd(
+    which(grepl("^\\s*Sample\\s*Type\\s*$", full_sheet, ignore.case = TRUE)),
+    dim(full_sheet)
+  )[, 2]
 
   rows_data <- which(full_sheet[, col_sample_type] == "Sample") # rows
   names(rows_data) <- NULL
@@ -271,7 +276,7 @@ slice_meta_data <- function(full_sheet, data_ranges) {
     data_ranges$data_rows,
     1:data_ranges[["class_col"]]
   ])
-  colnames(meta_data) <- meta_header
+  colnames(meta_data) <- gsub("[^a-zA-Z ]", "", meta_header)
   meta_data <- meta_data[
     colSums(is.na(meta_data)) != nrow(meta_data)
   ] # remove full NA columns
