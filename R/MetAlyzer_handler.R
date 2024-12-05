@@ -9,7 +9,6 @@
 #'
 #' @examples
 #' metalyzer_se <- MetAlyzer_dataset(file_path = example_extraction_data())
-#' metalyzer_se <- MetAlyzer_dataset(file_path = "/Users/larrylusi/Downloads/2024-09-10_DISC_THRX_Tissue+TRP.xlsx")
 #'
 #' summarizeConcValues(metalyzer_se)
 summarizeConcValues <- function(metalyzer_se) {

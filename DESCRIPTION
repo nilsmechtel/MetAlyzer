@@ -1,7 +1,7 @@
 Package: MetAlyzer
 Type: Package
 Title: Read and Analyze 'MetIDQ&trade;' Software Output Files
-Version: 1.0.0
+Version: 1.1.0
 Authors@R: c(
     person(given = "Nils",
            family = "Mechtel",
@@ -49,10 +49,11 @@ Description: The 'MetAlyzer' S4 object provides methods to read and reformat met
 License: GPL-3
 Encoding: UTF-8
 Language: en-US
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 Suggests:
     rmarkdown,
     knitr
 VignetteBuilder: knitr
 URL: https://github.com/nilsmechtel/MetAlyzer
 BugReports: https://github.com/nilsmechtel/MetAlyzer/issues
+
